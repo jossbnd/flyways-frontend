@@ -12,7 +12,9 @@ import {
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 // Import des fonts
+import StyledRegularText from "../components/StyledRegularText";
 import StyledBoldText from "../components/StyledBoldText";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignUpScreen({ navigation }) {
@@ -24,9 +26,65 @@ export default function SignUpScreen({ navigation }) {
   const [password, setPassword] = useState(null);
   const [passwordCheck, setPasswordCheck] = useState(null);
 
-  const handleContinue = () => {
-    navigation.navigate("Phone");
+  const [errorMessages, setErrorMessages] = useState([]);
+
+  const newUser = {};
+
+  const handleContinue = async () => {
+    let inputsAreValid = true;
+    let errors = [];
+
+    setErrorMessages([]);
+
+    // Regex Pattern
+    const EMAIL_REGEX =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    const DATE_REGEX =
+      /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
+    const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,20}$/;
+
+    // Check
+    if (!EMAIL_REGEX.test(email)) {
+      errors.push("wrong email");
+      inputsAreValid = false;
+    }
+
+    // CH
+    if (!DATE_REGEX.test(dob)) {
+      errors.push("wrong date of birth, please use DD/MM/YYYY format");
+      inputsAreValid = false;
+    }
+
+    if (!PASSWORD_REGEX.test(password) && !PASSWORD_REGEX.test(passwordCheck)) {
+      errors.push(
+        "Invalid password: must be 6-20 characters long, include at least one lower case, one upper case, one digit, and no white space"
+      );
+      inputsAreValid = false;
+    } else if (password !== passwordCheck) {
+      errors.push("Passwords are different");
+      inputsAreValid = false;
+    }
+
+    if (inputsAreValid) {
+      let newUser = {
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        dob: dob,
+        password: password,
+      }
+      navigation.navigate("Phone", { newUser });
+      setErrorMessages([]);
+    } else {
+      setErrorMessages(errors);
+    }
   };
+
+  const errorMessagesData = errorMessages.map((errorText, i) => {
+    return (
+      <StyledRegularText key={i} title={errorText} style={{ color: "red" }} />
+    );
+  });
 
   return (
     <KeyboardAvoidingView
@@ -36,6 +94,7 @@ export default function SignUpScreen({ navigation }) {
       <SafeAreaView style={styles.safeContainer}>
         <View style={styles.header}>
           <StyledBoldText style={styles.title} title="Create an account" />
+          <StyledBoldText style={styles.welcome} title="Welcome" />
         </View>
         <View style={styles.inputsContainer}>
           <View style={styles.inputContainer}>
@@ -80,6 +139,7 @@ export default function SignUpScreen({ navigation }) {
               placeholder="Password"
               onChangeText={(value) => setPassword(value)}
               value={password}
+              secureTextEntry={true}
             />
             <FontAwesome5 name="lock" size={25} />
           </View>
@@ -89,9 +149,11 @@ export default function SignUpScreen({ navigation }) {
               placeholder="Confirm Password"
               onChangeText={(value) => setPasswordCheck(value)}
               value={passwordCheck}
+              secureTextEntry={true}
             />
             <FontAwesome5 name="lock" size={25} />
           </View>
+          <View style={styles.errorContainer}>{errorMessagesData}</View>
         </View>
         <View style={styles.bottom}>
           <TouchableOpacity
@@ -123,6 +185,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
+    width: "90%",
+    textAlign: "center",
+  },
+  welcome: {
+    fontSize: 30,
+    width: "90%",
+    textAlign: "left",
+    color: "#1EA85F",
   },
   inputsContainer: {
     flex: 5,
@@ -134,7 +204,7 @@ const styles = StyleSheet.create({
     width: "90%",
     borderBottomWidth: 1,
     height: "10%",
-    minHeight: 45,
+    minHeight: 40,
     margin: 3,
     justifyContent: "space-between",
     alignItems: "center",
@@ -142,6 +212,13 @@ const styles = StyleSheet.create({
   input: {
     width: "90%",
     height: "100%",
+  },
+  errorContainer: {
+    flexDirection: "column",
+    width: "90%",
+    minHeight: 20,
+    marginTop: 10,
+    justifyContent: "space-between",
   },
   bottom: {
     flex: 1,

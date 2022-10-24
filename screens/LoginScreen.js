@@ -8,6 +8,6 @@ export default function LoginScreen({ navigation }) {
  );
 }
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
 
 })
