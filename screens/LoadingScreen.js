@@ -1,16 +1,17 @@
 import { Button, StyleSheet, Text, View } from 'react-native';
-import StyledText from "../components/StyledText";
+import { SafeAreaView } from 'react-native-safe-area-context';
+import StyledText from "../components/StyledRegularText";
 
 export default function LoadingScreen({ navigation }) {
  return (
-   <View style={styles.container}>
-    <StyledText title='HELLO WORLD' />
-    <Text>HELLO WORLD</Text>
+   <SafeAreaView style={styles.container}>
+    <StyledRegularText title='FlyWays' />
+    <Text>FyWays</Text>
 
-   </View>
+   </SafeAreaView>
  );
 }
 
 const styles = StyleSheet.create({
-  
+
 })

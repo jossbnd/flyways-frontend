@@ -1,7 +1,6 @@
 import React from "react";
 import { Text, StyleSheet, View } from "react-native";
 
-import AppLoading from "expo-app-loading";
 import { useFonts, Lato_400Regular } from "@expo-google-fonts/lato";
 
 export default function SignUpScreen({ title, style }) {
