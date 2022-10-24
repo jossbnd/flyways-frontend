@@ -1,13 +1,16 @@
 import { Button, StyleSheet, Text, View } from 'react-native';
+import StyledText from "../components/StyledText";
 
 export default function LoadingScreen({ navigation }) {
  return (
-   <View>
+   <View style={styles.container}>
+    <StyledText title='HELLO WORLD' />
+    <Text>HELLO WORLD</Text>
 
    </View>
  );
 }
 
-const style = StyleSheet.create({
-
+const styles = StyleSheet.create({
+  
 })
