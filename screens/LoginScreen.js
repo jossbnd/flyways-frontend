@@ -52,13 +52,13 @@ export default function LoginScreen({ navigation }) {
       </View>
       <StyledText title="OR" />
       <View style={styles.flywaysButton}>
-        <TouchableOpacity
-          style={[styles.button, styles.green]}
-          onPress={() => handleSubmit()}
-        >
+        <TouchableOpacity style={[styles.button, styles.green]}>
           <StyledText title="SIGN UP" style={styles.signup} />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.white]}>
+        <TouchableOpacity
+          style={[styles.button, styles.white]}
+          onPress={() => handleSubmit()}
+        >
           <StyledText title="SIGN IN" style={styles.signin} />
         </TouchableOpacity>
       </View>
