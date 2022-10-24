@@ -9,6 +9,7 @@ import {
 } from "react-native";
 
 import { useFonts } from "expo-font";
+import StyledText from "../components/StyledText";
 
 export default function LoadingScreen({ navigation }) {
   return (
@@ -22,6 +23,7 @@ export default function LoadingScreen({ navigation }) {
       />
       <Text style={styles.title}>FlyWays</Text>
       <Text style={styles.motto}>Relax, Stress less, save money</Text>
+      <StyledText title='HELLO WORLD' />
     </KeyboardAvoidingView>
   );
 }
@@ -49,3 +51,4 @@ const styles = StyleSheet.create({
     color: "#1EA85F",
   },
 });
+
