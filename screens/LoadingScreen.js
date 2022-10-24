@@ -8,6 +8,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { useFonts } from "expo-font";
+
 export default function LoadingScreen({ navigation }) {
   return (
     <KeyboardAvoidingView
@@ -19,6 +21,7 @@ export default function LoadingScreen({ navigation }) {
         source={require("../assets/flyways-logo.png")}
       />
       <Text style={styles.title}>FlyWays</Text>
+      <Text style={styles.motto}>Relax, Stress less, save money</Text>
     </KeyboardAvoidingView>
   );
 }
@@ -31,12 +34,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   image: {
-    width: "100%",
-    height: "50%",
+    flex: 1,
+    width: 150,
+    height: 80,
+    resizeMode: "contain",
   },
   title: {
     width: "80%",
     fontSize: 38,
     fontWeight: "600",
+    color: "#FFFFFF",
+  },
+  motto: {
+    color: "#1EA85F",
   },
 });
