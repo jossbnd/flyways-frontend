@@ -30,16 +30,15 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function LoginScreen({ navigation }) {
   // Création états inputs
-  const [signInEmail, setEmail] = useState(null);
-  const [signInPassword, setPassword] = useState(null);
-  const [passwordCheck, setPasswordCheck] = useState(null);
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
 
   // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
   const handleContinue = () => {
     fetch("http://192.168.10.134:3000/users/signin", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ email: signInEmail, password: signInPassword }),
+      body: JSON.stringify({ email: email, password: password }),
     })
       .then((res) => res.json())
       .then((data) => {
