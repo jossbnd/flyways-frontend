@@ -14,21 +14,48 @@ import {
   View,
 } from "react-native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
+// import store redux et fonction redux
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../reducers/user";
+
+// import des fonts
 import StyledBoldText from "../components/StyledBoldText";
 import StyledRegularText from "../components/StyledRegularText";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+// import des icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function LoginScreen({ navigation }) {
   // Création états inputs
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [signInEmail, setEmail] = useState(null);
+  const [signInPassword, setPassword] = useState(null);
   const [passwordCheck, setPasswordCheck] = useState(null);
 
   // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
   const handleContinue = () => {
-    navigation.navigate("HomeScreen");
+    fetch("http://192.168.10.134:3000/users/signin", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ email: signInEmail, password: signInPassword }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.result) {
+          dispatch(
+            login({
+              firstName: data.user.firstName,
+              lastName: data.user.lastName,
+              token: data.user.token,
+            })
+          );
+          navigation.navigate("Home");
+          console.log("USER CONNECTE");
+        }
+      });
   };
 
   return (
