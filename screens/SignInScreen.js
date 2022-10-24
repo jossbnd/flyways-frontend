@@ -1,9 +1,11 @@
 /* COMMENTAIRES:
  */
-
+import { useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
   Platform,
   StyleSheet,
   Text,
@@ -12,75 +14,90 @@ import {
   View,
 } from "react-native";
 
-import StyledText from "../components/StyledText";
+import StyledBoldText from "../components/StyledBoldText";
+import StyledRegularText from "../components/StyledRegularText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function LoginScreen({ navigation }) {
+  // Création états inputs
+  const [email, setEmail] = useState(null);
+  const [password, setPassword] = useState(null);
+  const [passwordCheck, setPasswordCheck] = useState(null);
+
   // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
-  const handleSubmit = () => {
-    navigation.navigate("SignIn");
+  const handleContinue = () => {
+    navigation.navigate("HomeScreen");
   };
 
   return (
-    <SafeAreaView
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "android" ? "position" : "height"}
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Image
-        style={styles.image}
-        source={require("../assets/flyways-logo.png")}
-      />
-      <View style={styles.titles}>
-        <StyledText style={styles.title} title="FlyWays" />
-        <StyledText
-          style={styles.motto}
-          title="Relax, Stress less, save money"
+      <SafeAreaView style={styles.safeContainer}>
+        <Image
+          style={styles.image}
+          source={require("../assets/flyways-logo.png")}
         />
-      </View>
-      <View style={styles.googleButton}>
-        <TouchableOpacity style={[styles.button, styles.green]}>
-          <FontAwesome
-            name="google"
-            size={20}
-            color="#000000"
-            style={{ marginRight: 5 }}
+        <View style={styles.titles}>
+          <StyledBoldText style={styles.title} title="FlyWays" />
+          <StyledRegularText
+            style={styles.motto}
+            title="Relax, Stress less, save money"
           />
-          <StyledText title="Connect with Google" />
-        </TouchableOpacity>
-      </View>
-      <StyledText title="OR" />
-      <View style={styles.flywaysButton}>
-        <TouchableOpacity style={[styles.button, styles.green]}>
-          <StyledText title="SIGN UP" style={styles.signup} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.button, styles.white]}
-          onPress={() => handleSubmit()}
-        >
-          <StyledText title="SIGN IN" style={styles.signin} />
-        </TouchableOpacity>
-      </View>
-    </SafeAreaView>
+        </View>
+        <View style={styles.inputsContainer}>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="E-mail address"
+              onChangeText={(value) => setEmail(value)}
+              value={email}
+            />
+            <FontAwesome5 name="mail-bulk" size={25} />
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Password"
+              onChangeText={(value) => setPassword(value)}
+              value={password}
+            />
+            <FontAwesome5 name="lock" size={25} />
+          </View>
+        </View>
+        <View style={styles.bottom}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => handleContinue()}
+          >
+            <StyledBoldText title="CONTINUE" style={styles.buttonText} />
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFFFF",
+  },
+  safeContainer: {
+    flex: 1,
     alignItems: "center",
   },
   image: {
     width: 200,
-    height: 400,
+    height: 300,
     resizeMode: "contain",
   },
   titles: {
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: 10,
+    height: 100,
   },
   title: {
     fontSize: 38,
@@ -90,40 +107,40 @@ const styles = StyleSheet.create({
   motto: {
     color: "#1EA85F",
   },
-  googleButton: {
+  inputsContainer: {
+    flex: 5,
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
-    marginBottom: 10,
   },
-  flywaysButton: {
+  inputContainer: {
+    flexDirection: "row",
+    width: "90%",
+    borderBottomWidth: 1,
+    height: "10%",
+    minHeight: 45,
+    margin: 3,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  input: {
+    width: "90%",
+    height: "100%",
+  },
+  bottom: {
+    marginTop: 280,
+    flex: 1,
     width: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    marginTop: 10,
   },
   button: {
-    borderRadius: 20,
     width: "90%",
     height: 40,
-    marginTop: 5,
+    borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
-    flexDirection: "row",
+    backgroundColor: "rgba(30, 168, 95, 0.5)",
   },
-  green: {
-    backgroundColor: "#1EA85F",
-  },
-  white: {
-    borderWidth: 1,
-    borderColor: "#1EA85F",
-  },
-  signin: {
-    color: "#1EA85F",
-    fontWeight: "bold",
-  },
-  signup: {
-    fontWeight: "bold",
+  buttonText: {
+    fontSize: 14,
   },
 });

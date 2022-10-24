@@ -12,15 +12,21 @@ import {
   View,
 } from "react-native";
 
-import StyledText from "../components/StyledText";
+import StyledBoldText from "../components/StyledBoldText";
+import StyledRegularText from "../components/StyledRegularText";
 import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function LoginScreen({ navigation }) {
   // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
-  const handleSubmit = () => {
+  const handleSignIn = () => {
     navigation.navigate("SignIn");
+  };
+
+  // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
+  const handleSignUp = () => {
+    navigation.navigate("SignUp");
   };
 
   return (
@@ -33,8 +39,8 @@ export default function LoginScreen({ navigation }) {
         source={require("../assets/flyways-logo.png")}
       />
       <View style={styles.titles}>
-        <StyledText style={styles.title} title="FlyWays" />
-        <StyledText
+        <StyledBoldText style={styles.title} title="FlyWays" />
+        <StyledRegularText
           style={styles.motto}
           title="Relax, Stress less, save money"
         />
@@ -47,19 +53,22 @@ export default function LoginScreen({ navigation }) {
             color="#000000"
             style={{ marginRight: 5 }}
           />
-          <StyledText title="Connect with Google" />
+          <StyledRegularText title="Connect with Google" />
         </TouchableOpacity>
       </View>
-      <StyledText title="OR" />
+      <StyledRegularText title="OR" />
       <View style={styles.flywaysButton}>
-        <TouchableOpacity style={[styles.button, styles.green]}>
-          <StyledText title="SIGN UP" style={styles.signup} />
+        <TouchableOpacity
+          style={[styles.button, styles.green]}
+          onPress={() => handleSignUp()}
+        >
+          <StyledRegularText title="SIGN UP" style={styles.signup} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.white]}
-          onPress={() => handleSubmit()}
+          onPress={() => handleSignIn()}
         >
-          <StyledText title="SIGN IN" style={styles.signin} />
+          <StyledRegularText title="SIGN IN" style={styles.signin} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -74,13 +83,14 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 200,
-    height: 400,
+    height: 300,
     resizeMode: "contain",
   },
   titles: {
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 10,
+    height: 100,
   },
   title: {
     fontSize: 38,
@@ -113,7 +123,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   green: {
-    backgroundColor: "#1EA85F",
+    backgroundColor: "rgba(30, 168, 95, 0.5)",
   },
   white: {
     borderWidth: 1,

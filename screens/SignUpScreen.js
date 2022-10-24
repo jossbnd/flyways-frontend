@@ -13,6 +13,7 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 // Import des fonts
 import StyledBoldText from "../components/StyledBoldText";
+import StyledRegularText from "../components/StyledRegularText";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function SignUpScreen({ navigation }) {

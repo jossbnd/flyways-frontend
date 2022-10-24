@@ -1,19 +1,11 @@
-/* COMMENTAIRES:
-Page finit dans l'ensemble, il reste a changer le nom des icons, je n ai pas reussi a afficher les bons */
+import { Image, Platform, StyleSheet, View } from "react-native";
 
-import {
-  Image,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from "react-native";
-
-import StyledText from "../components/StyledText";
+// import des fonts dans components
+import StyledBoldText from "../components/StyledBoldText";
+import StyledRegularText from "../components/StyledRegularText";
+// Safearea import
 import { SafeAreaView } from "react-native-safe-area-context";
+// import Font Awesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
@@ -33,8 +25,8 @@ export default function LoadingScreen({ navigation }) {
         source={require("../assets/flyways-logo.png")}
       />
       <View style={styles.titles}>
-        <StyledText style={styles.title} title="FlyWays" />
-        <StyledText
+        <StyledBoldText style={styles.title} title="FlyWays" />
+        <StyledRegularText
           style={styles.motto}
           title="Relax, Stress less, save money"
         />
@@ -45,6 +37,7 @@ export default function LoadingScreen({ navigation }) {
             color="#ffffff"
             onPress={() => handleSubmit()}
           />
+          {/* Icon name à changer */}
           <FontAwesome name="rotate-right" size={20} color="#ffffff" />
           <FontAwesome name="money" size={20} color="#ffffff" />
         </View>
