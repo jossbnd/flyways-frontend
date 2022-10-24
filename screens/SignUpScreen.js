@@ -27,8 +27,6 @@ export default function SignUpScreen({ navigation }) {
 
   const [errorMessages, setErrorMessages] = useState([]);
 
-  const newUser = {};
-
   const handleContinue = async () => {
     let inputsAreValid = true;
     let errors = [];
@@ -48,7 +46,7 @@ export default function SignUpScreen({ navigation }) {
       inputsAreValid = false;
     }
 
-    // CH
+    // Check date of birth
     if (!DATE_REGEX.test(dob)) {
       errors.push("wrong date of birth, please use DD/MM/YYYY format");
       inputsAreValid = false;
@@ -152,7 +150,7 @@ export default function SignUpScreen({ navigation }) {
             />
             <FontAwesome5 name="lock" size={25} />
           </View>
-          <View style={styles.errorContainer}>{errorMessagesData}</View>
+          <View style={styles.errorsContainer}>{errorMessagesData}</View>
         </View>
         <View style={styles.bottom}>
           <TouchableOpacity
@@ -212,7 +210,7 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "100%",
   },
-  errorContainer: {
+  errorsContainer: {
     flexDirection: "column",
     width: "90%",
     minHeight: 20,

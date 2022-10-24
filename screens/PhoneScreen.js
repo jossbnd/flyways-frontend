@@ -20,8 +20,10 @@ import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 
 export default function PhoneScreen({ navigation, route: { params } }) {
-  // Création états inputs
+  // Création états
   const [phoneNumber, setPhoneNumber] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
+
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
 
@@ -45,13 +47,15 @@ export default function PhoneScreen({ navigation, route: { params } }) {
               token: data.user.token,
             })
           );
+          setErrorMessage(null);
           navigation.navigate("Home");
-          console.log("USER ENREGISTRE");
+        } else {
+          setErrorMessage(data.error);
         }
       });
   };
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <KeyboardAvoidingView
@@ -79,6 +83,10 @@ export default function PhoneScreen({ navigation, route: { params } }) {
             />
             <FontAwesome5 name="phone" size={25} />
           </View>
+          <StyledRegularText
+            title={errorMessage}
+            style={{ color: "red", marginTop: 5 }}
+          />
         </View>
         <View style={styles.bottom}>
           <TouchableOpacity
