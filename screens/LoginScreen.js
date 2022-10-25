@@ -3,11 +3,8 @@
 
 import {
   Image,
-  KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -15,8 +12,9 @@ import {
 import StyledBoldText from "../components/StyledBoldText";
 import StyledRegularText from "../components/StyledRegularText";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+// Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function LoginScreen({ navigation }) {
   // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
@@ -27,6 +25,11 @@ export default function LoginScreen({ navigation }) {
   // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
   const handleSignUp = () => {
     navigation.navigate("SignUp");
+  };
+
+  // fonction pour acceder a la profile page
+  const handleProfilePage = () => {
+    navigation.navigate("TabNavigator");
   };
 
   return (
@@ -70,6 +73,14 @@ export default function LoginScreen({ navigation }) {
         >
           <StyledRegularText title="SIGN IN" style={styles.signin} />
         </TouchableOpacity>
+        {/* FONCTION CI DESSOUS A SUPPRIMER UNE FOIS LA PAGE DE PROFLIL TERMINEE */}
+        <TouchableOpacity
+          style={[styles.button, styles.white]}
+          onPress={() => handleProfilePage()}
+        >
+          <StyledRegularText title="PROFILE PAGE" style={styles.signin} />
+        </TouchableOpacity>
+        {/* ********************************************************************** */}
       </View>
     </SafeAreaView>
   );
