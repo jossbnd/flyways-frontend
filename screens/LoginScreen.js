@@ -46,14 +46,9 @@ export default function LoginScreen({ navigation }) {
         />
       </View>
       <View style={styles.googleButton}>
-        <TouchableOpacity style={[styles.button, styles.green]}>
-          <FontAwesome
-            name="google"
-            size={20}
-            color="#000000"
-            style={{ marginRight: 5 }}
-          />
-          <StyledRegularText title="Connect with Google" />
+        <TouchableOpacity style={[styles.button, styles.black]}>
+          <Image source={require('../assets/logo-google.png')} style={{ height: 20, width:20, marginRight: 5}} />
+          <StyledBoldText title="Connect with Google" style={{ color: '#ffffff' }} />
         </TouchableOpacity>
       </View>
       <StyledRegularText title="OR" />
@@ -62,13 +57,13 @@ export default function LoginScreen({ navigation }) {
           style={[styles.button, styles.green]}
           onPress={() => handleSignUp()}
         >
-          <StyledRegularText title="SIGN UP" style={styles.signup} />
+          <StyledBoldText title="SIGN UP" style={styles.signup} />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.white]}
           onPress={() => handleSignIn()}
         >
-          <StyledRegularText title="SIGN IN" style={styles.signin} />
+          <StyledBoldText title="SIGN IN" style={styles.signin} />
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -80,6 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
+    paddingTop: 50
   },
   image: {
     width: 200,
@@ -128,6 +124,9 @@ const styles = StyleSheet.create({
   white: {
     borderWidth: 1,
     borderColor: "#1EA85F",
+  },
+  black: {
+    backgroundColor: "rgba(0, 0, 0, 1)",
   },
   signin: {
     color: "#1EA85F",

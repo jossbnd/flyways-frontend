@@ -20,9 +20,11 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import StyledRegularText from "../components/StyledRegularText";
 import StyledBoldText from "../components/StyledBoldText";
 
+// Import Store Redux
 import { useDispatch } from "react-redux";
 import { login } from "../reducers/user";
 
+// Mettre son adresse back end ici
 const BACK_END_ADDRESS = "192.168.10.135:3000";
 
 export default function SignUpScreen({ navigation }) {
@@ -30,31 +32,35 @@ export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState(null);
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
-  const [date, setDate] = useState(new Date());
   const [dob, setDob] = useState(null);
   const [password, setPassword] = useState(null);
   const [passwordCheck, setPasswordCheck] = useState(null);
 
-  const [errorMessages, setErrorMessages] = useState([]);
-
+  // Etats pour date picker
+  const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
 
+  // Etat pour messages d'erreur
+  const [errorMessages, setErrorMessages] = useState([]);
+
+  // Redux dispatch
   const dispatch = useDispatch();
 
+  // Fonction pour bouton Continue: check input + fetch
   const handleContinue = async () => {
     let inputsAreValid = true;
     let errors = [];
 
     setErrorMessages([]);
 
-    // Regex Pattern
+    // Regex ratterns
     const EMAIL_REGEX =
       /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     const DATE_REGEX =
-      /^(0[1-9]|1[0-2])\/(0[1-9]|1\d|2\d|3[01])\/(19|20)\d{2}$/;
+      /^(0[1-9]|1\d|2\d|3[01])\/(0[1-9]|1[0-2])\/(19|20)\d{2}$/;
     const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z]).{6,20}$/;
 
-    // Check
+    // Check mail
     if (!EMAIL_REGEX.test(email)) {
       errors.push("wrong email");
       inputsAreValid = false;
@@ -66,6 +72,7 @@ export default function SignUpScreen({ navigation }) {
       inputsAreValid = false;
     }
 
+    // Check password
     if (!PASSWORD_REGEX.test(password) && !PASSWORD_REGEX.test(passwordCheck)) {
       errors.push(
         "Invalid password: must be 6-20 characters long, include at least one lower case, one upper case, one digit, and no white space"
@@ -76,6 +83,7 @@ export default function SignUpScreen({ navigation }) {
       inputsAreValid = false;
     }
 
+    // checks all inputs
     if (inputsAreValid) {
       let newUser = {
         firstName: firstName,
@@ -102,18 +110,17 @@ export default function SignUpScreen({ navigation }) {
                 token: data.user.token,
               })
             );
-
+            // reset les inputs et errormessages
             setFirstName(null);
             setLastName(null);
             setEmail(null);
             setDob(null);
             setPassword(null);
             setPasswordCheck(null);
+            setErrorMessages([]);
 
             // navigate vers PhoneScreen
             navigation.navigate("Phone");
-
-            setErrorMessages([]);
           } else {
             setErrorMessages([data.error]);
           }
@@ -123,10 +130,9 @@ export default function SignUpScreen({ navigation }) {
     }
   };
 
-  
+  // Fonction pour le Date Picker
   const handleDatePicker = (el) => {
-
-    if (el.type == 'set') {
+    if (el.type == "set") {
       setDate(new Date(el.nativeEvent.timestamp));
       setOpen(false);
       setDob(formatDate(new Date(el.nativeEvent.timestamp)));
@@ -224,7 +230,7 @@ export default function SignUpScreen({ navigation }) {
             value={date}
             onChange={handleDatePicker}
             onTouchCancel={() => setOpen(false)}
-            mode='date'
+            mode="date"
           />
         )}
       </SafeAreaView>
