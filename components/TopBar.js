@@ -1,13 +1,10 @@
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  Text,
-  Modal,
-} from "react-native";
+// Import des balises
+import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { useState } from "react";
+
+// Import du/des composant(s)
+import ProfilModal from "./ProfilModal";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -15,61 +12,40 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 // Import des fonts
 import StyledRegularText from "../components/StyledRegularText";
 import StyledBoldText from "../components/StyledBoldText";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function TopBar() {
+  // etat pour afficher le modal
   const [headerModalVisible, setHeaderModalVisible] = useState(false);
   const handleProfilePage = () => {
     navigation.navigate("TabNavigator");
   };
 
-  // fonction contenant le modal
-  const profilModal = () => {
-    console.log("This is the modal");
-    <Modal
-      transparent={true}
-      animationType="none"
-      onRequestClose={() => {
-        setHeaderModalVisible(true);
-      }}
-      visible={headerModalVisible}
-    >
-      <View style={styles.modalMainContainer}>
-        <View style={styles.modalSubContainer}>
-          <Text style={styles.modalTitle}>This is the modal</Text>
-        </View>
-      </View>
-    </Modal>;
-  };
-
   return (
-    <SafeAreaView style={styles.mainContainer}>
-      <View style={styles.container}>
-        <TouchableOpacity
-          onPress={() => {
-            setHeaderModalVisible(true);
-          }}
-        >
-          <FontAwesome5 name="bars" size={25} />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.logo}>
-          <Image
-            style={styles.image}
-            source={require("../assets/flyways-logo.png")}
-            onPress={() => handleProfilePage()}
-          />
-        </TouchableOpacity>
-        <FontAwesome5 name="comment-dots" size={25} />
-      </View>
-      {profilModal()}
-    </SafeAreaView>
+    <View style={styles.container}>
+      <TouchableOpacity
+        onPress={() => {
+          setHeaderModalVisible(true);
+        }}
+      >
+        <FontAwesome5 name="bars" size={25} />
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.logo}>
+        <Image
+          style={styles.image}
+          source={require("../assets/flyways-logo.png")}
+          onPress={() => handleProfilePage()}
+        />
+      </TouchableOpacity>
+      <FontAwesome5 name="comment-dots" size={25} />
+      <ProfilModal
+        visible={headerModalVisible}
+        style={styles.modal}
+      ></ProfilModal>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    flex: 1,
-  },
   container: {
     alignSelf: "stretch",
     height: 52,
@@ -103,5 +79,8 @@ const styles = StyleSheet.create({
   },
   modalTitle: {
     color: "red",
+  },
+  modal: {
+    height: 400,
   },
 });
