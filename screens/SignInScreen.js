@@ -1,5 +1,3 @@
-/* COMMENTAIRES:
- */
 import { useState } from "react";
 import {
   Image,
@@ -14,21 +12,62 @@ import {
   View,
 } from "react-native";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
+// Import store redux et fonction redux
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../reducers/user";
+
+// Import des fonts
 import StyledBoldText from "../components/StyledBoldText";
 import StyledRegularText from "../components/StyledRegularText";
-import { SafeAreaView } from "react-native-safe-area-context";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+
+// Import des icons
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+
+// Mettre son adresse back end ici
+const BACK_END_ADDRESS = "192.168.10.135:3000";
 
 export default function LoginScreen({ navigation }) {
   // Création états inputs
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
-  const [passwordCheck, setPasswordCheck] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-  // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
+  const dispatch = useDispatch();
+
+  // Fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
   const handleContinue = () => {
-    navigation.navigate("HomeScreen");
+    const EMAIL_REGEX =
+      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    // check email
+    if (EMAIL_REGEX.test(email)) {
+      fetch(`http://${BACK_END_ADDRESS}/users/signin`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email: email, password: password }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.result) {
+            dispatch(
+              login({
+                firstName: data.user.firstName,
+                lastName: data.user.lastName,
+                token: data.user.token,
+              })
+            );
+            setErrorMessage(null);
+            navigation.navigate("TabNavigator");
+          } else {
+            setErrorMessage(data.error);
+          }
+        });
+    } else {
+      setErrorMessage("Invalid Mail");
+    }
   };
 
   return (
@@ -67,6 +106,9 @@ export default function LoginScreen({ navigation }) {
               secureTextEntry={true}
             />
             <FontAwesome5 name="lock" size={25} />
+          </View>
+          <View style={styles.errorContainer}>
+            <StyledRegularText title={errorMessage} style={{ color: "red" }} />
           </View>
         </View>
         <View style={styles.bottom}>
@@ -122,6 +164,14 @@ const styles = StyleSheet.create({
     margin: 3,
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  errorContainer: {
+    width: "90%",
+    height: "10%",
+    minHeight: 45,
+    margin: 3,
+    justifyContent: "space-between",
+    alignItems: "flex-start",
   },
   input: {
     width: "90%",

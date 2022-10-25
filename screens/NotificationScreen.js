@@ -6,11 +6,11 @@ import TopBar from "../components/TopBar";
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 
-export default function HomeScreen({ navigation }) {
+export default function NotificationScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <TopBar></TopBar>
-      <StyledRegularText title="WELCOME ON HOME SCREEN" />
+      <StyledRegularText title="NOTIFICATION SCREEN" />
     </SafeAreaView>
   );
 }

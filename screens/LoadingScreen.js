@@ -6,7 +6,7 @@ import {
   Animated,
   TouchableOpacity,
 } from "react-native";
-import { useRef, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 // Import des fonts dans components
 import StyledBoldText from "../components/StyledBoldText";
@@ -19,39 +19,32 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function LoadingScreen({ navigation }) {
-
+  // état pour l'animation
   const [go, setGo] = useState(false);
 
-  // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
-  const handleSubmit = () => {
-    navigation.navigate("Login");
-  };
-
   // const takeOffAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
-  const [takeOffAnim, setTakeOffAnim] = useState(new Animated.Value(0))
+  const [takeOffAnim, setTakeOffAnim] = useState(new Animated.Value(0));
 
+  // hoof d'effet pour lancer l'animation sur le style de Animated.View
   useEffect(() => {
     if (go) {
-      Animated.timing(
-        takeOffAnim,
-        {
-          toValue: 400,
-          duration: 2000,
-          useNativeDriver: false
-        }
-      ).start();
+      Animated.timing(takeOffAnim, {
+        toValue: 400,
+        duration: 2000,
+        useNativeDriver: false,
+      }).start();
     } else {
       // setTakeOffAnim(0)
     }
-    return (() => {
-      setGo(false)
-    })
-  }, [go])
+    return () => {
+      setGo(false);
+    };
+  }, [go]);
 
   const handleGo = () => {
     setGo(true);
-    setTimeout(() => navigation.navigate('Login'), 1000)
-  }
+    setTimeout(() => navigation.navigate("Login"), 1000);
+  };
 
   return (
     <SafeAreaView
@@ -71,12 +64,7 @@ export default function LoadingScreen({ navigation }) {
           title="Relax, Stress less, save money"
         />
         <View style={styles.icons}>
-          <FontAwesome5
-            name="glass-martini"
-            size={20}
-            color="#ffffff"
-            onPress={handleSubmit}
-          />
+          <FontAwesome5 name="glass-martini" size={20} color="#ffffff" />
           <FontAwesome5 name="globe-americas" size={20} color="#ffffff" />
           <FontAwesome5 name="money-bill-alt" size={20} color="#ffffff" />
         </View>
@@ -85,7 +73,7 @@ export default function LoadingScreen({ navigation }) {
         style={[styles.button, styles.green]}
         onPress={handleGo}
       >
-        <StyledBoldText title="LET'S GO !" style={styles.go}/>
+        <StyledBoldText title="LET'S GO !" style={styles.go} />
       </TouchableOpacity>
     </SafeAreaView>
   );
@@ -112,11 +100,11 @@ const styles = StyleSheet.create({
     fontSize: 38,
     color: "#FFFFFF",
     marginBottom: 5,
-    margin: 10
+    margin: 10,
   },
   motto: {
     color: "#1EA85F",
-    margin: 10
+    margin: 10,
   },
   icons: {
     flexDirection: "row",

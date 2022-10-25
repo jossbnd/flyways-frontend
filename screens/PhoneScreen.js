@@ -21,7 +21,7 @@ import StyledBoldText from "../components/StyledBoldText";
 export default function PhoneScreen({ navigation }) {
   // Création états
   const [phoneNumber, setPhoneNumber] = useState(null);
-  const [errorMessage, setErrorMessage] = useState([]);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   const user = useSelector((state) => state.user.value);
 

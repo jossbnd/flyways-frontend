@@ -1,13 +1,7 @@
-/* COMMENTAIRES:
- */
-
 import {
   Image,
-  KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -15,16 +9,14 @@ import {
 import StyledBoldText from "../components/StyledBoldText";
 import StyledRegularText from "../components/StyledRegularText";
 import { SafeAreaView } from "react-native-safe-area-context";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function LoginScreen({ navigation }) {
-  // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
+  // Fonction pour pouvoir accéder à la page login en appuyant sur le premier logo
   const handleSignIn = () => {
     navigation.navigate("SignIn");
   };
 
-  // fonction pour pouvoir acceder a la page login en appuyant sur le premier logo
+  // Fonction pour pouvoir accéder à la page login en appuyant sur le premier logo
   const handleSignUp = () => {
     navigation.navigate("SignUp");
   };
@@ -47,8 +39,14 @@ export default function LoginScreen({ navigation }) {
       </View>
       <View style={styles.googleButton}>
         <TouchableOpacity style={[styles.button, styles.black]}>
-          <Image source={require('../assets/logo-google.png')} style={{ height: 20, width:20, marginRight: 5}} />
-          <StyledBoldText title="Connect with Google" style={{ color: '#ffffff' }} />
+          <Image
+            source={require("../assets/logo-google.png")}
+            style={{ height: 20, width: 20, marginRight: 5 }}
+          />
+          <StyledBoldText
+            title="Connect with Google"
+            style={{ color: "#ffffff" }}
+          />
         </TouchableOpacity>
       </View>
       <StyledRegularText title="OR" />
@@ -57,7 +55,7 @@ export default function LoginScreen({ navigation }) {
           style={[styles.button, styles.green]}
           onPress={() => handleSignUp()}
         >
-          <StyledBoldText title="SIGN UP" style={styles.signup} />
+          <StyledBoldText title="SIGN UP" />
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.button, styles.white]}
@@ -75,7 +73,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#FFFFFF",
     alignItems: "center",
-    paddingTop: 50
+    paddingTop: 50,
   },
   image: {
     width: 200,
@@ -130,9 +128,5 @@ const styles = StyleSheet.create({
   },
   signin: {
     color: "#1EA85F",
-    fontWeight: "bold",
-  },
-  signup: {
-    fontWeight: "bold",
   },
 });
