@@ -121,8 +121,10 @@ export default function SignUpScreen({ navigation }) {
 
             // navigate vers PhoneScreen
             navigation.navigate("Phone");
+            return;
           } else {
             setErrorMessages([data.error]);
+            return;
           }
         });
     } else {

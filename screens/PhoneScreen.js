@@ -26,21 +26,20 @@ export default function PhoneScreen({ navigation }) {
   const user = useSelector((state) => state.user.value);
 
   const handleContinue = () => {
-    const PHONE_REGEX = /^(\+33|0033|0)(6|7)[0-9]{8}$/g;
+    const PHONE_REGEX = /^(\+33|0033|0)(6|7)[0-9]{8}$/;
+    console.log(PHONE_REGEX.test(phoneNumber));
 
     if (PHONE_REGEX.test(phoneNumber)) {
-      navigation.navigate('Home');
+      navigation.navigate("TabNavigator");
       // ajout route pour update user
-      return;
+      setErrorMessage(null);
     } else {
-      setErrorMessage('Phone number is invalid');
+      setErrorMessage("Invalid phone number");
     }
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-    >
+    <KeyboardAvoidingView style={styles.container}>
       <SafeAreaView style={styles.safeContainer}>
         <View style={styles.header}>
           <TouchableOpacity
@@ -59,20 +58,16 @@ export default function PhoneScreen({ navigation }) {
               placeholder="+33 ..."
               onChangeText={(value) => setPhoneNumber(value)}
               value={phoneNumber}
-              keyboardType='phone-pad'
+              keyboardType="phone-pad"
             />
             <FontAwesome5 name="phone" size={25} />
           </View>
-          <StyledRegularText
-            title={errorMessage}
-            style={{ color: "red", marginTop: 5 }}
-          />
+          <View style={{ width: "90%" }}>
+            <StyledRegularText title={errorMessage} style={{ color: "red" }} />
+          </View>
         </View>
         <View style={styles.bottom}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => handleContinue()}
-          >
+          <TouchableOpacity style={styles.button} onPress={handleContinue}>
             <StyledBoldText title="CONTINUE" style={styles.buttonText} />
           </TouchableOpacity>
         </View>
@@ -108,8 +103,8 @@ const styles = StyleSheet.create({
   inputsContainer: {
     flex: 5,
     width: "100%",
-    alignItems: "center",
     justifyContent: "center",
+    alignItems: "center",
   },
   inputContainer: {
     flexDirection: "row",
