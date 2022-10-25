@@ -64,6 +64,7 @@ export default function LoginScreen({ navigation }) {
               placeholder="Password"
               onChangeText={(value) => setPassword(value)}
               value={password}
+              secureTextEntry={true}
             />
             <FontAwesome5 name="lock" size={25} />
           </View>

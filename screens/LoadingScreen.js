@@ -27,23 +27,30 @@ export default function LoadingScreen({ navigation }) {
     navigation.navigate("Login");
   };
 
-  const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+  // const takeOffAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
+  const [takeOffAnim, setTakeOffAnim] = useState(new Animated.Value(0))
 
   useEffect(() => {
     if (go) {
       Animated.timing(
-        fadeAnim,
+        takeOffAnim,
         {
           toValue: 400,
-          duration: 3000,
+          duration: 2000,
+          useNativeDriver: false
         }
       ).start();
+    } else {
+      // setTakeOffAnim(0)
     }
-  }, [fadeAnim, go])
+    return (() => {
+      setGo(false)
+    })
+  }, [go])
 
   const handleGo = () => {
     setGo(true);
-    setTimeout(() => navigation.navigate('Login'), 2000)
+    setTimeout(() => navigation.navigate('Login'), 1000)
   }
 
   return (
@@ -51,7 +58,7 @@ export default function LoadingScreen({ navigation }) {
       style={styles.container}
       behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
-      <Animated.View style={{ bottom: fadeAnim }}>
+      <Animated.View style={{ bottom: takeOffAnim }}>
         <Image
           style={styles.image}
           source={require("../assets/flyways-logo.png")}
