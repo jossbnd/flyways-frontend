@@ -4,6 +4,7 @@ import { StyleSheet, Text, View } from "react-native";
 // Navigation
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 // Import des screens
 import LoadingScreen from "./screens/LoadingScreen";
@@ -13,6 +14,13 @@ import SignUpScreen from "./screens/SignUpScreen";
 import PhoneScreen from "./screens/PhoneScreen";
 import PhoneVerification from "./screens/PhoneVerification";
 import HomeScreen from "./screens/HomeScreen";
+import NotificationScreen from "./screens/NotificationScreen";
+import SearchScreen from "./screens/SearchScreen";
+
+// Import icons
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 // redux imports
 import { Provider } from "react-redux";
@@ -39,6 +47,38 @@ const store = configureStore({
 const persistor = persistStore(store);
 
 const Stack = createNativeStackNavigator();
+// Bottom Tab navigator
+const Tab = createBottomTabNavigator();
+
+// Composition du bottom tab navigator
+const TabNavigator = () => {
+  return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName = "";
+
+          if (route.name === "My Trips") {
+            iconName = "luggage";
+          } else if (route.name === "Search") {
+            iconName = "search";
+          } else if (route.name === "Notification") {
+            iconName = "notifications";
+          }
+          return <MaterialIcons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "#1EA85F",
+        tabBarInactiveTintColor: "#335561",
+        tabBarStyle: { paddingBottom: 10, paddingTop: 5, height: 55 },
+        headerShown: false,
+      })}
+    >
+      <Tab.Screen name="My Trips" component={HomeScreen} />
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="Notification" component={NotificationScreen} />
+    </Tab.Navigator>
+  );
+};
 
 export default function App() {
   return (
@@ -55,7 +95,7 @@ export default function App() {
               name="PhoneVerification"
               component={PhoneVerification}
             />
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
