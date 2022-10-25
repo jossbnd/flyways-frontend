@@ -1,3 +1,5 @@
+/* Modal qui sera visible lorsque l'utilisateur appuie sur l'icon Bars*/
+
 import React from "react";
 import {
   StyleSheet,

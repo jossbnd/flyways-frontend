@@ -1,3 +1,5 @@
+/* Composant de la barre Header avec l'icone menu, le logo et l'icone chat */
+
 import React from "react";
 // Import des balises
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
