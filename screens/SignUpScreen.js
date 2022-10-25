@@ -7,6 +7,11 @@ import {
   View,
   Platform,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
+// Import pour gérer le date picker
+import DateTimePicker from "@react-native-community/datetimepicker";
+import formatDate from "../modules/formatDate";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -14,18 +19,27 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 // Import des fonts
 import StyledRegularText from "../components/StyledRegularText";
 import StyledBoldText from "../components/StyledBoldText";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import { useDispatch } from "react-redux";
+import { login } from "../reducers/user";
+
+const BACK_END_ADDRESS = "192.168.10.135:3000";
 
 export default function SignUpScreen({ navigation }) {
   // Création états inputs
   const [email, setEmail] = useState(null);
   const [firstName, setFirstName] = useState(null);
   const [lastName, setLastName] = useState(null);
+  const [date, setDate] = useState(new Date());
   const [dob, setDob] = useState(null);
   const [password, setPassword] = useState(null);
   const [passwordCheck, setPasswordCheck] = useState(null);
 
   const [errorMessages, setErrorMessages] = useState([]);
+
+  const [open, setOpen] = useState(false);
+
+  const dispatch = useDispatch();
 
   const handleContinue = async () => {
     let inputsAreValid = true;
@@ -64,16 +78,62 @@ export default function SignUpScreen({ navigation }) {
 
     if (inputsAreValid) {
       let newUser = {
-        email: email,
         firstName: firstName,
         lastName: lastName,
+        email: email,
         dob: dob,
         password: password,
-      }
-      navigation.navigate("Phone", { newUser });
-      setErrorMessages([]);
+      };
+
+      fetch(`http://${BACK_END_ADDRESS}/users/signup`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(newUser),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          if (data.result) {
+            // enregistrer le user dans reducer
+            dispatch(
+              login({
+                firstName: data.user.firstName,
+                lastName: data.user.lastName,
+                token: data.user.token,
+              })
+            );
+
+            setFirstName(null);
+            setLastName(null);
+            setEmail(null);
+            setDob(null);
+            setPassword(null);
+            setPasswordCheck(null);
+
+            // navigate vers PhoneScreen
+            navigation.navigate("Phone");
+
+            setErrorMessages([]);
+          } else {
+            setErrorMessages([data.error]);
+          }
+        });
     } else {
       setErrorMessages(errors);
+    }
+  };
+
+  
+  const handleDatePicker = (el) => {
+
+    if (el.type == 'set') {
+      setDate(new Date(el.nativeEvent.timestamp));
+      setOpen(false);
+      setDob(formatDate(new Date(el.nativeEvent.timestamp)));
+      return;
+    } else {
+      setOpen(false);
+      return;
     }
   };
 
@@ -84,10 +144,7 @@ export default function SignUpScreen({ navigation }) {
   });
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-    >
+    <KeyboardAvoidingView style={styles.container}>
       <SafeAreaView style={styles.safeContainer}>
         <View style={styles.header}>
           <StyledBoldText style={styles.title} title="Create an account" />
@@ -128,7 +185,9 @@ export default function SignUpScreen({ navigation }) {
               onChangeText={(value) => setDob(value)}
               value={dob}
             />
-            <FontAwesome5 name="calendar-alt" size={25} />
+            <TouchableOpacity onPress={() => setOpen(true)}>
+              <FontAwesome5 name="calendar-alt" size={25} />
+            </TouchableOpacity>
           </View>
           <View style={styles.inputContainer}>
             <TextInput
@@ -160,6 +219,14 @@ export default function SignUpScreen({ navigation }) {
             <StyledBoldText title="CONTINUE" style={styles.buttonText} />
           </TouchableOpacity>
         </View>
+        {open && (
+          <DateTimePicker
+            value={date}
+            onChange={handleDatePicker}
+            onTouchCancel={() => setOpen(false)}
+            mode='date'
+          />
+        )}
       </SafeAreaView>
     </KeyboardAvoidingView>
   );

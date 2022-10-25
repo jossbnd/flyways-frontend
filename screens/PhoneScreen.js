@@ -9,8 +9,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useDispatch, useSelector } from "react-redux";
-import { login } from "../reducers/user";
+import { useSelector } from "react-redux";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -19,48 +18,28 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 
-export default function PhoneScreen({ navigation, route: { params } }) {
+export default function PhoneScreen({ navigation }) {
   // Création états
   const [phoneNumber, setPhoneNumber] = useState(null);
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState([]);
 
-  const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
 
   const handleContinue = () => {
-    let newUser = { ...params.newUser, phoneNumber: phoneNumber };
+    const PHONE_REGEX = /^(\+33|0033|0)(6|7)[0-9]{8}$/g;
 
-    console.log(newUser);
-    fetch("http://192.168.10.134:3000/users/signup", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(newUser),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-        if (data.result) {
-          dispatch(
-            login({
-              firstName: data.user.firstName,
-              lastName: data.user.lastName,
-              token: data.user.token,
-            })
-          );
-          setErrorMessage(null);
-          navigation.navigate("Home");
-        } else {
-          setErrorMessage(data.error);
-        }
-      });
+    if (PHONE_REGEX.test(phoneNumber)) {
+      navigation.navigate('Home');
+      // ajout route pour update user
+      return;
+    } else {
+      setErrorMessage('Phone number is invalid');
+    }
   };
-
-  // console.log(user);
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
     >
       <SafeAreaView style={styles.safeContainer}>
         <View style={styles.header}>
@@ -77,9 +56,10 @@ export default function PhoneScreen({ navigation, route: { params } }) {
           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
-              placeholder="+33 (0) ..."
+              placeholder="+33 ..."
               onChangeText={(value) => setPhoneNumber(value)}
               value={phoneNumber}
+              keyboardType='phone-pad'
             />
             <FontAwesome5 name="phone" size={25} />
           </View>
