@@ -72,7 +72,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "android" ? "position" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeContainer}>
@@ -178,7 +178,6 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   bottom: {
-    marginTop: 280,
     flex: 1,
     width: "100%",
     alignItems: "center",
