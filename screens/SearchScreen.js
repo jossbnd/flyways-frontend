@@ -11,14 +11,14 @@ import { StyleSheet, Dimensions, View } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 
+import GOOGLE_API_KEY from "../environmentVar";
+
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 
 // variables pour afficher la map a son initialisation sur un point geographique par defaut
 const { width, height } = Dimensions.get("window");
-
-const GOOGLE_API_KEY = "AIzaSyDzcCPu-F8IaF_BC0wETn5efFrq701mx68";
 
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 1;
