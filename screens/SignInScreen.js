@@ -178,10 +178,11 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   bottom: {
-    marginTop: 280,
-    flex: 1,
+    height: 200,
     width: "100%",
     alignItems: "center",
+    justifyContent: 'flex-end',
+    zIndex: -1,
   },
   button: {
     width: "90%",
