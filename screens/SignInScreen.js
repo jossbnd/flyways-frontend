@@ -2,11 +2,8 @@ import { useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
   Platform,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -178,9 +175,11 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   bottom: {
-    flex: 1,
+    height: 200,
     width: "100%",
     alignItems: "center",
+    justifyContent: "flex-end",
+    zIndex: -1,
   },
   button: {
     width: "90%",
