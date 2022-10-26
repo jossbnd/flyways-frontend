@@ -25,7 +25,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../reducers/user";
 
 // Mettre son adresse back end ici
-const BACK_END_ADDRESS = "192.168.10.135:3000";
+const BACK_END_ADDRESS = "192.168.10.158:3000";
 
 export default function SignUpScreen({ navigation }) {
   // Création états inputs
