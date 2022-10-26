@@ -26,7 +26,7 @@ import StyledRegularText from "../components/StyledRegularText";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 // Mettre son adresse back end ici
-const BACK_END_ADDRESS = "https://vercel.com/flyways/flyways-backend";
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function LoginScreen({ navigation }) {
   // Création états inputs
