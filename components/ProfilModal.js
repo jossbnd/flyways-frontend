@@ -1,15 +1,10 @@
 /* Modal qui sera visible lorsque l'utilisateur appuie sur l'icon Bars*/
 
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  Text,
-  Modal,
-} from "react-native";
-import { useState } from "react";
+import { StyleSheet, View, TouchableOpacity, Modal } from "react-native";
+
+// import de navigation pour naviguer vers login quand l'utiliateur appuie sur log out
+import { useNavigation } from "@react-navigation/native";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -18,9 +13,27 @@ import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 // Import des fonts
 import StyledRegularText from "../components/StyledRegularText";
 import StyledBoldText from "../components/StyledBoldText";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+// Import store redux et fonction redux
+import { useDispatch, useSelector } from "react-redux";
+
+// import fonction logout du reducer
+import { logout } from "../reducers/user";
 
 export default function ProfilModal(props) {
+  // selector et dispatch du store pour afficher le nom de l'utilisateur et faire fonctionner le log out
+  const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
+
+  // variable qui stocke la methode useNavigation
+  const navigation = useNavigation();
+
+  // fonction pour le fonctionnement du log out
+  const handleLogout = () => {
+    dispatch(logout());
+    navigation.navigate("Login");
+  };
+
   return (
     <Modal
       transparent={true}
@@ -33,22 +46,28 @@ export default function ProfilModal(props) {
       <View style={styles.modalMainContainer}>
         <View style={styles.leftModal}>
           <View style={styles.topLeftModal}>
-            <TouchableOpacity onPress={() => props.toggleModal()}>
-              <FontAwesome5 name="times" size={25} style={styles.icon} />
-            </TouchableOpacity>
-            <FontAwesome5 name="user" size={25} style={styles.icon} />
-          </View>
-          <View style={styles.bottomLeftModal}>
             <TouchableOpacity
               onPress={() => props.toggleModal()}
-              style={styles.bottomButton}
+              style={styles.topButton}
             >
+              <FontAwesome5 name="times" size={25} style={styles.icon} />
+            </TouchableOpacity>
+            <View style={styles.userView}>
+              <FontAwesome5 name="user" size={50} style={styles.userIcon} />
+              <StyledRegularText
+                title={user.firstName + " " + user.lastName}
+                style={styles.userText}
+              />
+            </View>
+          </View>
+          <View style={styles.bottomLeftModal}>
+            <TouchableOpacity style={styles.bottomButton}>
               <MaterialIcons name="settings" size={30} style={styles.icon} />
               <StyledBoldText title="Settings" style={styles.text} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => props.toggleModal()}
               style={styles.bottomButton}
+              onPress={() => handleLogout()}
             >
               <MaterialIcons name="logout" size={30} style={styles.icon} />
               <StyledBoldText title="Log Out" style={styles.text} />
@@ -65,7 +84,6 @@ const styles = StyleSheet.create({
   modalMainContainer: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#1E1E1E",
     flexDirection: "row",
   },
   leftModal: {
@@ -75,18 +93,42 @@ const styles = StyleSheet.create({
   topLeftModal: {
     width: "100%",
     height: "20%",
-    backgroundColor: "rgba(30, 168, 95, 0.5)",
+    backgroundColor: "rgba(30, 168, 95, 1)",
+    padding: 15,
+  },
+  userView: {
+    width: "100%",
+    height: "80%",
+    justifyContent: "space-evenly",
+    padding: 5,
+  },
+  userIcon: {
+    marginLeft: 25,
+    color: "#FFFFFF",
+  },
+  userText: {
+    marginLeft: 10,
+    color: "#FFFFFF",
+    marginTop: 10,
   },
   bottomLeftModal: {
     width: "100%",
     height: "80%",
-    padding: 10,
+    padding: 15,
+    backgroundColor: "rgba(30, 30, 30, 1)",
+  },
+  topButton: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
   },
   bottomButton: {
     flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 15,
   },
   rightModal: {
-    backgroundColor: "#C9C9C9",
+    backgroundColor: "rgba(30, 30, 30, 0.5)",
     width: "20%",
     height: "100%",
   },
@@ -94,9 +136,10 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
   },
   icon: {
-    color: "white",
+    color: "#FFFFFF",
   },
   text: {
     color: "#FFFFFF",
+    marginLeft: 10,
   },
 });
