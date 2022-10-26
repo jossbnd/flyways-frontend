@@ -16,6 +16,9 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 // Import composants upcoming trips
 import UpcomingTrips from "../components/UpcomingTrips";
 
+import ProfilModal from "../components/ProfilModal";
+
+
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 
@@ -25,6 +28,10 @@ export default function HomeScreen({ navigation }) {
   const [upcomingTrips, setUpcomingTrips] = useState([]);
   const [test, setTest] = useState(false);
 
+  const [modalVisible, setModalVisible] = useState(false);
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
 
   const user = useSelector((state) => state.user.value);
 
@@ -40,7 +47,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TopBar /> 
+      <TopBar toggleModal={toggleModal} />
       <View style={styles.profileContainer}>
         <Image source={require('../assets/profile-picture.jpg')} style={styles.profilePicture}/>
         <StyledBoldText title={user.firstName + ' ' + user.lastName} style={styles.userName} />
@@ -56,13 +63,9 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.upcomingTripsContainer}>
           <UpcomingTrips arrival='Paris' passengers='2' capacity='5' date='02 Nov 22' time='9h30'  />
           <UpcomingTrips />
-
         </View>
-
-
-
-
       </View>
+      <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
   );
 }
@@ -73,15 +76,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   profileContainer: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center'
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   profilePicture: {
     height: 150,
     width: 150,
     borderRadius: 100,
-    marginTop: 50
+    marginTop: 50,
   },
   userName: {
     marginTop: 20,

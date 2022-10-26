@@ -5,9 +5,6 @@ import React from "react";
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
 import { useState } from "react";
 
-// Import du/des composant(s)
-import ProfilModal from "./ProfilModal";
-
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
@@ -15,9 +12,7 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import StyledRegularText from "../components/StyledRegularText";
 import StyledBoldText from "../components/StyledBoldText";
 
-export default function TopBar() {
-  // etat pour afficher le modal
-  const [headerModalVisible, setHeaderModalVisible] = useState(false);
+export default function TopBar(props) {
   const handleProfilePage = () => {
     navigation.navigate("TabNavigator");
   };
@@ -26,7 +21,7 @@ export default function TopBar() {
     <View style={styles.container}>
       <TouchableOpacity
         onPress={() => {
-          setHeaderModalVisible(true);
+          props.toggleModal();
         }}
       >
         <FontAwesome5 name="bars" size={25} />
@@ -39,10 +34,6 @@ export default function TopBar() {
         />
       </TouchableOpacity>
       <FontAwesome5 name="comment-dots" size={25} />
-      <ProfilModal
-        visible={headerModalVisible}
-        style={styles.modal}
-      ></ProfilModal>
     </View>
   );
 }
@@ -71,18 +62,8 @@ const styles = StyleSheet.create({
     width: 38,
     height: 38,
   },
-  modalMainContainer: {
-    flex: 1,
-    backgroundColor: "#1E1E1E",
-  },
-  modalSubContainer: {
-    width: "80%",
-    height: "100%",
-  },
-  modalTitle: {
-    color: "red",
-  },
   modal: {
     height: 400,
+    width: 200,
   },
 });
