@@ -15,7 +15,7 @@ import StyledRegularText from "../components/StyledRegularText";
 // Safearea import
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// import Font Awesome
+// Import Font Awesome
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 export default function LoadingScreen({ navigation }) {
@@ -61,7 +61,7 @@ export default function LoadingScreen({ navigation }) {
         <StyledBoldText style={styles.title} title="FlyWays" />
         <StyledRegularText
           style={styles.motto}
-          title="Relax, Stress less, save money"
+          title="Relax More, Stress less, Save Money"
         />
         <View style={styles.icons}>
           <FontAwesome5 name="glass-martini" size={20} color="#ffffff" />

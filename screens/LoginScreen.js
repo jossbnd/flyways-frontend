@@ -9,8 +9,19 @@ import {
 import StyledBoldText from "../components/StyledBoldText";
 import StyledRegularText from "../components/StyledRegularText";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useSelector } from "react-redux";
+import { useEffect } from "react";
 
 export default function LoginScreen({ navigation }) {
+
+  const user = useSelector((state) => state.user.value);
+  useEffect(() => {
+    if (user.token) {
+      navigation.navigate('TabNavigator');
+      return;
+    }
+  }, []);
+
   // Fonction pour pouvoir accéder à la page login en appuyant sur le premier logo
   const handleSignIn = () => {
     navigation.navigate("SignIn");

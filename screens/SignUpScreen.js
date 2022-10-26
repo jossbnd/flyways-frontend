@@ -5,7 +5,6 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -25,7 +24,7 @@ import { useDispatch } from "react-redux";
 import { login } from "../reducers/user";
 
 // Mettre son adresse back end ici
-const BACK_END_ADDRESS = "192.168.10.135:3000";
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function SignUpScreen({ navigation }) {
   // Création états inputs
@@ -93,7 +92,7 @@ export default function SignUpScreen({ navigation }) {
         password: password,
       };
 
-      fetch(`http://${BACK_END_ADDRESS}/users/signup`, {
+      fetch(`${BACK_END_ADDRESS}/users/signup`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(newUser),
