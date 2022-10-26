@@ -26,7 +26,7 @@ import StyledRegularText from "../components/StyledRegularText";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 // Mettre son adresse back end ici
-const BACK_END_ADDRESS = "192.168.10.158:3000";
+const BACK_END_ADDRESS = "https://vercel.com/flyways/flyways-backend";
 
 export default function LoginScreen({ navigation }) {
   // Création états inputs
@@ -43,7 +43,7 @@ export default function LoginScreen({ navigation }) {
 
     // check email
     if (EMAIL_REGEX.test(email)) {
-      fetch(`http://${BACK_END_ADDRESS}/users/signin`, {
+      fetch(`${BACK_END_ADDRESS}/users/signin`, {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: email, password: password }),
