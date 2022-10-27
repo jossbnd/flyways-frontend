@@ -34,14 +34,12 @@ export default function HomeScreen({ navigation }) {
   // Etats
   const [upcomingTrips, setUpcomingTrips] = useState([]);
   const [test, setTest] = useState(false);
-  const [profilePicture, setProfilePicture] = useState("");
+  const [profilePicture, setProfilePicture] = useState(null);
 
   const [modalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
-
-  const [image, setImage] = useState(null);
 
   const user = useSelector((state) => state.user.value);
 
@@ -77,11 +75,24 @@ export default function HomeScreen({ navigation }) {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
-      
-      setImage(result.uri);
+      setProfilePicture(result.uri);
+
+      const formData = new FormData();
+      formData.append("photoFromFront", {
+        uri: result.uri,
+        name: "photo.jpg",
+        type: "image/jpeg",
+      });
+
+      fetch(`${BACK_END_ADDRESS}/users/update/profilepicture/${user.token}`, {
+        method: "PUT",
+        body: formData,
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        });
     }
   };
 
