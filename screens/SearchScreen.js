@@ -1,7 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
-import { StyleSheet, Dimensions, View } from "react-native";
-import { useRef, useState } from "react";
+import { StyleSheet, Dimensions, View, TouchableOpacity } from "react-native";
+import { useRef, useState, useEffect } from "react";
+import * as Location from "expo-location";
 
 /* A faire: ajoutter bouton dans l input pour supprimer la recherche au lieu
 de suprrimer une par une les lettres */
@@ -14,19 +15,25 @@ de suprrimer une par une les lettres */
 
 /* Librairie google maps pour react native */
 // https://www.npmjs.com/package/react-native-google-places-autocomplete
+/* Librairie react native pour les maps directions */
+// https://www.npmjs.com/package/react-native-maps-directions
 
 // Pour utiliser l API: creation d un compte Google Cloud et activation de la librairie SDK android
 
 // import de mapview et du provider Google necessaire pour le fonctionnement de map
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import MapViewDirections from "react-native-maps-directions";
 
 import GOOGLE_API_KEY from "../environmentVar";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
-import { login } from "../reducers/user";
+import { Marker } from "react-native-maps";
+
+// Import Icones
+import AntDesign from "react-native-vector-icons/AntDesign";
 
 // variables pour afficher la map a son initialisation sur un point geographique par defaut
 const { width, height } = Dimensions.get("window");
@@ -35,33 +42,64 @@ const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 1;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
 const INITIAL_POSITION = {
-  latitude: 48.87,
-  longitude: 2.33,
+  latitude: 0,
+  longitude: 0,
   latitudeDelta: LATITUDE_DELTA,
   longitudeDelta: LONGITUDE_DELTA,
 };
 
 export default function SearchScreen() {
+  const [departureLocation, setDepartureLocation] = useState(null);
+  const [arrivalLocation, setArrivalLocation] = useState(null);
+
+  // etats de position
+  const [currentPosition, setCurrentPosition] = useState(null);
+
   // creation d etats pour recuperer les valeurs des "details" des inputs qui contiennent les valeurs necessaires
   // pour faire la recherche: latitute et longitude
-  const [origin, setOrigin] = useState("");
-  const [destination, setDestination] = useState("");
+  const [origin, setOrigin] = useState({});
+
+  // etats des inputs
+  const [inputOne, setInputOne] = useState("");
+
+  //useRef pour la reference de MapView
+  const mapRef = useRef(null);
+
+  // set la position au chargement de la page
+  useEffect(() => {
+    (async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync();
+
+      if (status === "granted") {
+        Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+          const coords = {
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: LATITUDE_DELTA,
+            longitudeDelta: LONGITUDE_DELTA,
+          };
+          setCurrentPosition(coords);
+          moveTo(coords);
+        });
+      }
+    })();
+  }, []);
 
   // fonction pour faire deplacer la carte au moment de la selection d une destination
   const moveTo = async (position) => {
-    //
+    // la variable camera recoit la valeur de mapRef
     const camera = await mapRef.current?.getCamera();
-    console.log("map reference:", camera);
+    console.log(camera);
+    // une condition doit etre faite pour verifier la valeur de camera
     if (camera) {
+      // camera.center est egal a la position recue en argument
       camera.center = position;
       mapRef.current?.animateCamera(camera, { duration: 1000 });
+      setOrigin(camera.center);
     }
   };
 
-  // fonction onPlaceSelected pour sauvegarder les informations de localisation
-  const onPlaceSelected = (details) => {};
-  const mapRef = useRef(null);
-
+  /* RETURN de la fonction SEARCHSCREEN */
   return (
     <SafeAreaView style={styles.container}>
       <TopBar style={styles.topBar}></TopBar>
@@ -70,7 +108,24 @@ export default function SearchScreen() {
         style={styles.map}
         provider={PROVIDER_GOOGLE}
         initialRegion={INITIAL_POSITION}
-      />
+      >
+        {departureLocation && <Marker coordinate={departureLocation} />}
+        {arrivalLocation && <Marker coordinate={arrivalLocation} />}
+        {departureLocation && arrivalLocation && (
+          <MapViewDirections
+            origin={departureLocation}
+            destination={arrivalLocation}
+            apikey={GOOGLE_API_KEY}
+            mode="DRIVING"
+            strokeWidth={5}
+            strokeColor="#1EA85F"
+            timePrecision="now"
+            onReady={(data) => {
+              console.log(data.distance, data.duration);
+            }}
+          />
+        )}
+      </MapView>
       <View style={styles.searchContainer}>
         <GooglePlacesAutocomplete
           label="Origin"
@@ -83,15 +138,25 @@ export default function SearchScreen() {
               latitude: details?.geometry.location.lat,
               longitude: details?.geometry.location.lng,
             };
-            // console.log("coordonnees", details.geometry);
+            setDepartureLocation({
+              ...position,
+              description: data.structured_formatting.secondary_text,
+            });
             moveTo(position);
-            // console.log("etat:", origin);
           }}
           query={{
             key: GOOGLE_API_KEY,
             language: "en",
           }}
         />
+        <TouchableOpacity
+          style={styles.closeButton}
+          onPress={() => {
+            setInputOne("");
+          }}
+        >
+          <AntDesign name="closecircleo" size={15} color="#000000" />
+        </TouchableOpacity>
       </View>
       <View style={styles.destinationContainer}>
         <GooglePlacesAutocomplete
@@ -100,15 +165,24 @@ export default function SearchScreen() {
           fetchDetails={true}
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
-            // setDestination(details);
-            // console.log("coordonnees", details.geometry);
-            // console.log("resultat", data);
+            const position = {
+              latitude: details?.geometry.location.lat,
+              longitude: details?.geometry.location.lng,
+            };
+            setArrivalLocation({
+              ...position,
+              description: data.structured_formatting.secondary_text,
+            });
+            moveTo(position);
           }}
           query={{
             key: GOOGLE_API_KEY,
             language: "en",
           }}
         />
+        <TouchableOpacity style={styles.closeButton}>
+          <AntDesign name="closecircleo" size={15} color="#000000" />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -129,6 +203,8 @@ const styles = StyleSheet.create({
   searchContainer: {
     position: "absolute",
     width: "90%",
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#FFFFFF",
     shadowColor: "black",
     shadowOffset: { width: 2, height: 2 },
@@ -142,6 +218,8 @@ const styles = StyleSheet.create({
   destinationContainer: {
     position: "absolute",
     width: "90%",
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#FFFFFF",
     shadowColor: "black",
     shadowOffset: { width: 2, height: 2 },
@@ -150,5 +228,8 @@ const styles = StyleSheet.create({
     elevation: 4,
     borderRadius: 8,
     top: 150,
+  },
+  closeButton: {
+    marginRight: 8,
   },
 });
