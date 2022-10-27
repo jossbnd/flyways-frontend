@@ -31,6 +31,7 @@ import user from "./reducers/user";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import SearchResultScreen from "./screens/SearchResultScreen";
 
 const reducers = combineReducers({ user });
 const persistConfig = {
@@ -95,6 +96,7 @@ export default function App() {
               name="PhoneVerification"
               component={PhoneVerification}
             />
+            <Stack.Screen name="SearchResult" component={SearchResultScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>

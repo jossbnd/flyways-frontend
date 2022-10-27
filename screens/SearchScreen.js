@@ -1,6 +1,6 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
-import { StyleSheet, Dimensions, View } from "react-native";
+import { StyleSheet, Dimensions, View, TouchableOpacity, Text } from "react-native";
 
 /* Librairie google maps pour react native */
 // https://www.npmjs.com/package/react-native-google-places-autocomplete
@@ -30,7 +30,7 @@ const INITIAL_POSITION = {
   longitudeDelta: LONGITUDE_DELTA,
 };
 
-export default function SearchScreen() {
+export default function SearchScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <TopBar style={styles.topBar}></TopBar>
@@ -52,6 +52,9 @@ export default function SearchScreen() {
             language: "en",
           }}
         />
+      <TouchableOpacity onPress={() => {
+        navigation.navigate("SearchResult")
+      }}><Text>Search</Text></TouchableOpacity>
       </View>
     </SafeAreaView>
   );
