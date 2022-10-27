@@ -2,11 +2,8 @@ import { useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
-  TouchableWithoutFeedback,
-  Keyboard,
   Platform,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -72,7 +69,7 @@ export default function LoginScreen({ navigation }) {
 
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "android" ? "position" : "height"}
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.container}
     >
       <SafeAreaView style={styles.safeContainer}>
@@ -178,10 +175,11 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   bottom: {
-    marginTop: 280,
-    flex: 1,
+    height: 200,
     width: "100%",
     alignItems: "center",
+    justifyContent: "flex-end",
+    zIndex: -1,
   },
   button: {
     width: "90%",
