@@ -184,14 +184,13 @@ export default function SearchScreen({ navigation }) {
           <AntDesign name="closecircleo" size={15} color="#000000" />
         </TouchableOpacity>
         <TouchableOpacity
-        onPress={() => {
-          navigation.navigate("SearchResult");
-        }}
-      >
-        <StyledRegularText title="Search" />
-      </TouchableOpacity>
+          onPress={() => {
+            navigation.navigate("SearchResult");
+          }}
+        >
+          <StyledRegularText title="Search" />
+        </TouchableOpacity>
       </View>
-
     </SafeAreaView>
   );
 }
