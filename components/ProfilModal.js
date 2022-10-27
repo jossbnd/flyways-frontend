@@ -1,7 +1,7 @@
 /* Modal qui sera visible lorsque l'utilisateur appuie sur l'icon Bars*/
 
 import React from "react";
-import { StyleSheet, View, TouchableOpacity, Modal } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Modal, Image } from "react-native";
 
 // import de navigation pour naviguer vers login quand l'utiliateur appuie sur log out
 import { useNavigation } from "@react-navigation/native";
@@ -53,7 +53,15 @@ export default function ProfilModal(props) {
               <FontAwesome5 name="times" size={25} style={styles.icon} />
             </TouchableOpacity>
             <View style={styles.userView}>
-              <FontAwesome5 name="user" size={50} style={styles.userIcon} />
+              <Image
+                source={
+                  user.profilePicture
+                    ? { uri: user.profilePicture }
+                    : require("../assets/profile-picture.jpg")
+                }
+                style={styles.profilePicture}
+                resizeMode="contain"
+              />
               <StyledRegularText
                 title={user.firstName + " " + user.lastName}
                 style={styles.userText}
@@ -100,14 +108,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "80%",
     justifyContent: "space-evenly",
-    padding: 5,
+    alignItems: 'flex-start',
   },
-  userIcon: {
-    marginLeft: 25,
-    color: "#FFFFFF",
+  profilePicture: {
+    height: 50,
+    width: 50,
+    borderRadius: 50,
   },
   userText: {
-    marginLeft: 10,
     color: "#FFFFFF",
     marginTop: 10,
   },

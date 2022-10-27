@@ -7,7 +7,11 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+// Import composants upcoming trips
+import ProfilModal from "../components/ProfilModal";
 import TopBar from "../components/TopBar";
+import UpcomingTrips from "../components/UpcomingTrips";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
@@ -15,18 +19,21 @@ import StyledBoldText from "../components/StyledBoldText";
 
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { updateProfilePicture } from "../reducers/user";
 
 // Import FontAwesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
-// Import composants upcoming trips
-import UpcomingTrips from "../components/UpcomingTrips";
-
-import ProfilModal from "../components/ProfilModal";
+// Format Date
 import moment from "moment";
 
+// Image Picker
 import * as ImagePicker from "expo-image-picker";
+
+// Cloudinary
+import { CLOUDINARY_CLOUD_NAME } from "../environmentVar";
 
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
@@ -42,6 +49,7 @@ export default function HomeScreen({ navigation }) {
   };
 
   const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     fetch(`${BACK_END_ADDRESS}/users/info/${user.token}`)
@@ -77,21 +85,37 @@ export default function HomeScreen({ navigation }) {
 
     if (!result.cancelled) {
       setProfilePicture(result.uri);
+      dispatch(updateProfilePicture(result.uri))
 
-      const formData = new FormData();
-      formData.append("photoFromFront", {
+      const file = {
         uri: result.uri,
         name: "photo.jpg",
         type: "image/jpeg",
-      });
+      };
 
-      fetch(`${BACK_END_ADDRESS}/users/update/profilepicture/${user.token}`, {
-        method: "PUT",
-        body: formData,
-      })
+      const data = new FormData();
+      data.append("file", file);
+      data.append("upload_preset", "flyways");
+      data.append("cloud_name", CLOUDINARY_CLOUD_NAME);
+
+      fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
+        {
+          method: "post",
+          body: data,
+        }
+      )
         .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
+        .then((cloudinaryData) => {
+          fetch(`${BACK_END_ADDRESS}/users/update/${user.token}`, {
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ profilePicture: cloudinaryData.secure_url }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+            });
         });
     }
   };
