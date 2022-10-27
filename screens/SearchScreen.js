@@ -1,7 +1,7 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 import { StyleSheet, Dimensions, View, TouchableOpacity } from "react-native";
-import { useRef, useState, useEffect, Text } from "react";
+import { useRef, useState, useEffect } from "react";
 import * as Location from "expo-location";
 
 /* A faire: ajoutter bouton dans l input pour supprimer la recherche au lieu
@@ -183,10 +183,15 @@ export default function SearchScreen({ navigation }) {
         <TouchableOpacity style={styles.closeButton}>
           <AntDesign name="closecircleo" size={15} color="#000000" />
         </TouchableOpacity>
+        <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("SearchResult");
+        }}
+      >
+        <StyledRegularText title="Search" />
+      </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => {
-        navigation.navigate("SearchResult")
-      }}><Text>Search</Text></TouchableOpacity>
+
     </SafeAreaView>
   );
 }
