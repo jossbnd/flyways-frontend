@@ -37,18 +37,6 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
   const [searchDataComplete, setSearchDataComplete] = useState(null);
 
   const handleSearch = () => {
-    // FIXME: have to press multiple times on button to set the data
-    console.log(params.searchData);
-
-    // ajoute les paramètres de date et de distance au searchData de l'écran précédent
-    setSearchDataComplete((searchDataComplete) => ({
-      ...params.searchData, // prend les données de la page précédente (coordonnées GPS)
-      ...searchDataComplete, // ajoute les données de cette page (date et distance max)
-      minDate,
-      maxDate,
-      maxDist,
-    }));
-
     console.log(searchDataComplete);
     navigation.navigate("SearchResult", { searchDataComplete }); // envoie l'objet complet (coords + date/distance)
   };
@@ -67,8 +55,8 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
             onChangeText={(value) => {
               setMinDate(value);
               setSearchDataComplete((searchDataComplete) => ({
-                ...params.searchData,
-                ...searchDataComplete,
+                ...params.searchData, // prend les données de la page précédente (coordonnées GPS)
+                ...searchDataComplete, // ajoute minDate
                 minDate,
               }));
             }}
@@ -84,8 +72,8 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
             onChangeText={(value) => {
               setMaxDate(value);
               setSearchDataComplete((searchDataComplete) => ({
-                ...params.searchData,
-                ...searchDataComplete,
+                ...params.searchData, // prend les données de la page précédente (coordonnées GPS)
+                ...searchDataComplete, // ajoute maxDate
                 maxDate,
               }));
             }}
@@ -101,8 +89,8 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
             onChangeText={(value) => {
               setMaxDist(value);
               setSearchDataComplete((searchDataComplete) => ({
-                ...params.searchData,
-                ...searchDataComplete,
+                ...params.searchData, // prend les données de la page précédente (coordonnées GPS)
+                ...searchDataComplete, // ajoute maxDist
                 maxDist,
               }))
             }}
