@@ -81,13 +81,13 @@ export default function SearchScreen({ navigation }) {
   // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
   const handleSearch = () => {
     // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
-    setSearchData((searchData) => ({
-      ...searchData,
-      departureCoordsLat: departureLocation.latitude,
-      departureCoordsLong: departureLocation.longitude,
-      arrivalCoordsLat: arrivalLocation.latitude,
-      arrivalCoordsLong: arrivalLocation.longitude,
-    }));
+    // setSearchData((searchData) => ({
+    //   ...searchData,
+    //   departureCoordsLat: departureLocation.latitude,
+    //   departureCoordsLong: departureLocation.longitude,
+    //   arrivalCoordsLat: arrivalLocation.latitude,
+    //   arrivalCoordsLong: arrivalLocation.longitude,
+    // }));
 
     console.log(searchData);
 
@@ -267,6 +267,7 @@ export default function SearchScreen({ navigation }) {
           fetchDetails={true}
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
+            // TODO: remove the unnecessary (position, setArrivalLocation)
             const position = {
               latitude: details?.geometry.location.lat,
               longitude: details?.geometry.location.lng,
@@ -277,6 +278,14 @@ export default function SearchScreen({ navigation }) {
             });
             moveTo(position);
             handleContinueButton();
+
+            setSearchData((searchData) => ({
+              ...searchData,
+              departureCoordsLat: departureLocation.latitude,
+              departureCoordsLong: departureLocation.longitude,
+              arrivalCoordsLat: details?.geometry.location.lat,
+              arrivalCoordsLong: details?.geometry.location.lng,
+            }));
           }}
           query={{
             key: GOOGLE_API_KEY,

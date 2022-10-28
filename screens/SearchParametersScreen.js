@@ -26,9 +26,9 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function SearchResultScreen({ navigation, route: { params } }) {
-//   const [minDate, setMinDate] = useState(null);
-//   const [maxDate, setMaxDate] = useState(null);
-//   const [maxDist, setMaxDist] = useState(null);
+  //   const [minDate, setMinDate] = useState(null);
+  //   const [maxDate, setMaxDate] = useState(null);
+  //   const [maxDist, setMaxDist] = useState(null);
 
   const [minDate, setMinDate] = useState("20/01/2010 10:00");
   const [maxDate, setMaxDate] = useState("20/01/2050 10:00");
@@ -64,7 +64,14 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
           <TextInput // expects: 20/01/2020 10:50
             style={styles.input}
             placeholder="DD/MM/YYYY HH:mm"
-            onChangeText={(value) => setMinDate(value)}
+            onChangeText={(value) => {
+              setMinDate(value);
+              setSearchDataComplete((searchDataComplete) => ({
+                ...params.searchData,
+                ...searchDataComplete,
+                minDate,
+              }));
+            }}
             value={minDate}
           />
         </View>
@@ -74,24 +81,33 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
           <TextInput // expects: 20/01/2020 10:50
             style={styles.input}
             placeholder="DD/MM/YYYY HH:mm"
-            onChangeText={(value) => setMaxDate(value)}
+            onChangeText={(value) => {
+              setMaxDate(value);
+              setSearchDataComplete((searchDataComplete) => ({
+                ...params.searchData,
+                ...searchDataComplete,
+                maxDate,
+              }));
+            }}
             value={maxDate}
           />
         </View>
 
         <View style={styles.dateAndTime}>
           <StyledRegularText title="Maximum drop-off distance" />
-          <TextInput // expects: 20/01/2020 10:50
+          <TextInput // expects: number in km
             style={styles.input}
             placeholder="0.5"
-            onChangeText={(value) => setMaxDist(value)}
+            onChangeText={(value) => {
+              setMaxDist(value);
+              setSearchDataComplete((searchDataComplete) => ({
+                ...params.searchData,
+                ...searchDataComplete,
+                maxDist,
+              }))
+            }}
             value={maxDist}
           />
-          {/* <ReactSlider
-            className="horizontal-slider"
-            thumbClassName="example-thumb"
-            trackClassName="example-track"
-          /> */}
         </View>
       </View>
 

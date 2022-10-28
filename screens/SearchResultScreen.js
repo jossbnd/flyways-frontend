@@ -114,12 +114,6 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
       });
   };
 
-  // const searchResult = placeHolderData.sortedResult.map((trip, i) => {
-  //   return (
-  //     <SearchResultTrip key={i} {...trip} /> // map les données de passengers[0] (le leader du trip)
-  //   );
-  // });
-
   return (
     <SafeAreaView style={styles.container}>
       <TopBar></TopBar>
