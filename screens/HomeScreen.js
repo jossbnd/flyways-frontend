@@ -42,8 +42,11 @@ export default function HomeScreen({ navigation }) {
   const [upcomingTrips, setUpcomingTrips] = useState([]);
   const [test, setTest] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
+  const [averageRating, setAverageRating] = useState(null);
+  const [reviews, setReviews] = useState(null);
 
   const [modalVisible, setModalVisible] = useState(false);
+
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
@@ -57,6 +60,8 @@ export default function HomeScreen({ navigation }) {
       .then((data) => {
         if (data.result) {
           setProfilePicture(data.user.profilePicture);
+          setAverageRating(data.user.averageRating);
+          setReviews(data.user.reviews);
 
           let tripsTemp = [];
           for (let trip of data.user.trips) {
@@ -85,7 +90,7 @@ export default function HomeScreen({ navigation }) {
 
     if (!result.cancelled) {
       setProfilePicture(result.uri);
-      dispatch(updateProfilePicture(result.uri))
+      dispatch(updateProfilePicture(result.uri));
 
       const file = {
         uri: result.uri,
@@ -150,9 +155,16 @@ export default function HomeScreen({ navigation }) {
             style={{ marginRight: 5, color: "#f1c40f" }}
           />
           <StyledRegularText
-            title="4.5 / 5 (26 reviews)"
+            title={`${averageRating ? averageRating : "-"} / 5`}
             style={styles.reviews}
           />
+
+            <StyledRegularText title={` (`} style={styles.reviews} />
+            <TouchableOpacity> 
+            <StyledRegularText title={`${reviews.length > 0 ? reviews.length : 'no'} reviews`} style={[styles.reviews, styles.underline]} />
+            </TouchableOpacity>
+            <StyledRegularText title={`)`} style={styles.reviews} />
+
         </View>
         <TouchableOpacity
           style={styles.sarchButton}
@@ -233,4 +245,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
+  underline: {
+    textDecorationLine: 'underline'
+  }
 });
