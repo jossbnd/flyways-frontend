@@ -161,7 +161,7 @@ export default function HomeScreen({ navigation }) {
 
             <StyledRegularText title={` (`} style={styles.reviews} />
             <TouchableOpacity> 
-            <StyledRegularText title={`${reviews.length > 0 ? reviews.length : 'no'} reviews`} style={[styles.reviews, styles.underline]} />
+            <StyledRegularText title={`${reviews ? reviews.length : 'no'} reviews`} style={[styles.reviews, styles.underline]} />
             </TouchableOpacity>
             <StyledRegularText title={`)`} style={styles.reviews} />
 
