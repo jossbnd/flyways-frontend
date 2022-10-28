@@ -1,6 +1,14 @@
 import { SafeAreaView } from "react-native-safe-area-context";
+// Import Composants
 import TopBar from "../components/TopBar";
-import { StyleSheet, Dimensions, View, TouchableOpacity } from "react-native";
+import ProfilModal from "../components/ProfilModal";
+import {
+  StyleSheet,
+  Dimensions,
+  View,
+  TouchableOpacity,
+  Animated,
+} from "react-native";
 import { useRef, useState, useEffect } from "react";
 import * as Location from "expo-location";
 
@@ -43,6 +51,7 @@ const INITIAL_POSITION = {
 
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
+  /****** ETATS ******/
   /* états pour stocker la valeur distance (distance entre 2 points sur la carte)
   et la valeur duration (durée de trajet entre 2 points sur la carte) */
   const [distance, setDistance] = useState(null);
@@ -62,9 +71,17 @@ export default function SearchScreen({ navigation }) {
   // états pour stocker la value des inputs
   const [inputOne, setInputOne] = useState("");
 
-  //useRef pour la reference de MapView
-  const mapRef = useRef(null);
+  // état et fonction pour gérer le fonctionnement de la modale profile
+  const [modalVisible, setModalVisible] = useState(false);
 
+  // état et fonction pour gérer le fonctionnement du bouton continue
+  const [continueButton, setContinueButton] = useState(false);
+
+  const [animatedViewVisible, setAnimatedViewVisible] = useState(false);
+
+  /* ********************************************************************** */
+
+  /****** USE EFFECT ******/
   // useEffect d'initialisation qui demande l'autorisation à l'utilisateur de trouver sa position
   // la fonction moveTo permet de changer la vue sur la position de l'utilisateur
   useEffect(() => {
@@ -86,6 +103,10 @@ export default function SearchScreen({ navigation }) {
     })();
   }, []);
 
+  /* ********************************************************************** */
+
+  /****** FONCTIONS ******/
+
   // fonction qui permet de changer la vue de la caméra
   const moveTo = async (position) => {
     // la variable camera recoit la valeur de mapRef
@@ -99,13 +120,13 @@ export default function SearchScreen({ navigation }) {
     }
   };
 
-  // variables qui mettent en place du padding sur la caméra lorsque l'utilisateur recherche un trajet
-  const edgePaddingValue = 30;
-  const edgePadding = {
-    top: edgePaddingValue,
-    right: edgePaddingValue,
-    bottom: edgePaddingValue,
-    left: edgePaddingValue,
+  const fadeIn = () => {
+    // Will change fadeAnim value to 1 in 5 seconds
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 1500,
+      useNativeDriver: false,
+    }).start();
   };
 
   /* fonction permettant de calculer la moyenne latitude + longitude entre 2 points
@@ -116,15 +137,52 @@ export default function SearchScreen({ navigation }) {
     });
   };
 
+  // fonction qui permet de stocker la valeur de distance et duration
   const viewDistanceDuration = (data) => {
     setDistance(data.distance);
     setDuration(data.duration);
   };
 
+  // fonction pour rendre la modale profile visible
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  // fonction pour afficher le bouton continue
+  const handleContinueButton = () => {
+    setContinueButton(true);
+  };
+
+  // fonction pour activer l'animation du formulaire après l'appui sur le bouton continue
+  const animatedView = () => {
+    setAnimatedViewVisible(true);
+  };
+
+  /* ********************************************************************** */
+
+  /* VARIABLES */
+  // variables qui mettent en place du padding sur la caméra lorsque l'utilisateur recherche un trajet
+  const edgePaddingValue = 30;
+  const edgePadding = {
+    top: edgePaddingValue,
+    right: edgePaddingValue,
+    bottom: edgePaddingValue,
+    left: edgePaddingValue,
+  };
+
+  // variable qui stocke la nouvelle valeur pour l'animated View
+  const fadeAnim = useRef(new Animated.Value(-500)).current;
+
+  // useRef pour la reference de MapView
+  const mapRef = useRef(null);
+
+  /* ********************************************************************** */
+
   /* RETURN de la fonction SEARCHSCREEN */
   return (
     <SafeAreaView style={styles.container}>
-      <TopBar style={styles.topBar}></TopBar>
+      <TopBar toggleModal={toggleModal} style={styles.topBar}></TopBar>
+
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -197,6 +255,7 @@ export default function SearchScreen({ navigation }) {
               description: data.structured_formatting.secondary_text,
             });
             moveTo(position);
+            handleContinueButton();
           }}
           query={{
             key: GOOGLE_API_KEY,
@@ -206,20 +265,47 @@ export default function SearchScreen({ navigation }) {
         <TouchableOpacity style={styles.closeButton}>
           <AntDesign name="closecircleo" size={15} color="#000000" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("SearchResult");
-          }}
-        >
-          <StyledRegularText title="Search" />
-        </TouchableOpacity>
-        {distance && duration && (
-          <View>
-            <StyledBoldText title={distance.toFixed(2)} />
-            <StyledBoldText title={Math.ceil(duration)} />
-          </View>
-        )}
       </View>
+      {distance && duration && (
+        <View style={styles.viewDistanceDuration}>
+          <StyledBoldText title={`Distance: ${distance.toFixed(2)} km`} />
+          <StyledBoldText title={`Trip duration: ${Math.ceil(duration)} min`} />
+        </View>
+      )}
+      {continueButton && (
+        <View style={styles.continuePopover}>
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              animatedView();
+              fadeIn();
+            }}
+          >
+            <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
+          </TouchableOpacity>
+        </View>
+      )}
+      <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
+      {animatedViewVisible && (
+        <Animated.View
+          style={[
+            styles.fadingContainer,
+            {
+              // Bind opacity to animated value
+              bottom: fadeAnim,
+            },
+          ]}
+        >
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => {
+              navigation.navigate("SearchResult");
+            }}
+          >
+            <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
+          </TouchableOpacity>
+        </Animated.View>
+      )}
     </SafeAreaView>
   );
 }
@@ -229,7 +315,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
     justifyContent: "space-between",
   },
   map: {
@@ -267,5 +352,52 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginRight: 8,
+  },
+  viewDistanceDuration: {
+    position: "absolute",
+    flexDirection: "row",
+    width: "90%",
+    height: "5%",
+    top: 210,
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    borderRadius: 10,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+  },
+  continuePopover: {
+    top: 620,
+    position: "absolute",
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  button: {
+    width: "90%",
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 1)",
+  },
+  buttonText: {
+    fontSize: 14,
+  },
+
+  fadingContainer: {
+    zIndex: 1,
+    borderRadius: 10,
+    height: "75%",
+    width: "90%",
+    position: "absolute",
+    padding: 20,
+    backgroundColor: "rgba(255, 255, 255, 1)",
+    borderWidth: 1,
+    borderColor: "rgba(30, 168, 95, 1)",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  fadingText: {
+    fontSize: 28,
+    color: "black",
   },
 });
