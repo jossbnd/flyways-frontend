@@ -60,7 +60,7 @@ const TabNavigator = () => {
         tabBarIcon: ({ color, size }) => {
           let iconName = "";
 
-          if (route.name === "My Trips") {
+          if (route.name === "My Profile") {
             iconName = "luggage";
             
           } else if (route.name === "Search") {
@@ -85,7 +85,7 @@ const TabNavigator = () => {
 
       })}
     >
-      <Tab.Screen name="My Trips" component={HomeScreen} />
+      <Tab.Screen name="My Profile" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
       <Tab.Screen name="Chat" component={ChatScreen} />
