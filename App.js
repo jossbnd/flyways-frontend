@@ -77,7 +77,7 @@ const TabNavigator = () => {
         tabBarStyle: { paddingBottom: 10, paddingTop: 5, height: 55 },
         headerShown: false,
         tabBarButton: (props) => {
-          if (route.name === "Chat") {
+          if (route.name === "Chat" || route.name === 'Trip') {
             return null;
         } else {
           return <Pressable {...props}></Pressable>
