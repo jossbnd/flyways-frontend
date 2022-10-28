@@ -37,6 +37,7 @@
     "react-native-screens": "~3.15.0",
     "react-native-vector-icons": "^9.2.0",
     "react-redux": "^8.0.4",
+    "react-slider": "^2.0.4",
     "redux-persist": "^6.0.0"
   },
   "devDependencies": {

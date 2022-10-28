@@ -26,6 +26,15 @@ export default function SearchResultTrip(props) {
   const dateFormatted = `${dateJS.getDate()}/${ // formate la date pour qu'elle soit lisible
     dateJS.getMonth() + 1
   } ${dateJS.getHours()}:${dateJS.getMinutes()}`;
+  let dist = undefined;
+
+  if (props.distToDestination >= 1) {
+    // si la distance to destination est sup ou égale à 1 km, affiche la dist en km
+    dist = `${props.distToDestination.toFixed(2)} km`
+  } else {
+    // si la distance est en dessous de 1 km, affiche la dist en m
+    dist = `${Math.round(props.distToDestination * 1000)} m`
+  }
 
   return (
     <TouchableOpacity style={styles.container}>
@@ -79,7 +88,8 @@ export default function SearchResultTrip(props) {
               style={styles.bottomDataItem}
             />
             <StyledRegularText
-              title={`${props.distToDestination.toFixed(2)} km`}
+              // title={`${props.distToDestination.toFixed(2)} km`}
+              title={dist}
               style={styles.bottomDataItem}
             />
           </View>

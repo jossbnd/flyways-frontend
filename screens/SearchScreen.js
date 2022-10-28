@@ -52,6 +52,15 @@ export default function SearchScreen({ navigation }) {
   const [departureLocation, setDepartureLocation] = useState(null);
   const [arrivalLocation, setArrivalLocation] = useState(null);
 
+  // search data, null par défaut
+  const [departureCoordsLat, setDepartureCoordsLat] = useState(null);
+  const [departureCoordsLong, setDepartureCoordsLong] = useState(null);
+  const [arrivalCoordsLat, setArrivalCoordsLat] = useState(null);
+  const [arrivalCoordsLong, setArrivalCoordsLong] = useState(null);
+
+  // l'objet qui est envoyé à la page suivante (SearchParametersScreen)
+  const [searchData, setSearchData] = useState(null);
+
   // etats de position
   const [currentPosition, setCurrentPosition] = useState(null);
 
@@ -64,6 +73,36 @@ export default function SearchScreen({ navigation }) {
 
   //useRef pour la reference de MapView
   const mapRef = useRef(null);
+
+  // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
+  const handleSearch = () => {
+    // set all data (coords, etc) to searchData, then send it to SR screen
+
+    // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
+    // FIXME: have to press multiple times for data to be set
+    setDepartureCoordsLat(40);
+    setDepartureCoordsLong(50);
+    setArrivalCoordsLat(42.008);
+    setArrivalCoordsLong(52.004);
+    // setMinDate("28/10/2022 15:00");
+    // setMaxDate("28/10/2028 16:00");
+    // setMaxDist(10);
+
+    setSearchData(searchData => ({
+      ...searchData,
+      departureCoordsLat,
+      departureCoordsLong,
+      arrivalCoordsLat,
+      arrivalCoordsLong,
+      // minDate,
+      // maxDate,
+      // maxDist,
+    }));
+
+    console.log(searchData);
+    
+    navigation.navigate("SearchParameters", { searchData });
+  };
 
   // set la position au chargement de la page
   useEffect(() => {
@@ -183,11 +222,7 @@ export default function SearchScreen({ navigation }) {
         <TouchableOpacity style={styles.closeButton}>
           <AntDesign name="closecircleo" size={15} color="#000000" />
         </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.navigate("SearchResult");
-          }}
-        >
+        <TouchableOpacity onPress={() => handleSearch()}>
           <StyledRegularText title="Search" />
         </TouchableOpacity>
       </View>

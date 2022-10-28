@@ -16,6 +16,7 @@ import PhoneVerification from "./screens/PhoneVerification";
 import HomeScreen from "./screens/HomeScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import SearchScreen from "./screens/SearchScreen";
+import SearchParametersScreen from "./screens/SearchParametersScreen";
 
 // Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -97,6 +98,7 @@ export default function App() {
               component={PhoneVerification}
             />
             <Stack.Screen name="SearchResult" component={SearchResultScreen} />
+            <Stack.Screen name="SearchParameters" component={SearchParametersScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
