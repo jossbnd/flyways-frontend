@@ -7,12 +7,6 @@ import * as Location from "expo-location";
 /* A faire: ajoutter bouton dans l input pour supprimer la recherche au lieu
 de suprrimer une par une les lettres */
 
-/*  COMMENTAIRES A SUPPRIMER*/
-// a faire aujourd'hui:
-// faire des états pour récupérer les valeurs de details
-// créer une variable, qui est égal à un objet, que l'on va envoyer aux pages suivantes
-/* ********************************************* */
-
 /* Librairie google maps pour react native */
 // https://www.npmjs.com/package/react-native-google-places-autocomplete
 /* Librairie react native pour les maps directions */
@@ -37,7 +31,6 @@ import AntDesign from "react-native-vector-icons/AntDesign";
 
 // variables pour afficher la map a son initialisation sur un point geographique par defaut
 const { width, height } = Dimensions.get("window");
-
 const ASPECT_RATIO = width / height;
 const LATITUDE_DELTA = 1;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
@@ -48,24 +41,32 @@ const INITIAL_POSITION = {
   longitudeDelta: LONGITUDE_DELTA,
 };
 
+// FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
+  /* états pour stocker la valeur distance (distance entre 2 points sur la carte)
+  et la valeur duration (durée de trajet entre 2 points sur la carte) */
+  const [distance, setDistance] = useState(null);
+  const [duration, setDuration] = useState(null);
+
+  // etats pour stocker la valeur de départ et d'arrivée
   const [departureLocation, setDepartureLocation] = useState(null);
   const [arrivalLocation, setArrivalLocation] = useState(null);
 
-  // etats de position
+  // état pour stocker la valeur de la position en temps réel de l'utilisateur
   const [currentPosition, setCurrentPosition] = useState(null);
 
   // creation d etats pour recuperer les valeurs des "details" des inputs qui contiennent les valeurs necessaires
   // pour faire la recherche: latitute et longitude
   const [origin, setOrigin] = useState({});
 
-  // etats des inputs
+  // états pour stocker la value des inputs
   const [inputOne, setInputOne] = useState("");
 
   //useRef pour la reference de MapView
   const mapRef = useRef(null);
 
-  // set la position au chargement de la page
+  // useEffect d'initialisation qui demande l'autorisation à l'utilisateur de trouver sa position
+  // la fonction moveTo permet de changer la vue sur la position de l'utilisateur
   useEffect(() => {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -85,11 +86,10 @@ export default function SearchScreen({ navigation }) {
     })();
   }, []);
 
-  // fonction pour faire deplacer la carte au moment de la selection d une destination
+  // fonction qui permet de changer la vue de la caméra
   const moveTo = async (position) => {
     // la variable camera recoit la valeur de mapRef
     const camera = await mapRef.current?.getCamera();
-    console.log(camera);
     // une condition doit etre faite pour verifier la valeur de camera
     if (camera) {
       // camera.center est egal a la position recue en argument
@@ -97,6 +97,28 @@ export default function SearchScreen({ navigation }) {
       mapRef.current?.animateCamera(camera, { duration: 1000 });
       setOrigin(camera.center);
     }
+  };
+
+  // variables qui mettent en place du padding sur la caméra lorsque l'utilisateur recherche un trajet
+  const edgePaddingValue = 30;
+  const edgePadding = {
+    top: edgePaddingValue,
+    right: edgePaddingValue,
+    bottom: edgePaddingValue,
+    left: edgePaddingValue,
+  };
+
+  /* fonction permettant de calculer la moyenne latitude + longitude entre 2 points
+  et déplacer la caméra basée sur cette moyenne */
+  const handleTripView = () => {
+    mapRef.current?.fitToCoordinates([departureLocation, arrivalLocation], {
+      edgePadding,
+    });
+  };
+
+  const viewDistanceDuration = (data) => {
+    setDistance(data.distance);
+    setDuration(data.duration);
   };
 
   /* RETURN de la fonction SEARCHSCREEN */
@@ -121,7 +143,8 @@ export default function SearchScreen({ navigation }) {
             strokeColor="#1EA85F"
             timePrecision="now"
             onReady={(data) => {
-              console.log(data.distance, data.duration);
+              handleTripView();
+              viewDistanceDuration(data);
             }}
           />
         )}
@@ -190,6 +213,12 @@ export default function SearchScreen({ navigation }) {
         >
           <StyledRegularText title="Search" />
         </TouchableOpacity>
+        {distance && duration && (
+          <View>
+            <StyledBoldText title={distance.toFixed(2)} />
+            <StyledBoldText title={Math.ceil(duration)} />
+          </View>
+        )}
       </View>
     </SafeAreaView>
   );
