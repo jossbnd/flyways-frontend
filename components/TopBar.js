@@ -33,7 +33,9 @@ export default function TopBar(props) {
           onPress={() => handleProfilePage()}
         />
       </TouchableOpacity>
-      <FontAwesome5 name="comment-dots" size={25} />
+      <TouchableOpacity onPress={() => props.navigation.navigate('Chat')}>
+        <FontAwesome5 name="comment-dots" size={25} />
+      </TouchableOpacity>
     </View>
   );
 }

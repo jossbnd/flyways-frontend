@@ -1,5 +1,5 @@
 // Composants
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 // Navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -32,6 +32,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SearchResultScreen from "./screens/SearchResultScreen";
+import ChatScreen from "./screens/ChatScreen";
 
 const reducers = combineReducers({ user });
 const persistConfig = {
@@ -61,10 +62,13 @@ const TabNavigator = () => {
 
           if (route.name === "My Trips") {
             iconName = "luggage";
+            
           } else if (route.name === "Search") {
             iconName = "search";
           } else if (route.name === "Notification") {
             iconName = "notifications";
+          } else if (route.name === 'Chat') {
+            return <View style={{display: 'none' }}></View>
           }
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
@@ -72,11 +76,19 @@ const TabNavigator = () => {
         tabBarInactiveTintColor: "#335561",
         tabBarStyle: { paddingBottom: 10, paddingTop: 5, height: 55 },
         headerShown: false,
+        tabBarButton: (props) => {
+          if (route.name === "Chat") {
+            return null;
+        } else {
+          return <Pressable {...props}></Pressable>
+        }},
+
       })}
     >
       <Tab.Screen name="My Trips" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
+      <Tab.Screen name="Chat" component={ChatScreen} />
     </Tab.Navigator>
   );
 };

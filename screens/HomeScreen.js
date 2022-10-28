@@ -131,7 +131,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TopBar toggleModal={toggleModal} />
+      <TopBar toggleModal={toggleModal} navigation={navigation} />
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={pickImage}>
           <Image
