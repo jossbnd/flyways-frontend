@@ -26,14 +26,16 @@ export default function TopBar(props) {
       >
         <FontAwesome5 name="bars" size={25} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.logo}>
+      <TouchableOpacity style={styles.logo} onPress={() => props.navigation.navigate('My Profile')}>
         <Image
           style={styles.image}
           source={require("../assets/flyways-logo.png")}
           onPress={() => handleProfilePage()}
         />
       </TouchableOpacity>
-      <FontAwesome5 name="comment-dots" size={25} />
+      <TouchableOpacity onPress={() => props.navigation.navigate('Chat')}>
+        <FontAwesome5 name="comment-dots" size={25} />
+      </TouchableOpacity>
     </View>
   );
 }
