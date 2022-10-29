@@ -111,10 +111,8 @@ export default function App() {
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Phone" component={PhoneScreen} />
-            <Stack.Screen
-              name="PhoneVerification"
-              component={PhoneVerification}
-            />
+            <Stack.Screen name="PhoneVerification" component={PhoneVerification} />
+            <Stack.Screen name="Search" component={SearchScreen} />
             <Stack.Screen name="SearchResult" component={SearchResultScreen} />
             <Stack.Screen name="SearchParameters" component={SearchParametersScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
