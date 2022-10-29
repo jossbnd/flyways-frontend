@@ -71,9 +71,12 @@ export default function SearchResultTrip(props) {
                 title={`${props.passengers[0].rating} / 5`}
                 style={styles.nameAndRatingItem}
               />
-              <StyledRegularText title={`from  ${props.departureCoords.description} to ${props.arrivalCoords.description}`} />
-              <View style={styles.flagContainer}>{languages}</View>
             </View>
+            <StyledRegularText
+              title={`from ${props.departureCoords.description} to ${props.arrivalCoords.description}`}
+              style={styles.nameAndRatingItem}
+            />
+            <View style={styles.flagContainer}>{languages}</View>
           </View>
         </View>
 
