@@ -1,3 +1,10 @@
+/* Librairie google maps pour react native */
+// https://www.npmjs.com/package/react-native-google-places-autocomplete
+/* Librairie react native pour les maps directions */
+// https://www.npmjs.com/package/react-native-maps-directions
+
+// Pour utiliser l API: creation d un compte Google Cloud et activation de la librairie SDK android
+
 import { SafeAreaView } from "react-native-safe-area-context";
 // Import Composants
 import TopBar from "../components/TopBar";
@@ -8,19 +15,17 @@ import {
   View,
   TouchableOpacity,
   Animated,
+  TextInput,
 } from "react-native";
 import { useRef, useState, useEffect } from "react";
 import * as Location from "expo-location";
 
-/* A faire: ajoutter bouton dans l input pour supprimer la recherche au lieu
-de suprrimer une par une les lettres */
+// Import pour gérer le date picker
+import DateTimePicker from "@react-native-community/datetimepicker";
+import formatDate from "../modules/formatDate";
 
-/* Librairie google maps pour react native */
-// https://www.npmjs.com/package/react-native-google-places-autocomplete
-/* Librairie react native pour les maps directions */
-// https://www.npmjs.com/package/react-native-maps-directions
-
-// Pour utiliser l API: creation d un compte Google Cloud et activation de la librairie SDK android
+// Import icones
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 // import de mapview et du provider Google necessaire pour le fonctionnement de map
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
@@ -78,25 +83,15 @@ export default function SearchScreen({ navigation }) {
   // état et fonction pour gérer le fonctionnement de la modale profile
   const [modalVisible, setModalVisible] = useState(false);
 
-  // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
-  const handleSearch = () => {
-    // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
-    // setSearchData((searchData) => ({
-    //   ...searchData,
-    //   departureCoordsLat: departureLocation.latitude,
-    //   departureCoordsLong: departureLocation.longitude,
-    //   arrivalCoordsLat: arrivalLocation.latitude,
-    //   arrivalCoordsLong: arrivalLocation.longitude,
-    // }));
-
-    console.log(searchData);
-
-    navigation.navigate("SearchParameters", { searchData });
-  };
-
   // set la position au chargement de la page
   // état et fonction pour gérer le fonctionnement du bouton continue
   const [continueButton, setContinueButton] = useState(false);
+
+  // Etats pour date et time picker
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
+  const [departureDate, setDepartureDate] = useState(null);
+  const [departureTime, setDepartureTime] = useState(null);
 
   const [animatedViewVisible, setAnimatedViewVisible] = useState(false);
 
@@ -128,6 +123,22 @@ export default function SearchScreen({ navigation }) {
 
   /****** FONCTIONS ******/
 
+  // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
+  const handleSearch = () => {
+    // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
+    // setSearchData((searchData) => ({
+    //   ...searchData,
+    //   departureCoordsLat: departureLocation.latitude,
+    //   departureCoordsLong: departureLocation.longitude,
+    //   arrivalCoordsLat: arrivalLocation.latitude,
+    //   arrivalCoordsLong: arrivalLocation.longitude,
+    // }));
+
+    console.log(searchData);
+
+    navigation.navigate("SearchParameters", { searchData });
+  };
+
   // fonction qui permet de changer la vue de la caméra
   const moveTo = async (position) => {
     // la variable camera recoit la valeur de mapRef
@@ -141,8 +152,8 @@ export default function SearchScreen({ navigation }) {
     }
   };
 
+  // fonction qui permet d'animer l'animated view qui s'affiche au moment de l'appui sur le bouton Continue
   const fadeIn = () => {
-    // Will change fadeAnim value to 1 in 5 seconds
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 1500,
@@ -179,6 +190,25 @@ export default function SearchScreen({ navigation }) {
     setAnimatedViewVisible(true);
   };
 
+  // fonction pour récupérer la valeur de l'input destination
+  const getAddress = () => {
+    console.log(placesRef.current?.getAddressText());
+  };
+
+  // Fonction pour le Date Picker
+  const handleDatePicker = (el) => {
+    if (el.type == "set") {
+      setDate(new Date(el.nativeEvent.timestamp));
+      setOpen(false);
+      setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
+      console.log();
+      return;
+    } else {
+      setOpen(false);
+      return;
+    }
+  };
+
   /* ********************************************************************** */
 
   /* VARIABLES */
@@ -197,12 +227,20 @@ export default function SearchScreen({ navigation }) {
   // useRef pour la reference de MapView
   const mapRef = useRef(null);
 
+  /*    utilisation de placesRef sur les GooglePlaceAutocomplete, permet d'utiliser la fonction getAddress
+  qui récupère la valeur des inputs */
+  const placesRef = useRef();
+
   /* ********************************************************************** */
 
   /* RETURN de la fonction SEARCHSCREEN */
   return (
     <SafeAreaView style={styles.container}>
-      <TopBar toggleModal={toggleModal} style={styles.topBar}></TopBar>
+      <TopBar
+        toggleModal={toggleModal}
+        style={styles.topBar}
+        navigation={navigation}
+      ></TopBar>
 
       <MapView
         ref={mapRef}
@@ -233,9 +271,10 @@ export default function SearchScreen({ navigation }) {
           label="Origin"
           placeholder="From"
           fetchDetails={true}
+          ref={placesRef}
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
-            // setOrigin(details);
+            getAddress();
             const position = {
               latitude: details?.geometry.location.lat,
               longitude: details?.geometry.location.lng,
@@ -250,22 +289,28 @@ export default function SearchScreen({ navigation }) {
             key: GOOGLE_API_KEY,
             language: "en",
           }}
+          renderRightButton={() =>
+            placesRef.current?.getAddressText() ? (
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => {
+                  placesRef.current?.setAddressText("");
+                }}
+              >
+                <AntDesign name="closecircleo" size={15} color="#000000" />
+              </TouchableOpacity>
+            ) : null
+          }
         />
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() => {
-            setInputOne("");
-          }}
-        >
-          <AntDesign name="closecircleo" size={15} color="#000000" />
-        </TouchableOpacity>
       </View>
       <View style={styles.destinationContainer}>
         <GooglePlacesAutocomplete
           label="Destination"
           placeholder="To"
           fetchDetails={true}
+          ref={placesRef}
           onPress={(data, details = null) => {
+            getAddress();
             // 'details' is provided when fetchDetails = true
             // TODO: remove the unnecessary (position, setArrivalLocation)
             const position = {
@@ -291,10 +336,19 @@ export default function SearchScreen({ navigation }) {
             key: GOOGLE_API_KEY,
             language: "en",
           }}
+          renderRightButton={() =>
+            placesRef.current?.getAddressText() ? (
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => {
+                  placesRef.current?.setAddressText("");
+                }}
+              >
+                <AntDesign name="closecircleo" size={15} color="#000000" />
+              </TouchableOpacity>
+            ) : null
+          }
         />
-        <TouchableOpacity style={styles.closeButton}>
-          <AntDesign name="closecircleo" size={15} color="#000000" />
-        </TouchableOpacity>
       </View>
       {distance && duration && (
         <View style={styles.viewDistanceDuration}>
@@ -326,6 +380,28 @@ export default function SearchScreen({ navigation }) {
             },
           ]}
         >
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Departure Date"
+              onChangeText={(value) => setDepartureDate(value)}
+              value={departureDate}
+            />
+            <TouchableOpacity onPress={() => setOpen(true)}>
+              <FontAwesome5 name="calendar-alt" size={25} />
+            </TouchableOpacity>
+          </View>
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              placeholder="Departure Time"
+              onChangeText={(value) => setDepartureTime(value)}
+              value={departureTime}
+            />
+            <TouchableOpacity onPress={() => setOpen(true)}>
+              <FontAwesome5 name="calendar-alt" size={25} />
+            </TouchableOpacity>
+          </View>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
@@ -336,6 +412,24 @@ export default function SearchScreen({ navigation }) {
             <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
           </TouchableOpacity>
         </Animated.View>
+      )}
+      {open && (
+        <DateTimePicker
+          value={date}
+          // onChange={handleDatePicker}
+          onChange={console.log}
+          onTouchCancel={() => setOpen(false)}
+          mode="date"
+        />
+      )}
+      {open && (
+        <DateTimePicker
+          value={date}
+          // onChange={handleDatePicker}
+          onChange={console.log}
+          onTouchCancel={() => setOpen(false)}
+          mode="time"
+        />
       )}
     </SafeAreaView>
   );
@@ -383,6 +477,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginRight: 8,
+    marginTop: 15,
   },
   viewDistanceDuration: {
     position: "absolute",
@@ -430,5 +525,15 @@ const styles = StyleSheet.create({
   fadingText: {
     fontSize: 28,
     color: "black",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    width: "90%",
+    borderBottomWidth: 1,
+    height: "10%",
+    minHeight: 40,
+    margin: 3,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
