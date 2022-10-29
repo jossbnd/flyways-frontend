@@ -107,7 +107,7 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
           // TODO: display msg if no trip has been found
           setSearchResult(() => {
             return (
-              <StyledRegularText title="No result found, please revise your search parameters" />
+              <StyledRegularText title="No result found, would you like to create a new trip ?" />
             );
           });
         }

@@ -23,17 +23,19 @@ export default function SearchResultTrip(props) {
   const placesLeft = props.capacity - props.passengersNumber; // calcul des places restantes sur le trip
   const leaderProfilePicture = props.passengers[0].profilePicture; // avatar du leader
   const dateJS = new Date(props.date); // créée une date javascript
-  const dateFormatted = `${dateJS.getDate()}/${ // formate la date pour qu'elle soit lisible
+  
+  const dateFormatted = `${dateJS.getDate()}/${
+    // formate la date pour qu'elle soit lisible
     dateJS.getMonth() + 1
   } ${dateJS.getHours()}:${dateJS.getMinutes()}`;
   let dist = undefined;
 
   if (props.distToDestination >= 1) {
     // si la distance to destination est sup ou égale à 1 km, affiche la dist en km
-    dist = `${props.distToDestination.toFixed(2)} km`
+    dist = `${props.distToDestination.toFixed(2)} km`;
   } else {
     // si la distance est en dessous de 1 km, affiche la dist en m
-    dist = `${Math.round(props.distToDestination * 1000)} m`
+    dist = `${Math.round(props.distToDestination * 1000)} m`;
   }
 
   return (
@@ -42,7 +44,11 @@ export default function SearchResultTrip(props) {
         <View style={styles.leaderData}>
           {/* leaderData contient avatar, name, rating dans un bloc*/}
           <Image
-            source={{ uri: leaderProfilePicture }}
+            source={
+              leaderProfilePicture
+                ? { uri: leaderProfilePicture }
+                : require("../assets/profile-picture.jpg")
+            }
             style={{ width: 64, height: 64, borderRadius: 32 }}
           />
           <View style={styles.nameAndRating}>
