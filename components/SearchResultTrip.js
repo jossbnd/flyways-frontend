@@ -1,5 +1,12 @@
 import React from "react";
-import { Text, Image, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  Text,
+  Image,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 
 // Import FontAwesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -12,13 +19,22 @@ import CountryFlag from "react-native-country-flag";
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
+
 export default function SearchResultTrip(props) {
-  // map d'une icone drapeau par langue parlée
+  // map une icone drapeau par langue parlée
   const languages = props.passengers[0].languagesSpoken.map((language, i) => {
     return (
       <CountryFlag key={i} isoCode={language} style={styles.flag} size={18} />
     );
   });
+
+  let languagesSpokenCheck = true;
+  if (props.passengers[0].languagesSpoken.length === 0) {
+    // si l'utilisateur n'a pas renseigné de langues parlées, permet de ne rien afficher
+    languagesSpokenCheck = false;
+  }
 
   const placesLeft = props.capacity - props.passengersNumber; // calcul des places restantes sur le trip
   const leaderProfilePicture = props.passengers[0].profilePicture; // avatar du leader
@@ -51,15 +67,12 @@ export default function SearchResultTrip(props) {
             }
             style={{ width: 64, height: 64, borderRadius: 32 }}
           />
+
           <View style={styles.nameAndRating}>
             {/* contient name et rating, pour les afficher verticalement*/}
             <StyledRegularText
-              title={
-                props.passengers[0].firstName +
-                " " +
-                props.passengers[0].lastName
-              }
-              style={styles.nameAndRatingItem}
+              title={`${props.passengers[0].firstName} ${props.passengers[0].lastName}`}
+              style={styles.name}
             />
             <View style={styles.userRating}>
               <FontAwesome
@@ -72,11 +85,32 @@ export default function SearchResultTrip(props) {
                 style={styles.nameAndRatingItem}
               />
             </View>
+          </View>
+          {/* si l'utilisateur n'a pas renseigné de langues parlées, n'affiche rien */}
+          {languagesSpokenCheck ? (
+            <View style={styles.languages}>
+              <StyledRegularText style={styles.greenText} title="speaks : " />
+              {languages}
+            </View>
+          ) : (
+            <></>
+          )}
+        </View>
+
+        <View style={styles.fromToContainer}>
+          <View style={styles.fromTo}>
+            <StyledRegularText title={`FROM :`} style={styles.fromToItem} />
             <StyledRegularText
-              title={`from ${props.departureCoords.description} to ${props.arrivalCoords.description}`}
+              title={props.departureCoords.description}
               style={styles.nameAndRatingItem}
             />
-            <View style={styles.flagContainer}>{languages}</View>
+          </View>
+          <View style={styles.fromTo}>
+            <StyledRegularText title={`TO :`} style={styles.fromToItem} />
+            <StyledRegularText
+              title={props.arrivalCoords.description}
+              style={styles.nameAndRatingItem}
+            />
           </View>
         </View>
 
@@ -97,11 +131,7 @@ export default function SearchResultTrip(props) {
               title="Drop-off distance:"
               style={styles.bottomDataItem}
             />
-            <StyledRegularText
-              // title={`${props.distToDestination.toFixed(2)} km`}
-              title={dist}
-              style={styles.bottomDataItem}
-            />
+            <StyledRegularText title={dist} style={styles.bottomDataItem} />
           </View>
 
           <View style={styles.bottomDataContainer}>
@@ -123,8 +153,8 @@ export default function SearchResultTrip(props) {
 const styles = StyleSheet.create({
   // TODO:
   container: {
-    width: "96%",
-    height: 140,
+    width: "99.5%",
+    height: 220,
     backgroundColor: "#efefef",
     borderRadius: 5,
     borderBottomWidth: 0.5,
@@ -144,6 +174,9 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 7,
   },
+  greenText: {
+    color: "#1B9756",
+  },
   leaderData: {
     flex: 1,
     flexDirection: "row",
@@ -152,22 +185,42 @@ const styles = StyleSheet.create({
   nameAndRating: {
     flex: 1,
     flexDirection: "column",
+    marginLeft: 6,
   },
   nameAndRatingItem: {
     marginBottom: 6,
     color: "#1B9756",
   },
-  flagContainer: {
+  name: {
+    color: "#1B9756",
+    fontSize: 16,
+  },
+  flag: {
+    marginLeft: 2,
+    borderRadius: 4,
+  },
+  languages: {
+    color: "#1B9756",
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-end",
   },
-  flag: {
-    marginLeft: 6,
-    borderRadius: 4,
-  },
   userRating: {
     flexDirection: "row",
+  },
+  fromToContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  fromTo: {
+    marginTop: 18,
+    marginRight: 10,
+  },
+  fromToItem: {
+    color: "#1B9756",
+    textAlign: "center",
+    marginBottom: 6,
   },
   bottomData: {
     flex: 1,
