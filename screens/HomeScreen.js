@@ -17,6 +17,7 @@ import UpcomingTrips from "../components/UpcomingTrips";
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 
+//Import hooks + redux
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
@@ -44,9 +45,9 @@ export default function HomeScreen({ navigation }) {
   const [profilePicture, setProfilePicture] = useState(null);
   const [averageRating, setAverageRating] = useState(null);
   const [reviews, setReviews] = useState(null);
-
   const [modalVisible, setModalVisible] = useState(false);
 
+  // fonction pour déclencher le menu modal
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
@@ -54,33 +55,39 @@ export default function HomeScreen({ navigation }) {
   const user = useSelector((state) => state.user.value);
   const dispatch = useDispatch();
 
+  // A l'initialisation de la page, fetch pour récupérer les infos du User
   useEffect(() => {
     fetch(`${BACK_END_ADDRESS}/users/info/${user.token}`)
       .then((res) => res.json())
       .then((data) => {
         if (data.result) {
+          // Récupérer Profile Pic, averageRating, reviews
           setProfilePicture(data.user.profilePicture);
           setAverageRating(data.user.averageRating);
           setReviews(data.user.reviews);
 
+          // Récupérer les trips, les stoker dans un états UpcomingTrips
           let tripsTemp = [];
           for (let trip of data.user.trips) {
-            let upcomingTrip = {
-              arrival: "Paris",
-              passengers: trip.passengers.length,
-              capacity: trip.capacity,
-              date: moment(trip.date).format("ll"),
-              time: moment(trip.date).format("LT"),
-            };
-            tripsTemp.push(upcomingTrip);
+            if (!trip.isDone) {
+              let upcomingTrip = {
+                arrival: trip.departureCoords.description.length < 15 ? trip.departureCoords.description : trip.departureCoords.description.slice(0, 15) + '...',
+                passengers: trip.passengers.length,
+                capacity: trip.capacity,
+                date: moment(trip.date).format("ll"),
+                time: moment(trip.date).format("LT"),
+              };
+              tripsTemp.push(upcomingTrip);
+            }
           }
           setUpcomingTrips(tripsTemp);
         }
       });
   }, []);
 
+  // Fonction pour déclencher le Image Picker, uploader dans cloudinary et récupérer l'url à enregistrer dans le reducer
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
+    // Il n'y a pas besoin de demander à l'utilisateur pour ouvrir sa bibliothèque d'image
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -88,6 +95,7 @@ export default function HomeScreen({ navigation }) {
       quality: 1,
     });
 
+    // Si l'utilisateur choisit une image:
     if (!result.cancelled) {
       setProfilePicture(result.uri);
       dispatch(updateProfilePicture(result.uri));
@@ -98,11 +106,13 @@ export default function HomeScreen({ navigation }) {
         type: "image/jpeg",
       };
 
+      // formater la donnée à envoyer à Cloudinary
       const data = new FormData();
       data.append("file", file);
       data.append("upload_preset", "flyways");
       data.append("cloud_name", CLOUDINARY_CLOUD_NAME);
 
+      // Post vers cloudinary
       fetch(
         `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`,
         {
@@ -125,6 +135,7 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
+  // Map pour afficher la liste des trips
   const upcomingTripsData = upcomingTrips.map((trip, i) => {
     return <UpcomingTrips key={i} {...trip} />;
   });
@@ -159,12 +170,14 @@ export default function HomeScreen({ navigation }) {
             style={styles.reviews}
           />
 
-            <StyledRegularText title={` (`} style={styles.reviews} />
-            <TouchableOpacity> 
-            <StyledRegularText title={`${reviews ? reviews.length : 'no'} reviews`} style={[styles.reviews, styles.underline]} />
-            </TouchableOpacity>
-            <StyledRegularText title={`)`} style={styles.reviews} />
-
+          <StyledRegularText title={` (`} style={styles.reviews} />
+          <TouchableOpacity>
+            <StyledRegularText
+              title={`${reviews ? reviews.length : "no"} reviews`}
+              style={[styles.reviews, styles.underline]}
+            />
+          </TouchableOpacity>
+          <StyledRegularText title={`)`} style={styles.reviews} />
         </View>
         <TouchableOpacity
           style={styles.sarchButton}
@@ -246,6 +259,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   underline: {
-    textDecorationLine: 'underline'
-  }
+    textDecorationLine: "underline",
+  },
 });
