@@ -6,99 +6,64 @@ import {
   Touchable,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 import ProfilModal from "../components/ProfilModal";
+import Discussion from "../components/Discussion";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+
+
 export default function ChatScreen({ navigation }) {
+  // Etats
   const [modalVisible, setModalVisible] = useState(false);
   const [search, setSearch] = useState(null);
   const [discussions, setDiscussions] = useState([
     { text: "Hello" },
     { text: "I should be there in a minute, see you there guys" },
   ]);
+  const [trips, setTrips] = useState([]);      
+  const user = useSelector((state) => state.user.value);
 
-  const [passengers, setPassengers] = useState([
-    {
-      firstName: "Joss",
-      lastName: "B.",
-      profilePicture:
-        "https://st3.depositphotos.com/6672868/13701/v/600/depositphotos_137014128-stock-illustration-user-profile-icon.jpg",
-    },
-    {
-      firstName: "Joss",
-      lastName: "B.",
-      profilePicture:
-        "https://res.cloudinary.com/dkx7bnj5n/image/upload/v1666889927/typgtzysqhbpb6khde9g.jpg",
-    },
-    {
-      firstName: "Chiri",
-      lastName: "C.",
-      profilePicture: null,
-    },
-    {
-        firstName: "Chiri",
-        lastName: "C.",
-        profilePicture: null,
-      },
-  ]);
+  // A l'initialisation, récupérer tous les trips associées (avec >1 passengers) au User et afficher les discussions
+  useEffect(() => {
+    fetch(`${BACK_END_ADDRESS}/users/info/${user.token}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.result) {
+          let tripsTemp = [];
+          for (let trip of data.user.trips) {
+            if (trip.passengers.length > 1) {
+              tripsTemp.push(trip);
+            }
+          }
+          setTrips(tripsTemp);
+        }
+      });
+  }, []);
 
+  // Fonction pour déclencher le menu modal
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
-  let passengersName = [];
-
-  if (passengers.length === 2) {
-    passengersName.push(
-      <StyledRegularText
-        key={0}
-        title={passengers[1].firstName + " " + passengers[1].lastName}
-        style={{ fontSize: 18 }}
-      />
-    );
-  } else if (passengers.length === 3) {
-    passengersName.push(
-      <StyledRegularText
-        key={1}
-        title={passengers[1].firstName + " " + passengers[1].lastName}
-        style={{ fontSize: 18 }}
-      />,
-      <StyledRegularText
-        key={2}
-        title={", " + passengers[2].firstName + " " + passengers[2].lastName}
-        style={{ fontSize: 18 }}
-      />
-    );
-  } else {
-    passengersName.push(
-      <StyledRegularText
-        key={4}
-        title={passengers[1].firstName + " " + passengers[1].lastName}
-        style={{ fontSize: 18 }}
-      />,
-      <StyledRegularText
-        key={5}
-        title={
-          ", " +
-          passengers[2].firstName +
-          " " +
-          passengers[2].lastName +
-          " & others"
-        }
-        style={{ fontSize: 18 }}
-      />
-    );
-  }
+  let tripsDiscussions = trips.map((trip, i) => {
+    return (
+      <Discussion key={i} {...trip} discussions={discussions}/>
+    )
+  })
 
   return (
     <SafeAreaView style={styles.container}>
@@ -116,68 +81,9 @@ export default function ChatScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.discussionsContainer}>
-        <TouchableOpacity style={styles.discussion}>
-          {passengers.length < 3 ? (
-            <View style={styles.imageContainer}>
-              <Image
-                style={styles.oneImage}
-                source={
-                  passengers[1].profilePicture
-                    ? { uri: passengers[1].profilePicture }
-                    : require("../assets/profile-picture.jpg")
-                }
-                resizeMode="contain"
-              />
-            </View>
-          ) : (
-            <View style={styles.imageContainer}>
-              <Image
-                style={[styles.twoImage, styles.first]}
-                source={
-                  passengers[1].profilePicture
-                    ? { uri: passengers[1].profilePicture }
-                    : require("../assets/profile-picture.jpg")
-                }
-                resizeMode="contain"
-              />
-              <Image
-                style={[styles.twoImage, styles.second]}
-                source={
-                  passengers[2].profilePicture
-                    ? { uri: passengers[1].profilePicture }
-                    : require("../assets/profile-picture.jpg")
-                }
-                resizeMode="contain"
-              />
-            </View>
-          )}
-          <View style={styles.decriptionContainer}>
-            <View style={styles.descriptionHeader}>{passengersName}</View>
-            <View style={styles.descriptionBody}>
-              <StyledRegularText
-                key={0}
-                title={'"' + discussions[discussions.length - 1].text + '"'}
-                style={{ fontSize: 12, fontStyle: "italic" }}
-              />
-            </View>
-          </View>
-          <View style={styles.dateContainer}>
-            <StyledRegularText
-              key={0}
-              title={"Paris, France".slice(0, 10) + '...'}
-              style={{ fontSize: 16 }}
-            />
-            <StyledRegularText
-              key={1}
-              title={"26 Feb 22"}
-              style={{ fontSize: 14, fontStyle: "italic", marginTop: 5 }}
-            />
-          </View>
-        </TouchableOpacity>
-        <View style={styles.discussion}></View>
-        <View style={styles.discussion}></View>
-      </View>
+      <ScrollView style={styles.discussionsContainer}>
+        {tripsDiscussions}
+      </ScrollView>
 
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
@@ -257,7 +163,7 @@ const styles = StyleSheet.create({
     height: "100%",
     width: "27%",
     justifyContent: "flex-start",
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
     paddingTop: 15,
   },
 });
