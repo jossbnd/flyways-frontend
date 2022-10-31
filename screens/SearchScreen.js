@@ -109,6 +109,9 @@ export default function SearchScreen({ navigation }) {
 
   const [animatedViewVisible, setAnimatedViewVisible] = useState(false);
 
+  // Etat pour messages d'erreur
+  const [errorMessages, setErrorMessages] = useState(false);
+
   /* ********************************************************************** */
 
   /****** USE EFFECT ******/
@@ -137,23 +140,28 @@ export default function SearchScreen({ navigation }) {
 
   /****** FONCTIONS ******/
 
-  // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
-  const handleSearch = () => {
-    // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
-    const formattedDate = `${date.getDate()}/${
-      date.getMonth() + 1
-    }/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
+  // fonction appelée quand l'utilisateur appuie sur le bouton "Continue"
+  const handleContinue = () => {
+    // vérification si l'utilisateur a choisi une date et une heure avant de continuer
+    if (!departureTime || !departureDate) {
+      setErrorMessages(true);
+    } else {
+      // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
+      const formattedDate = `${date.getDate()}/${
+        date.getMonth() + 1
+      }/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
 
-    const informationToSend = {
-      ...searchData,
-      minDate: formattedDate,
-      maxDist: rangeDistance / 1000,
-      rangeTime: rangeTime,
-    };
+      const informationToSend = {
+        ...searchData,
+        minDate: formattedDate,
+        maxDist: rangeDistance / 1000,
+        rangeTime: rangeTime,
+      };
 
-    console.log("resultat de la recherche:", informationToSend);
+      console.log("resultat de la recherche:", informationToSend);
 
-    // navigation.navigate("SearchParameters", { searchData });
+      navigation.navigate("SearchParameters", { searchData });
+    }
   };
 
   // fonction qui permet de changer la vue de la caméra
@@ -173,7 +181,7 @@ export default function SearchScreen({ navigation }) {
   const fadeIn = () => {
     Animated.timing(fadeAnim, {
       toValue: 0,
-      duration: 1500,
+      duration: 1000,
       useNativeDriver: false,
     }).start();
   };
@@ -411,6 +419,16 @@ export default function SearchScreen({ navigation }) {
             },
           ]}
         >
+          <View style={styles.closeAnimatedView}>
+            <TouchableOpacity
+              style={styles.closeAnimatedButton}
+              onPress={() => {
+                setAnimatedViewVisible(false);
+              }}
+            >
+              <FontAwesome5 name="window-close" size={30} />
+            </TouchableOpacity>
+          </View>
           <View style={styles.datePicker}>
             <StyledRegularText title="Pick your date: " />
             <TouchableOpacity
@@ -418,6 +436,7 @@ export default function SearchScreen({ navigation }) {
               onPress={() => {
                 setOpenDate(true);
                 setDepartureDate(true);
+                setErrorMessages(false);
               }}
             >
               <FontAwesome5 name="calendar-alt" size={25} />
@@ -434,6 +453,15 @@ export default function SearchScreen({ navigation }) {
             </View>
           )}
 
+          {errorMessages && (
+            <View style={{ marginTop: -20 }}>
+              <StyledRegularText
+                title={"Please pick a departure date"}
+                style={{ color: "red" }}
+              />
+            </View>
+          )}
+
           <View style={styles.timePicker}>
             <StyledRegularText title="Pick your time: " />
             <TouchableOpacity
@@ -441,6 +469,7 @@ export default function SearchScreen({ navigation }) {
               onPress={() => {
                 setOpenTime(true);
                 setDepartureTime(true);
+                setErrorMessages(false);
               }}
             >
               <FontAwesome5 name="clock" size={25} />
@@ -451,6 +480,15 @@ export default function SearchScreen({ navigation }) {
             <View>
               <StyledRegularText
                 title={`Departure Time: ${time.getHours()}:${time.getMinutes()}`}
+              />
+            </View>
+          )}
+
+          {errorMessages && (
+            <View style={{ marginTop: -20 }}>
+              <StyledRegularText
+                title={"Please pick a departure time"}
+                style={{ color: "red" }}
               />
             </View>
           )}
@@ -490,7 +528,7 @@ export default function SearchScreen({ navigation }) {
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
-              handleSearch();
+              handleContinue();
             }}
           >
             <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
@@ -612,12 +650,15 @@ const styles = StyleSheet.create({
     height: "75%",
     width: "90%",
     position: "absolute",
-    padding: 20,
     backgroundColor: "rgba(255, 255, 255, 1)",
     borderWidth: 1,
     borderColor: "rgba(30, 168, 95, 1)",
     alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
+    paddingTop: 5,
+    paddingBottom: 40,
+    paddingLeft: 20,
+    paddingRight: 10,
   },
   fadingText: {
     fontSize: 28,
@@ -652,5 +693,11 @@ const styles = StyleSheet.create({
   distanceSlider: {
     alignItems: "center",
     justifyContent: "center",
+  },
+  closeAnimatedView: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
   },
 });
