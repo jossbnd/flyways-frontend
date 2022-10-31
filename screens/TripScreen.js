@@ -10,9 +10,11 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 import ProfilModal from "../components/ProfilModal";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { Marker } from "react-native-maps";
 
 //import redux
-import { useRef, useEffect, useState } from "react";
+import { useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 
@@ -25,30 +27,76 @@ import { GOOGLE_API_KEY } from "../environmentVar";
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
+import { useEffect } from "react";
 
 export default function TripScreen({ navigation }) {
   //ETATS
   const [modalVisible, setModalVisible] = useState(false);
   const [distance, setDistance] = useState();
+  const [time, setTime] = useState();
+  const [request, setRequest] = useState(true);
 
   const user = useSelector((state) => state.user.value);
+
+  let dist;
+  if (distance >= 1) {
+    // si la distance to destination est sup ou égale à 1 km, affiche la dist en km
+    dist = `${distance.toFixed(2)} km`;
+  } else {
+    // si la distance est en dessous de 1 km, affiche la dist en m
+    dist = `${Math.round(distance * 1000)} m`;
+  }
 
   // mapRef pour le map
   const mapRef = useRef(null);
 
-  //constantes de position pour aficher parcour test
+  //constants de position pour aficher parcour test
   const departureLocation = {
     latitude: 48.85871119999999,
     longitude: 2.3536298,
   };
+  // title de marker-depart
+  const departureAddress = "2 Rue du Temple";
+
   const arrivalLocation = {
     latitude: 48.8629287,
     longitude: 2.364912,
   };
 
+  // title de marker-arrival
+  const arrivalAddress = "110 Rue de Turenne";
+
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
+
+  //const placesLeft = props.capacity - props.passengersNumber; // calcul des places restantes sur le trip
+
+  const placesLeft = 2;
+
+  useEffect(() => {
+    if (placesLeft === 0) {
+      setRequest(false);
+    }
+  }, []);
+
+  // const passengers = trip.passengers.map((passenger, i) => {
+  //   return (
+  //     <View key={i} style={styles.passengerIcon}>
+  //       <TouchableOpacity style={styles.passenger}>
+  //         <Image
+  //           source={{ uri: passenger[i].profilePicture }}
+  //           style={styles.profilePicture}
+  //           resizeMode="contain"
+  //         />
+  //       </TouchableOpacity>
+  //       <StyledRegularText
+  //         title={passenger[i].firstName + " " + passenger[i].lastName}
+  //         style={styles.userText}
+  //       />
+  //     </View>
+  //   );
+  // });
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,10 +104,13 @@ export default function TripScreen({ navigation }) {
       <View style={styles.card}>
         <StyledRegularText title="Name of trip" style={styles.titlecard} />
         <StyledRegularText title="Destination:" style={styles.descripcard} />
+        <View style={styles.datecard}>
+          <Text style={styles.date}>Oct, 17 th 2022</Text>
+          <Text style={styles.date}>10:30 am</Text>
+        </View>
         <Text style={styles.descripcard}>2 rue du Temple 75004 ,Paris</Text>
-        <Text style={styles.distance}>
-          {distance * 1000} m from destination
-        </Text>
+        <Text style={styles.datatrip}>{dist} from destination</Text>
+        <Text style={styles.datatrip}>{Math.ceil(time)} min</Text>
       </View>
       <View style={styles.divtextmap}>
         <Text style={styles.titlemap}>Distance to your destination</Text>
@@ -98,6 +149,17 @@ export default function TripScreen({ navigation }) {
         // zoomEnabled={false}
         // scrollEnabled={false}
       >
+        <Marker title={departureAddress} coordinate={departureLocation}>
+          <View style={styles.marker}>
+            <FontAwesome5 name="walking" size={30} />
+          </View>
+        </Marker>
+        <Marker title={arrivalAddress} coordinate={arrivalLocation}>
+          <View style={styles.marker}>
+            <FontAwesome name="flag-checkered" size={30} />
+          </View>
+        </Marker>
+
         <MapViewDirections
           origin={departureLocation}
           destination={arrivalLocation}
@@ -109,6 +171,7 @@ export default function TripScreen({ navigation }) {
           timePrecision="now"
           onReady={(data) => {
             setDistance(data.distance);
+            setTime(data.duration);
             console.log(data.distance, data.duration);
           }}
         />
@@ -117,7 +180,7 @@ export default function TripScreen({ navigation }) {
         <View style={styles.passengerIcon}>
           <TouchableOpacity style={styles.passenger}>
             <Image
-              source={user.profilePicture}
+              source={{ uri: user.profilePicture }}
               style={styles.profilePicture}
               resizeMode="contain"
             />
@@ -127,18 +190,23 @@ export default function TripScreen({ navigation }) {
             style={styles.userText}
           />
         </View>
-        <View style={styles.buttonIcon}>
-          <TouchableOpacity style={styles.addButton}>
-            <FontAwesome
-              name="plus"
-              size={25}
-              style={{ color: "#FFFFFF", marginTop: 10 }}
-            />
-            <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Send request</Text>
-          </TouchableOpacity>
-
-          <Text style={{ fontSize: 12, color: "#000000" }}>2 seat avail.</Text>
-        </View>
+        {placesLeft && (
+          <View style={styles.buttonCard}>
+            <TouchableOpacity style={styles.requestButton}>
+              <FontAwesome
+                name="plus"
+                size={25}
+                style={{ color: "#FFFFFF", marginTop: 10 }}
+              />
+              <Text style={{ fontSize: 8, color: "#FFFFFF" }}>
+                Send request
+              </Text>
+            </TouchableOpacity>
+            <Text style={{ fontSize: 12, color: "#000000" }}>
+              {placesLeft} seat avail.
+            </Text>
+          </View>
+        )}
       </View>
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
@@ -172,14 +240,23 @@ const styles = StyleSheet.create({
     color: "#1B9756",
     fontSize: 20,
   },
+  datecard: {
+    flex: 0.2,
+    position: "absolute",
+    marginLeft: 220,
+    marginTop: 40,
+  },
+  date: {
+    color: "#1B9756",
+  },
   descripcard: {
     flex: 0.2,
     justifyContent: "flex-start",
     marginLeft: 40,
     color: "#1B9756",
   },
-  distance: {
-    flex: 0.2,
+  datatrip: {
+    flex: 0.1,
     justifyContent: "flex-start",
     marginLeft: 40,
     color: "#1EA85F",
@@ -219,23 +296,24 @@ const styles = StyleSheet.create({
     marginRight: 10,
     borderRadius: 35,
     borderColor: "#1EA85F",
-    borderWidth: 10,
+    borderWidth: 2,
   },
   profilePicture: {
-    height: 50,
-    width: 50,
+    height: 70,
+    width: 70,
+    borderRadius: 40,
     resizeMode: "contain",
   },
   userText: {
     color: "#000000",
   },
-  buttonIcon: {
+  buttonCard: {
     height: "100%",
     width: "20%",
     justifyContent: "center",
     alignItems: "center",
   },
-  addButton: {
+  requestButton: {
     height: 70,
     width: 70,
     borderRadius: 35,
