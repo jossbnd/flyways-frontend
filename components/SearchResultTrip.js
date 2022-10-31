@@ -39,7 +39,6 @@ export default function SearchResultTrip(props) {
   const placesLeft = props.capacity - props.passengersNumber; // calcul des places restantes sur le trip
   const leaderProfilePicture = props.passengers[0].profilePicture; // avatar du leader
   const dateJS = new Date(props.date); // créée une date javascript
-
   const dateFormatted = `${dateJS.getDate()}/${
     // formate la date pour qu'elle soit lisible
     dateJS.getMonth() + 1

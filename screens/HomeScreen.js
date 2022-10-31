@@ -143,9 +143,21 @@ export default function HomeScreen({ navigation }) {
     return <UpcomingTrips key={i} {...trip} />;
   });
 
+  const handleTripScreen = () => {
+    setTest(!test);
+    navigation.navigate("Trip");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} navigation={navigation} />
+      
+      {/* TODO: REMOVE THIS WHEN DONE */}
+      <TouchableOpacity onPress={() => navigation.navigate("CreateTrip")}>
+        <Text>create trip</Text>
+      </TouchableOpacity>
+    {/* REMOVE */}
+
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={pickImage}>
           <Image
@@ -184,10 +196,7 @@ export default function HomeScreen({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.sarchButton}
-          onPress={() => {
-            setTest(!test);
-            navigation.navigate("Search");
-          }}
+          onPress={() => handleTripScreen()}
         >
           <StyledRegularText
             title="Search for a Trip"

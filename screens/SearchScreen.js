@@ -306,6 +306,7 @@ export default function SearchScreen({ navigation }) {
               ...position,
               description: data.structured_formatting.secondary_text,
             });
+            console.log("coordones position depart", position);
             moveTo(position);
           }}
           query={{
@@ -344,6 +345,7 @@ export default function SearchScreen({ navigation }) {
               ...position,
               description: data.structured_formatting.secondary_text,
             });
+            console.log("coordones position arrival", position);
             moveTo(position);
             handleContinueButton();
 
