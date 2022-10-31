@@ -143,6 +143,11 @@ export default function HomeScreen({ navigation }) {
     return <UpcomingTrips key={i} {...trip} />;
   });
 
+  const handleTripScreen = () => {
+    setTest(!test);
+    navigation.navigate("Trip");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} navigation={navigation} />
@@ -191,10 +196,7 @@ export default function HomeScreen({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.sarchButton}
-          onPress={() => {
-            setTest(!test);
-            navigation.navigate("Search");
-          }}
+          onPress={() => handleTripScreen()}
         >
           <StyledRegularText
             title="Search for a Trip"

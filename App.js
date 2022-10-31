@@ -16,13 +16,14 @@ import PhoneVerification from "./screens/PhoneVerification";
 import HomeScreen from "./screens/HomeScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import SearchScreen from "./screens/SearchScreen";
+import TripScreen from "./screens/TripScreen";
 import SearchParametersScreen from "./screens/SearchParametersScreen";
 import CreateTripScreen from "./screens/CreateTrip";
 import SettingsScreen from "./screens/SettingsScreen";
 import PersonalInformationScreen from "./screens/PersonalInformationScreen";
 import SecuritySettingsScreen from "./screens/SecuritySettingsScreen";
 import EditDateOfBirthScreen from "./screens/EditDateOfBirth";
-import EditGenderScreen from "./screens/EditGender"
+import EditGenderScreen from "./screens/EditGender";
 import EditLanguagesScreen from "./screens/EditLanguages";
 
 // Import icons
@@ -70,13 +71,12 @@ const TabNavigator = () => {
 
           if (route.name === "My Profile") {
             iconName = "luggage";
-            
           } else if (route.name === "Search") {
             iconName = "search";
           } else if (route.name === "Notification") {
             iconName = "notifications";
-          } else if (route.name === 'Chat') {
-            return <View style={{display: 'none' }}></View>
+          } else if (route.name === "Chat") {
+            return <View style={{ display: "none" }}></View>;
           }
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
@@ -85,17 +85,18 @@ const TabNavigator = () => {
         tabBarStyle: { paddingBottom: 10, paddingTop: 5, height: 55 },
         headerShown: false,
         tabBarButton: (props) => {
-          if (route.name === "Chat" || route.name === 'Trip') {
+          if (route.name === "Chat" || route.name === "Trip") {
             return null;
-        } else {
-          return <Pressable {...props}></Pressable>
-        }},
-
+          } else {
+            return <Pressable {...props}></Pressable>;
+          }
+        },
       })}
     >
       <Tab.Screen name="My Profile" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
+      <Tab.Screen name="Trip" component={TripScreen} />
       <Tab.Screen name="Chat" component={ChatScreen} />
     </Tab.Navigator>
   );
@@ -112,17 +113,32 @@ export default function App() {
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Phone" component={PhoneScreen} />
-            <Stack.Screen name="PhoneVerification" component={PhoneVerification} />
+            <Stack.Screen
+              name="PhoneVerification"
+              component={PhoneVerification}
+            />
             <Stack.Screen name="Search" component={SearchScreen} />
             <Stack.Screen name="SearchResult" component={SearchResultScreen} />
             <Stack.Screen name="CreateTrip" component={CreateTripScreen} />
             <Stack.Screen name="SearchParameters" component={SearchParametersScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
-            <Stack.Screen name="PersonalInformation" component={PersonalInformationScreen} />
-            <Stack.Screen name="SecuritySettings" component={SecuritySettingsScreen} />
-            <Stack.Screen name="EditDateOfBirth" component={EditDateOfBirthScreen} />
+            <Stack.Screen
+              name="PersonalInformation"
+              component={PersonalInformationScreen}
+            />
+            <Stack.Screen
+              name="SecuritySettings"
+              component={SecuritySettingsScreen}
+            />
+            <Stack.Screen
+              name="EditDateOfBirth"
+              component={EditDateOfBirthScreen}
+            />
             <Stack.Screen name="EditGender" component={EditGenderScreen} />
-            <Stack.Screen name="EditLanguages" component={EditLanguagesScreen} />
+            <Stack.Screen
+              name="EditLanguages"
+              component={EditLanguagesScreen}
+            />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
