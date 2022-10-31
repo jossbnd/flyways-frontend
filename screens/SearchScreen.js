@@ -144,15 +144,16 @@ export default function SearchScreen({ navigation }) {
       date.getMonth() + 1
     }/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
 
-    const informationToSend = {
+    const searchDataComplete = {
       ...searchData,
       minDate: formattedDate,
       maxDist: rangeDistance / 1000,
       rangeTime: rangeTime,
     };
 
-    console.log("resultat de la recherche:", informationToSend);
+    // console.log(searchDataComplete);
 
+    navigation.navigate("SearchResult", { searchDataComplete })
     // navigation.navigate("SearchParameters", { searchData });
   };
 
@@ -218,7 +219,6 @@ export default function SearchScreen({ navigation }) {
       setDate(new Date(el.nativeEvent.timestamp));
       setOpenDate(false);
       // setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
-      // console.log();
       return;
     } else {
       setOpenDate(false);
@@ -232,7 +232,6 @@ export default function SearchScreen({ navigation }) {
       setTime(new Date(el.nativeEvent.timestamp));
       setOpenTime(false);
       // setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
-      // console.log();
       return;
     } else {
       setOpenTime(false);

@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 
 // Import des fonts
@@ -21,14 +21,14 @@ import StyledBoldText from "../components/StyledBoldText";
 import SearchResultTrip from "../components/SearchResultTrip";
 import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
 
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+// const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
+const BACK_END_ADDRESS = "http://192.168.10.172:3000";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function SearchResultScreen({ navigation, route: { params } }) {
   const user = useSelector((state) => state.user.value); // pour utiliser le token de l'utilisateur
-
   const [searchResult, setSearchResult] = useState(null);
 
   const handleCreateNewTrip = () => {
@@ -37,7 +37,6 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
 
   const handleFetch = () => {
     console.log(params.searchDataComplete);
-
     fetch(`${BACK_END_ADDRESS}/trips/search`, {
       method: "PUT",
       headers: { "content-type": "application/json" },
@@ -45,12 +44,17 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
     })
       .then((res) => res.json())
       .then((foundTrips) => {
+        // NOTE: Pass this to the next screen
+        // console.log(foundTrips);
         if (foundTrips.result) {
           // si des trips ont été trouvés, affiche les trips trouvés
           setSearchResult(
             foundTrips.sortedResult.map((trip, i) => {
               return (
-                <SearchResultTrip key={i} {...trip} /> // map les données du trip
+                <SearchResultTrip
+                  key={i}
+                  {...trip}
+                /> // map les données du trip
               );
             })
           );
@@ -76,13 +80,15 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
       });
   };
 
+  // useEffect qui charge les résultats automatiquement au chargement de la page
+  useEffect(() => {
+    handleFetch();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container}>
       <TopBar></TopBar>
-      <ScrollView style={styles.resultContainer}>
-        {searchResult}
-        <Button title="FETCH" onPress={() => handleFetch()}></Button>
-      </ScrollView>
+      <ScrollView style={styles.resultContainer}>{searchResult}</ScrollView>
     </SafeAreaView>
   );
 }

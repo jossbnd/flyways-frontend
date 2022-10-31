@@ -29,7 +29,7 @@ import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 import { useEffect } from "react";
 
-export default function TripScreen({ navigation }) {
+export default function TripScreen({ navigation, route: { params } }) {
   //ETATS
   const [modalVisible, setModalVisible] = useState(false);
   const [distance, setDistance] = useState();
@@ -52,13 +52,15 @@ export default function TripScreen({ navigation }) {
 
   //constants de position pour aficher parcour test
   const departureLocation = {
-    latitude: 48.85871119999999,
-    longitude: 2.3536298,
+    // où le taxi s'arrête
+    latitude: params.tripData.arrivalCoords.latitude,
+    longitude: params.tripData.arrivalCoords.longitude,
   };
   // title de marker-depart
   const departureAddress = "2 Rue du Temple";
 
   const arrivalLocation = {
+    // où la personne veut arriver
     latitude: 48.8629287,
     longitude: 2.364912,
   };
@@ -80,35 +82,36 @@ export default function TripScreen({ navigation }) {
     }
   }, []);
 
-  // const passengers = trip.passengers.map((passenger, i) => {
-  //   return (
-  //     <View key={i} style={styles.passengerIcon}>
-  //       <TouchableOpacity style={styles.passenger}>
-  //         <Image
-  //           source={{ uri: passenger[i].profilePicture }}
-  //           style={styles.profilePicture}
-  //           resizeMode="contain"
-  //         />
-  //       </TouchableOpacity>
-  //       <StyledRegularText
-  //         title={passenger[i].firstName + " " + passenger[i].lastName}
-  //         style={styles.userText}
-  //       />
-  //     </View>
-  //   );
-  // });
+  const passengers = params.tripData.passengers.map((passenger, i) => {
+    return (
+      <View key={i} style={styles.passengerIcon}>
+        <TouchableOpacity style={styles.passenger}>
+          <Image
+            // source={{ uri: passenger[i].profilePicture }}
+            source={{ uri: passenger.profilePicture }}
+            style={styles.profilePicture}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
+        <StyledRegularText
+          // title={passenger[i].firstName + " " + passenger[i].lastName}
+          style={styles.userText}
+        />
+      </View>
+    );
+  });
 
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
       <View style={styles.card}>
-        <StyledRegularText title="Name of trip" style={styles.titlecard} />
-        <StyledRegularText title="Destination:" style={styles.descripcard} />
+        <StyledRegularText title="Destination" style={styles.titlecard} />
+        {/* <StyledRegularText title={params.tripData.arrivalCoords.description} style={styles.descripcard} /> */}
         <View style={styles.datecard}>
-          <Text style={styles.date}>Oct, 17 th 2022</Text>
+          <Text style={styles.date}>{params.tripData.date}</Text>
           <Text style={styles.date}>10:30 am</Text>
         </View>
-        <Text style={styles.descripcard}>2 rue du Temple 75004 ,Paris</Text>
+        {/* <Text style={styles.descripcard}>{params.tripData.arrivalCoords.description}</Text> */}
         <Text style={styles.datatrip}>{dist} from destination</Text>
         <Text style={styles.datatrip}>{Math.ceil(time)} min</Text>
       </View>
@@ -177,36 +180,26 @@ export default function TripScreen({ navigation }) {
         />
       </MapView>
       <View style={styles.passengersBar}>
-        <View style={styles.passengerIcon}>
-          <TouchableOpacity style={styles.passenger}>
-            <Image
-              source={{ uri: user.profilePicture }}
-              style={styles.profilePicture}
-              resizeMode="contain"
+        {passengers}
+
+        <View style={styles.buttonCard}>
+          <TouchableOpacity
+            style={styles.requestButton}
+            onPress={() => {
+              console.log(params.tripData.date);
+            }}
+          >
+            <FontAwesome
+              name="plus"
+              size={25}
+              style={{ color: "#FFFFFF", marginTop: 10 }}
             />
+            <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Send request</Text>
           </TouchableOpacity>
-          <StyledRegularText
-            title={user.firstName + " " + user.lastName}
-            style={styles.userText}
-          />
+          <Text style={{ fontSize: 12, color: "#000000" }}>
+            {placesLeft} seat avail.
+          </Text>
         </View>
-        {placesLeft && (
-          <View style={styles.buttonCard}>
-            <TouchableOpacity style={styles.requestButton}>
-              <FontAwesome
-                name="plus"
-                size={25}
-                style={{ color: "#FFFFFF", marginTop: 10 }}
-              />
-              <Text style={{ fontSize: 8, color: "#FFFFFF" }}>
-                Send request
-              </Text>
-            </TouchableOpacity>
-            <Text style={{ fontSize: 12, color: "#000000" }}>
-              {placesLeft} seat avail.
-            </Text>
-          </View>
-        )}
       </View>
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
