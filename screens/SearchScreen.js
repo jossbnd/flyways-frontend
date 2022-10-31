@@ -58,7 +58,8 @@ const INITIAL_POSITION = {
 };
 
 // adresse vercel back end
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+// const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
 
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
@@ -99,53 +100,12 @@ export default function SearchScreen({ navigation }) {
   const [continueButton, setContinueButton] = useState(false);
 
   // Etats pour date et time picker
-  // const [date, setDate] = useState(new Date());
-  // const [openDate, setOpenDate] = useState(false);
-  // const [openTime, setOpenTime] = useState(false);
-  // const [departureDate, setDepartureDate] = useState(null);
-  // const [departureTime, setDepartureTime] = useState(null);
-
-  /* **************************************************** */
-  // etats et fonction du date and time picker
   const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState("date"); // permet de changer entre le mode "date" et "time"
-  const [show, setShow] = useState(false); // montre ou cache le date/time picker
-  const [selectedDateJS, setSelectedDateJS] = useState(null);
-  const [formattedDate, setFormattedDate] = useState(null); // date formatée en string exploitable par la database
-  const [formattedTime, setFormattedTime] = useState(null); // time formaté en string exploitable par la database
-  const [formattedTimeAndDate, setFormattedTimeAndDate] = useState(null);
-  const onChange = (event, selectedDate) => {
-    setShow(Platform.OS === "ios");
-    setDate(selectedDate);
-
-    // date et heure créés en utilisant le date picker
-    setSelectedDateJS(new Date(selectedDate));
-
-    // formate l'heure en string pour l'afficher sur la page ("20/01/2000 09:50")
-    setFormattedDate(
-      `${selectedDateJS.getDate()}/${
-        selectedDateJS.getMonth() + 1
-      }/${selectedDateJS.getFullYear()}`
-    );
-    setFormattedTime(
-      `${selectedDateJS.getHours()}:${selectedDateJS.getMinutes()}`
-    );
-
-    // formate l'heure en string pour l'afficher sur la page ("20/01/2000 09:50")
-    setFormattedTimeAndDate(
-      `${selectedDateJS.getDate()}/${
-        selectedDateJS.getMonth() + 1
-      }/${selectedDateJS.getFullYear()} ${selectedDateJS.getHours()}:${selectedDateJS.getMinutes()}`
-    );
-  };
-
-  const showMode = (currentMode) => {
-    // permet de set le mode du date/time picker à afficher (date ou time)
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  /* **************************************************** */
+  const [time, setTime] = useState(new Date());
+  const [openDate, setOpenDate] = useState(false);
+  const [openTime, setOpenTime] = useState(false);
+  const [departureDate, setDepartureDate] = useState(null);
+  const [departureTime, setDepartureTime] = useState(null);
 
   const [animatedViewVisible, setAnimatedViewVisible] = useState(false);
 
@@ -180,16 +140,18 @@ export default function SearchScreen({ navigation }) {
   // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
   const handleSearch = () => {
     // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
-    setSearchData((searchData) => ({
-      ...searchData,
-      maxDist: rangeDistance / 1000,
-      minDate: formattedTimeAndDate,
-    }));
+    const formattedDate = `${date.getDate()}/${
+      date.getMonth() + 1
+    }/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
 
-    console.log("resultat de la recherche:", searchData);
-    console.log(formattedTimeAndDate);
-    // console.log(rangeDistance);
-    // console.log(rangeTime);
+    const informationToSend = {
+      ...searchData,
+      minDate: formattedDate,
+      maxDist: rangeDistance / 1000,
+      rangeTime: rangeTime,
+    };
+
+    console.log("resultat de la recherche:", informationToSend);
 
     // navigation.navigate("SearchParameters", { searchData });
   };
@@ -251,32 +213,32 @@ export default function SearchScreen({ navigation }) {
   };
 
   // Fonction pour le Date Picker
-  /*   const handleDatePicker = (el) => {
+  const handleDatePicker = (el) => {
     if (el.type == "set") {
       setDate(new Date(el.nativeEvent.timestamp));
       setOpenDate(false);
-      setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
-      console.log();
+      // setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
+      // console.log();
       return;
     } else {
       setOpenDate(false);
       return;
     }
-  }; */
+  };
 
   // Fonction pour le Date Picker
-  /*   const handleTimePicker = (el) => {
+  const handleTimePicker = (el) => {
     if (el.type == "set") {
-      setDate(new Date(el.nativeEvent.timestamp));
+      setTime(new Date(el.nativeEvent.timestamp));
       setOpenTime(false);
-      setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
-      console.log();
+      // setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
+      // console.log();
       return;
     } else {
       setOpenTime(false);
       return;
     }
-  }; */
+  };
 
   /* ********************************************************************** */
 
@@ -352,7 +314,6 @@ export default function SearchScreen({ navigation }) {
               ...position,
               description: data.structured_formatting.secondary_text,
             });
-            // console.log("coordones position depart", position);
             moveTo(position);
           }}
           query={{
@@ -391,7 +352,6 @@ export default function SearchScreen({ navigation }) {
               ...position,
               description: data.structured_formatting.secondary_text,
             });
-            // console.log("coordones position arrival", position);
             moveTo(position);
             handleContinueButton();
 
@@ -451,77 +411,62 @@ export default function SearchScreen({ navigation }) {
             },
           ]}
         >
-          {/*           <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Departure Date"
-              onChangeText={(value) => setDepartureDate(value)}
-              value={departureDate}
-            />
-            <TouchableOpacity onPress={() => setOpenDate(true)}>
-              <FontAwesome5 name="calendar-alt" size={25} />
-            </TouchableOpacity>
-          </View>
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Departure Time"
-              onChangeText={(value) => setDepartureTime(value)}
-              value={departureTime}
-            />
-            <TouchableOpacity onPress={() => setOpenTime(true)}>
-              <FontAwesome5 name="clock" size={25} />
-            </TouchableOpacity>
-          </View> */}
-
           <View style={styles.datePicker}>
             <StyledRegularText title="Pick your date: " />
             <TouchableOpacity
-              style={styles.button}
-              onPress={() => showMode("date")}
+              style={styles.dateButton}
+              onPress={() => {
+                setOpenDate(true);
+                setDepartureDate(true);
+              }}
             >
               <FontAwesome5 name="calendar-alt" size={25} />
             </TouchableOpacity>
           </View>
 
-          {formattedDate && (
+          {departureDate && (
             <View>
-              <Text>Departure : {formattedDate}</Text>
+              <StyledRegularText
+                title={`Departure Date: ${date.getDate()}/${
+                  date.getMonth() + 1
+                }/${date.getFullYear()}`}
+              />
             </View>
           )}
 
           <View style={styles.timePicker}>
             <StyledRegularText title="Pick your time: " />
             <TouchableOpacity
-              style={styles.button}
-              onPress={() => showMode("time")}
+              style={styles.timeButton}
+              onPress={() => {
+                setOpenTime(true);
+                setDepartureTime(true);
+              }}
             >
               <FontAwesome5 name="clock" size={25} />
             </TouchableOpacity>
           </View>
 
-          {formattedTime && (
+          {departureTime && (
             <View>
-              <Text>Time : {formattedTime}</Text>
+              <StyledRegularText
+                title={`Departure Time: ${time.getHours()}:${time.getMinutes()}`}
+              />
             </View>
           )}
 
-          {show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode={mode}
-              is24Hour={true}
-              display="default"
-              onChange={onChange}
-            />
-          )}
           <View style={styles.timeSlider}>
             <StyledRegularText title={`Max Waiting Time: ${rangeTime} mn`} />
             <Slider
               style={{ width: 200, height: 40 }}
               step={5}
-              onValueChange={(value) => setRangeTime(value)}
+              onValueChange={(value) => {
+                setRangeTime(value);
+                setSearchData((searchData) => ({
+                  ...searchData,
+                  rangeTime: value,
+                }));
+              }}
               thumbTintColor="rgba(30, 168, 95, 1)"
               minimumValue={0}
               maximumValue={60}
@@ -534,7 +479,9 @@ export default function SearchScreen({ navigation }) {
             <Slider
               style={{ width: 200, height: 40 }}
               step={100}
-              onValueChange={(value) => setRangeDistance(value)}
+              onValueChange={(value) => {
+                setRangeDistance(value);
+              }}
               thumbTintColor="rgba(30, 168, 95, 1)"
               minimumValue={0}
               maximumValue={1000}
@@ -544,32 +491,28 @@ export default function SearchScreen({ navigation }) {
             style={styles.button}
             onPress={() => {
               handleSearch();
-              // console.log("max time", rangeTime);
-              // console.log("max distance", rangeDistance);
             }}
           >
             <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
           </TouchableOpacity>
         </Animated.View>
       )}
-      {/*       {openDate && (
+      {openDate && (
         <DateTimePicker
           value={date}
           onChange={handleDatePicker}
-          // onChange={console.log}
           onTouchCancel={() => setOpenDate(false)}
           mode="date"
         />
       )}
       {openTime && (
         <DateTimePicker
-          value={date}
+          value={time}
           onChange={handleTimePicker}
-          // onChange={console.log}
           onTouchCancel={() => setOpenTime(false)}
           mode="time"
         />
-      )} */}
+      )}
     </SafeAreaView>
   );
 }
@@ -647,7 +590,22 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
   },
-
+  timeButton: {
+    width: "20%",
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 1)",
+  },
+  dateButton: {
+    width: "20%",
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 1)",
+  },
   fadingContainer: {
     zIndex: 1,
     borderRadius: 10,
