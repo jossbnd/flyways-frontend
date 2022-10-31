@@ -153,12 +153,12 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
-      
+
       {/* TODO: REMOVE THIS WHEN DONE */}
       <TouchableOpacity onPress={() => navigation.navigate("CreateTrip")}>
         <Text>create trip</Text>
       </TouchableOpacity>
-    {/* REMOVE */}
+      {/* REMOVE */}
 
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={pickImage}>
@@ -206,11 +206,11 @@ export default function HomeScreen({ navigation }) {
           />
           <FontAwesome5 name="search" size={38} color="#ffffff" />
         </TouchableOpacity>
+        <StyledRegularText
+          title="Upcoming Trips"
+          style={styles.upcomingTripsTitle}
+        />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <StyledRegularText
-            title="Upcoming Trips"
-            style={styles.upcomingTripsTitle}
-          />
           <View style={styles.upcomingTripsContainer}>{upcomingTripsData}</View>
         </ScrollView>
       </View>
@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
   upcomingTripsContainer: {
     width: "90%",
     marginTop: 10,
+    marginBottom: 150,
   },
   scrollContainer: {
     width: "100%",
