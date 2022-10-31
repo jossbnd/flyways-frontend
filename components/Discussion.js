@@ -8,7 +8,7 @@ import StyledRegularText from "../components/StyledBoldText";
 import { useNavigation } from "@react-navigation/native";
 
 export default function Discussion(props) {
-  const { passengers, discussions } = props;
+  const { passengers, messages } = props;
 
   // variable qui stocke la methode useNavigation
   const navigation = useNavigation();
@@ -97,7 +97,7 @@ export default function Discussion(props) {
         <View style={styles.descriptionBody}>
           <StyledRegularText
             key={0}
-            title={'"' + discussions[discussions.length - 1].text + '"'}
+            title={'"' + messages[messages.length - 1].text + '"'}
             style={{ fontSize: 12, fontStyle: "italic" }}
           />
         </View>
