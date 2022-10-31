@@ -22,7 +22,6 @@ import SearchResultTrip from "../components/SearchResultTrip";
 import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
 
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-const BACK_END_ADDRESS_LOCAL = "http://192.168.1.64:3000";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
