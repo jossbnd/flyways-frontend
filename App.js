@@ -1,5 +1,5 @@
 // Composants
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 // Navigation
 import { NavigationContainer } from "@react-navigation/native";
@@ -16,6 +16,7 @@ import PhoneVerification from "./screens/PhoneVerification";
 import HomeScreen from "./screens/HomeScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import SearchScreen from "./screens/SearchScreen";
+import TripScreen from "./screens/TripScreen";
 
 // Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -72,11 +73,19 @@ const TabNavigator = () => {
         tabBarInactiveTintColor: "#335561",
         tabBarStyle: { paddingBottom: 10, paddingTop: 5, height: 55 },
         headerShown: false,
+        tabBarButton: (props) => {
+          if (route.name === "Trip") {
+            return null;
+          } else {
+            return <Pressable {...props}></Pressable>;
+          }
+        },
       })}
     >
       <Tab.Screen name="My Trips" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
+      <Tab.Screen name="Trip" component={TripScreen} />
     </Tab.Navigator>
   );
 };

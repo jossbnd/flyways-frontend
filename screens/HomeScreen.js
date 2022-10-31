@@ -85,7 +85,7 @@ export default function HomeScreen({ navigation }) {
 
     if (!result.cancelled) {
       setProfilePicture(result.uri);
-      dispatch(updateProfilePicture(result.uri))
+      dispatch(updateProfilePicture(result.uri));
 
       const file = {
         uri: result.uri,
@@ -124,6 +124,11 @@ export default function HomeScreen({ navigation }) {
     return <UpcomingTrips key={i} {...trip} />;
   });
 
+  const handleTripScreen = () => {
+    setTest(!test);
+    navigation.navigate("Trip");
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
@@ -156,7 +161,7 @@ export default function HomeScreen({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.sarchButton}
-          onPress={() => setTest(!test)}
+          onPress={() => handleTripScreen()}
         >
           <StyledRegularText
             title="Search for a Trip"
