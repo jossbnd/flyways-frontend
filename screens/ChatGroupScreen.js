@@ -21,7 +21,7 @@ import { useSelector } from "react-redux";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import TripScreen from "./TripScreen";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
@@ -31,112 +31,57 @@ export default function ChatScreen({ navigation, route: { params } }) {
 
   // Etats
   const [modalVisible, setModalVisible] = useState(false);
+  const [message, setMessage] = useState(null);
 
   // fonction pour déclencher le menu modal
   const toggleModal = () => {
     setModalVisible(!modalVisible);
   };
 
+  const passengersData = trip.passengers.map((passenger, i) => {
+    return (
+      <View key={i} style={styles.imageContainer}>
+        <TouchableOpacity>
+          <Image
+            style={styles.userImage}
+            source={
+              passenger.profilePicture
+                ? { uri: passenger.profilePicture }
+                : require("../assets/profile-picture.jpg")
+            }
+            resizeMode="contain"
+          />
+          <StyledRegularText
+            title={passenger.firstName + " " + passenger.lastName[0] + "."}
+          />
+        </TouchableOpacity>
+      </View>
+    );
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
 
-    <View style={styles.header}>
-
-
-      <ScrollView contentContainerStyle={styles.header} horizontal={true} showsHorizontalScrollIndicator={false}>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.userImage}
-            source={require("../assets/profile-picture.jpg")}
-            resizeMode="contain"
-          />
-          <StyledRegularText
-            title={
-              trip.passengers[0].firstName +
-              " " +
-              trip.passengers[0].lastName[0] +
-              "."
-            }
-          />
-        </View>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.userImage}
-            source={require("../assets/profile-picture.jpg")}
-            resizeMode="contain"
-          />
-          <StyledRegularText
-            title={
-              trip.passengers[0].firstName +
-              " " +
-              trip.passengers[0].lastName[0] +
-              "."
-            }
-          />
-        </View>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.userImage}
-            source={require("../assets/profile-picture.jpg")}
-            resizeMode="contain"
-          />
-          <StyledRegularText
-            title={
-              trip.passengers[0].firstName +
-              " " +
-              trip.passengers[0].lastName[0] +
-              "."
-            }
-          />
-        </View>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.userImage}
-            source={require("../assets/profile-picture.jpg")}
-            resizeMode="contain"
-          />
-          <StyledRegularText
-            title={
-              trip.passengers[0].firstName +
-              " " +
-              trip.passengers[0].lastName[0] +
-              "."
-            }
-          />
-        </View>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.userImage}
-            source={require("../assets/profile-picture.jpg")}
-            resizeMode="contain"
-          />
-          <StyledRegularText
-            title={
-              trip.passengers[0].firstName +
-              " " +
-              trip.passengers[0].lastName[0] +
-              "."
-            }
-          />
-        </View>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.userImage}
-            source={require("../assets/profile-picture.jpg")}
-            resizeMode="contain"
-          />
-          <StyledRegularText
-            title={
-              trip.passengers[0].firstName +
-              " " +
-              trip.passengers[0].lastName[0] +
-              "."
-            }
-          />
-        </View>
-      </ScrollView>
-    </View>
+      <View style={styles.header}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {passengersData}
+        </ScrollView>
+      </View>
+      <View style={styles.discussionContainer}></View>
+      <View style={styles.inputContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Send a message..."
+          onChangeText={(value) => setMessage(value)}
+          value={message}
+        />
+        <TouchableOpacity
+          style={styles.sendButton}
+        >
+          <MaterialIcons name="send" color="#ffffff" size={24} />
+        </TouchableOpacity>
+      </View>
 
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
@@ -151,10 +96,7 @@ const styles = StyleSheet.create({
   header: {
     height: 100,
     borderBottomWidth: 0.5,
-    borderBottomColor: 'black',
-  },
-  scroll: {
-
+    borderBottomColor: "black",
   },
   imageContainer: {
     height: "100%",
@@ -167,5 +109,35 @@ const styles = StyleSheet.create({
     width: 64,
     borderRadius: 50,
     marginBottom: 5,
+  },
+  discussionContainer: {
+    width: "100%",
+    borderWidth: 1,
+    flex: 1,
+  },
+  inputContainer: {
+    width: "100%",
+    height: 100,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: 'center'
+  },
+  input: {
+    width: "75%",
+    height: 57,
+    borderWidth: 1,
+    borderColor: "#1EA85F",
+    borderRadius: 20,
+    marginRight: 15,
+    backgroundColor: '#ffffff',
+    paddingHorizontal: 10
+
+  },
+  sendButton: {
+    borderRadius: 50,
+    padding: 16,
+    backgroundColor: "#1EA85F",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
