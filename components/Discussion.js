@@ -4,8 +4,14 @@ import { StyleSheet, View, TouchableOpacity, Image } from "react-native";
 // Import des Fonts
 import StyledRegularText from "../components/StyledBoldText";
 
+// Import hook Navigation
+import { useNavigation } from "@react-navigation/native";
+
 export default function Discussion(props) {
   const { passengers, discussions } = props;
+
+  // variable qui stocke la methode useNavigation
+  const navigation = useNavigation();
 
   let passengersName = [];
 
@@ -14,7 +20,7 @@ export default function Discussion(props) {
     passengersName.push(
       <StyledRegularText
         key={0}
-        title={passengers[1].firstName + " " + passengers[1].lastName[0] + '.'}
+        title={passengers[1].firstName + " " + passengers[1].lastName[0] + "."}
         style={{ fontSize: 18 }}
       />
     );
@@ -22,12 +28,14 @@ export default function Discussion(props) {
     passengersName.push(
       <StyledRegularText
         key={1}
-        title={passengers[1].firstName + " " + passengers[1].lastName[0] + '.'}
+        title={passengers[1].firstName + " " + passengers[1].lastName[0] + "."}
         style={{ fontSize: 18 }}
       />,
       <StyledRegularText
         key={2}
-        title={", " + passengers[2].firstName + " " + passengers[2].lastName[0] + '.'}
+        title={
+          ", " + passengers[2].firstName + " " + passengers[2].lastName[0] + "."
+        }
         style={{ fontSize: 18 }}
       />
     );
@@ -35,7 +43,7 @@ export default function Discussion(props) {
     passengersName.push(
       <StyledRegularText
         key={4}
-        title={passengers[1].firstName + " " + passengers[1].lastName[0] + '.'}
+        title={passengers[1].firstName + " " + passengers[1].lastName[0] + "."}
         style={{ fontSize: 18 }}
       />,
       <StyledRegularText
@@ -44,7 +52,8 @@ export default function Discussion(props) {
           ", " +
           passengers[2].firstName +
           " " +
-          passengers[2].lastName[0] + '.' +
+          passengers[2].lastName[0] +
+          "." +
           " & others"
         }
         style={{ fontSize: 18 }}
@@ -53,7 +62,7 @@ export default function Discussion(props) {
   }
 
   return (
-    <TouchableOpacity style={styles.discussion}>
+    <TouchableOpacity style={styles.discussion} onPress={() => navigation.navigate("ChatGroup", { props })}>
       {passengers.length < 3 ? (
         <View style={styles.imageContainer}>
           <Image

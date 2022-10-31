@@ -25,6 +25,10 @@ import SecuritySettingsScreen from "./screens/SecuritySettingsScreen";
 import EditDateOfBirthScreen from "./screens/EditDateOfBirth";
 import EditGenderScreen from "./screens/EditGender";
 import EditLanguagesScreen from "./screens/EditLanguages";
+import SearchResultScreen from "./screens/SearchResultScreen";
+import ChatScreen from "./screens/ChatScreen";
+import ChatGroupScreen from "./screens/ChatGroupScreen";
+
 
 // Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -40,8 +44,7 @@ import user from "./reducers/user";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import SearchResultScreen from "./screens/SearchResultScreen";
-import ChatScreen from "./screens/ChatScreen";
+
 
 const reducers = combineReducers({ user });
 const persistConfig = {
@@ -85,7 +88,7 @@ const TabNavigator = () => {
         tabBarStyle: { paddingBottom: 10, paddingTop: 5, height: 55 },
         headerShown: false,
         tabBarButton: (props) => {
-          if (route.name === "Chat" || route.name === "Trip") {
+          if (route.name === "Chat" || route.name === "ChatGroup" || route.name === "Trip") {
             return null;
           } else {
             return <Pressable {...props}></Pressable>;
@@ -98,6 +101,7 @@ const TabNavigator = () => {
       <Tab.Screen name="Notification" component={NotificationScreen} />
       <Tab.Screen name="Trip" component={TripScreen} />
       <Tab.Screen name="Chat" component={ChatScreen} />
+      <Tab.Screen name="ChatGroup" component={ChatGroupScreen} />
     </Tab.Navigator>
   );
 };
