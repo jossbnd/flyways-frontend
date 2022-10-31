@@ -34,6 +34,10 @@ export default function ProfilModal(props) {
     navigation.navigate("Login");
   };
 
+  const goToSettings = () => {
+    navigation.navigate("Settings");
+  };
+
   return (
     <Modal
       transparent={true}
@@ -69,7 +73,10 @@ export default function ProfilModal(props) {
             </View>
           </View>
           <View style={styles.bottomLeftModal}>
-            <TouchableOpacity style={styles.bottomButton}>
+            <TouchableOpacity
+              style={styles.bottomButton}
+              onPress={() => goToSettings()}
+            >
               <MaterialIcons name="settings" size={30} style={styles.icon} />
               <StyledBoldText title="Settings" style={styles.text} />
             </TouchableOpacity>
@@ -108,7 +115,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "80%",
     justifyContent: "space-evenly",
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   profilePicture: {
     height: 50,

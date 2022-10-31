@@ -5,6 +5,8 @@ import {
   View,
   Dimensions,
   ScrollView,
+  TouchableOpacity,
+  Touchable
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
@@ -27,6 +29,10 @@ const windowHeight = Dimensions.get("window").height;
 export default function SearchResultScreen({ navigation, route: { params } }) {
   const [searchResult, setSearchResult] = useState(null);
 
+  const handleCreateNewTrip = () => {
+    console.log("create a new trip")
+  }
+
   const handleFetch = () => {
     console.log(params.searchDataComplete);
 
@@ -38,17 +44,24 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
       .then((res) => res.json())
       .then((foundTrips) => {
         if (foundTrips.result) {
+          // si des trips ont été trouvés, affiche les trips trouvés
           setSearchResult(
             foundTrips.sortedResult.map((trip, i) => {
               return (
-                <SearchResultTrip key={i} {...trip} /> // map les données de passengers[0] (le leader du trip)
+                <SearchResultTrip key={i} {...trip} /> // map les données du trip
               );
             })
           );
         } else {
           setSearchResult(() => {
+            // si aucun trip n'a été trouvé, propose de créer un nouveau trip
             return (
-              <StyledRegularText title="No result found, would you like to create a new trip ?" />
+              <>
+                <StyledRegularText title="No results found, would you like to create a new trip ?" />
+                <TouchableOpacity onPress={() => handleCreateNewTrip()}>
+                  <Text>Create a new trip</Text>
+                </TouchableOpacity>
+              </>
             );
           });
         }

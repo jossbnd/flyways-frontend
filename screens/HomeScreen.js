@@ -71,7 +71,10 @@ export default function HomeScreen({ navigation }) {
           for (let trip of data.user.trips) {
             if (!trip.isDone) {
               let upcomingTrip = {
-                arrival: trip.departureCoords.description.length < 15 ? trip.departureCoords.description : trip.departureCoords.description.slice(0, 15) + '...',
+                arrival:
+                  trip.departureCoords.description.length < 15
+                    ? trip.departureCoords.description
+                    : trip.departureCoords.description.slice(0, 15) + "...",
                 passengers: trip.passengers.length,
                 capacity: trip.capacity,
                 date: moment(trip.date).format("ll"),
@@ -181,7 +184,10 @@ export default function HomeScreen({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.sarchButton}
-          onPress={() => setTest(!test)}
+          onPress={() => {
+            setTest(!test);
+            navigation.navigate("Search");
+          }}
         >
           <StyledRegularText
             title="Search for a Trip"

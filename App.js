@@ -17,6 +17,12 @@ import HomeScreen from "./screens/HomeScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import SearchScreen from "./screens/SearchScreen";
 import SearchParametersScreen from "./screens/SearchParametersScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+import PersonalInformationScreen from "./screens/PersonalInformationScreen";
+import SecuritySettingsScreen from "./screens/SecuritySettingsScreen";
+import EditDateOfBirthScreen from "./screens/EditDateOfBirth";
+import EditGenderScreen from "./screens/EditGender"
+import EditLanguagesScreen from "./screens/EditLanguages";
 
 // Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -105,12 +111,16 @@ export default function App() {
             <Stack.Screen name="SignIn" component={SignInScreen} />
             <Stack.Screen name="SignUp" component={SignUpScreen} />
             <Stack.Screen name="Phone" component={PhoneScreen} />
-            <Stack.Screen
-              name="PhoneVerification"
-              component={PhoneVerification}
-            />
+            <Stack.Screen name="PhoneVerification" component={PhoneVerification} />
+            <Stack.Screen name="Search" component={SearchScreen} />
             <Stack.Screen name="SearchResult" component={SearchResultScreen} />
             <Stack.Screen name="SearchParameters" component={SearchParametersScreen} />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="PersonalInformation" component={PersonalInformationScreen} />
+            <Stack.Screen name="SecuritySettings" component={SecuritySettingsScreen} />
+            <Stack.Screen name="EditDateOfBirth" component={EditDateOfBirthScreen} />
+            <Stack.Screen name="EditGender" component={EditGenderScreen} />
+            <Stack.Screen name="EditLanguages" component={EditLanguagesScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
