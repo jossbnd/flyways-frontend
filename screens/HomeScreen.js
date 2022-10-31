@@ -146,6 +146,13 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} navigation={navigation} />
+      
+      {/* TODO: REMOVE THIS WHEN DONE */}
+      <TouchableOpacity onPress={() => navigation.navigate("CreateTrip")}>
+        <Text>create trip</Text>
+      </TouchableOpacity>
+    {/* REMOVE */}
+
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={pickImage}>
           <Image

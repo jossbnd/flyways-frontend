@@ -17,6 +17,7 @@ import HomeScreen from "./screens/HomeScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import SearchScreen from "./screens/SearchScreen";
 import SearchParametersScreen from "./screens/SearchParametersScreen";
+import CreateTripScreen from "./screens/CreateTrip";
 import SettingsScreen from "./screens/SettingsScreen";
 import PersonalInformationScreen from "./screens/PersonalInformationScreen";
 import SecuritySettingsScreen from "./screens/SecuritySettingsScreen";
@@ -114,6 +115,7 @@ export default function App() {
             <Stack.Screen name="PhoneVerification" component={PhoneVerification} />
             <Stack.Screen name="Search" component={SearchScreen} />
             <Stack.Screen name="SearchResult" component={SearchResultScreen} />
+            <Stack.Screen name="CreateTrip" component={CreateTripScreen} />
             <Stack.Screen name="SearchParameters" component={SearchParametersScreen} />
             <Stack.Screen name="Settings" component={SettingsScreen} />
             <Stack.Screen name="PersonalInformation" component={PersonalInformationScreen} />

@@ -6,11 +6,12 @@ import {
   Dimensions,
   ScrollView,
   TouchableOpacity,
-  Touchable
+  Touchable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
@@ -27,11 +28,13 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function SearchResultScreen({ navigation, route: { params } }) {
+  const user = useSelector((state) => state.user.value); // pour utiliser le token de l'utilisateur
+
   const [searchResult, setSearchResult] = useState(null);
 
   const handleCreateNewTrip = () => {
-    console.log("create a new trip")
-  }
+    navigation.navigate("CreateTrip");
+  };
 
   const handleFetch = () => {
     console.log(params.searchDataComplete);
@@ -56,12 +59,18 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
           setSearchResult(() => {
             // si aucun trip n'a été trouvé, propose de créer un nouveau trip
             return (
-              <>
-                <StyledRegularText title="No results found, would you like to create a new trip ?" />
-                <TouchableOpacity onPress={() => handleCreateNewTrip()}>
+              <View style={styles.container}>
+                <StyledRegularText
+                  style={styles.noResults}
+                  title="No results found, would you like to create a new trip ?"
+                />
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => handleCreateNewTrip()}
+                >
                   <Text>Create a new trip</Text>
                 </TouchableOpacity>
-              </>
+              </View>
             );
           });
         }
@@ -88,5 +97,21 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.98,
     height: windowHeight * 0.85,
     top: 16,
+  },
+  noResults: {
+    marginVertical: 20,
+    marginHorizontal: 8,
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "space-around",
+    textAlign: "center",
+  },
+  button: {
+    width: "90%",
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 0.5)",
   },
 });

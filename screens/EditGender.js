@@ -28,7 +28,7 @@ export default function EditGenderScreen({ navigation }) {
   const [open, setOpen] = useState(false);
   const [msg, setMsg] = useState(null);
 
-  //   dropdown list
+  //  variables dropdown list
   const [selected, setSelected] = useState("");
   const data = [
     { key: "1", value: "male" },
