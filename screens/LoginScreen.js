@@ -17,7 +17,7 @@ export default function LoginScreen({ navigation }) {
   const user = useSelector((state) => state.user.value);
   useEffect(() => {
     if (user.token) {
-      navigation.navigate('TabNavigator');
+      navigation.navigate('AppStack');
       return;
     }
   }, []);
