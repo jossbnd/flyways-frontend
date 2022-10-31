@@ -92,7 +92,7 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
                 ...params.searchData, // prend les données de la page précédente (coordonnées GPS)
                 ...searchDataComplete, // ajoute maxDist
                 maxDist,
-              }))
+              }));
             }}
             value={maxDist}
           />

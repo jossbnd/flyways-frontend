@@ -3,7 +3,9 @@
 import React from "react";
 // Import des balises
 import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
-import { useState } from "react";
+
+// Import hook Navigation
+import { useNavigation } from "@react-navigation/native";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -13,9 +15,8 @@ import StyledRegularText from "../components/StyledRegularText";
 import StyledBoldText from "../components/StyledBoldText";
 
 export default function TopBar(props) {
-  const handleProfilePage = () => {
-    navigation.navigate("TabNavigator");
-  };
+  // variable qui stocke la methode useNavigation
+  const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
@@ -26,14 +27,17 @@ export default function TopBar(props) {
       >
         <FontAwesome5 name="bars" size={25} />
       </TouchableOpacity>
-      <TouchableOpacity style={styles.logo} onPress={() => props.navigation.navigate('My Profile')}>
+      <TouchableOpacity
+        style={styles.logo}
+        onPress={() => navigation.navigate("My Profile")}
+      >
         <Image
           style={styles.image}
           source={require("../assets/flyways-logo.png")}
-          onPress={() => handleProfilePage()}
+          onPress={() => navigation.navigate("TabNavigator")}
         />
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => props.navigation.navigate('Chat')}>
+      <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
         <FontAwesome5 name="comment-dots" size={25} />
       </TouchableOpacity>
     </View>

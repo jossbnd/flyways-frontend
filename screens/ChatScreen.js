@@ -33,6 +33,8 @@ export default function ChatScreen({ navigation }) {
   const [discussions, setDiscussions] = useState([
     { text: "Hello" },
     { text: "I should be there in a minute, see you there guys" },
+    { text: "I should be there in a minute, see you guys" },
+
   ]);
   const [trips, setTrips] = useState([]);      
   const user = useSelector((state) => state.user.value);
@@ -61,13 +63,13 @@ export default function ChatScreen({ navigation }) {
 
   let tripsDiscussions = trips.map((trip, i) => {
     return (
-      <Discussion key={i} {...trip} discussions={discussions}/>
+      <Discussion key={i} {...trip} discussions={discussions} />
     )
   })
 
   return (
     <SafeAreaView style={styles.container}>
-      <TopBar toggleModal={toggleModal} navigation={navigation} />
+      <TopBar toggleModal={toggleModal} />
 
       <View style={styles.searchContainer}>
         <TextInput

@@ -101,6 +101,8 @@ export default function HomeScreen({ navigation }) {
     // Si l'utilisateur choisit une image:
     if (!result.cancelled) {
       setProfilePicture(result.uri);
+
+      // save url in the reducer
       dispatch(updateProfilePicture(result.uri));
 
       const file = {
@@ -150,7 +152,7 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TopBar toggleModal={toggleModal} navigation={navigation} />
+      <TopBar toggleModal={toggleModal} />
       
       {/* TODO: REMOVE THIS WHEN DONE */}
       <TouchableOpacity onPress={() => navigation.navigate("CreateTrip")}>

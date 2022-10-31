@@ -1,3 +1,10 @@
+/* Librairie google maps pour react native */
+// https://www.npmjs.com/package/react-native-google-places-autocomplete
+/* Librairie react native pour les maps directions */
+// https://www.npmjs.com/package/react-native-maps-directions
+
+// Pour utiliser l API: creation d un compte Google Cloud et activation de la librairie SDK android
+
 import { SafeAreaView } from "react-native-safe-area-context";
 // Import Composants
 import TopBar from "../components/TopBar";
@@ -8,19 +15,20 @@ import {
   View,
   TouchableOpacity,
   Animated,
+  Text,
 } from "react-native";
 import { useRef, useState, useEffect } from "react";
 import * as Location from "expo-location";
 
-/* A faire: ajoutter bouton dans l input pour supprimer la recherche au lieu
-de suprrimer une par une les lettres */
+// Import du Slider
+import Slider from "@react-native-community/slider";
 
-/* Librairie google maps pour react native */
-// https://www.npmjs.com/package/react-native-google-places-autocomplete
-/* Librairie react native pour les maps directions */
-// https://www.npmjs.com/package/react-native-maps-directions
+// Import pour gérer le date picker
+import DateTimePicker from "@react-native-community/datetimepicker";
+import formatDate from "../modules/formatDate";
 
-// Pour utiliser l API: creation d un compte Google Cloud et activation de la librairie SDK android
+// Import icones
+import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 // import de mapview et du provider Google necessaire pour le fonctionnement de map
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
@@ -49,9 +57,18 @@ const INITIAL_POSITION = {
   longitudeDelta: LONGITUDE_DELTA,
 };
 
+// adresse vercel back end
+// const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
+
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
   /****** ETATS ******/
+
+  // états pour stocker les valeurs des sliders
+  const [rangeTime, setRangeTime] = useState(0);
+  const [rangeDistance, setRangeDistance] = useState(0);
+
   /* états pour stocker la valeur distance (distance entre 2 points sur la carte)
   et la valeur duration (durée de trajet entre 2 points sur la carte) */
   const [distance, setDistance] = useState(null);
@@ -78,25 +95,17 @@ export default function SearchScreen({ navigation }) {
   // état et fonction pour gérer le fonctionnement de la modale profile
   const [modalVisible, setModalVisible] = useState(false);
 
-  // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
-  const handleSearch = () => {
-    // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
-    // setSearchData((searchData) => ({
-    //   ...searchData,
-    //   departureCoordsLat: departureLocation.latitude,
-    //   departureCoordsLong: departureLocation.longitude,
-    //   arrivalCoordsLat: arrivalLocation.latitude,
-    //   arrivalCoordsLong: arrivalLocation.longitude,
-    // }));
-
-    console.log(searchData);
-
-    navigation.navigate("SearchParameters", { searchData });
-  };
-
   // set la position au chargement de la page
   // état et fonction pour gérer le fonctionnement du bouton continue
   const [continueButton, setContinueButton] = useState(false);
+
+  // Etats pour date et time picker
+  const [date, setDate] = useState(new Date());
+  const [time, setTime] = useState(new Date());
+  const [openDate, setOpenDate] = useState(false);
+  const [openTime, setOpenTime] = useState(false);
+  const [departureDate, setDepartureDate] = useState(null);
+  const [departureTime, setDepartureTime] = useState(null);
 
   const [animatedViewVisible, setAnimatedViewVisible] = useState(false);
 
@@ -128,6 +137,25 @@ export default function SearchScreen({ navigation }) {
 
   /****** FONCTIONS ******/
 
+  // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
+  const handleSearch = () => {
+    // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
+    const formattedDate = `${date.getDate()}/${
+      date.getMonth() + 1
+    }/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
+
+    const informationToSend = {
+      ...searchData,
+      minDate: formattedDate,
+      maxDist: rangeDistance / 1000,
+      rangeTime: rangeTime,
+    };
+
+    console.log("resultat de la recherche:", informationToSend);
+
+    // navigation.navigate("SearchParameters", { searchData });
+  };
+
   // fonction qui permet de changer la vue de la caméra
   const moveTo = async (position) => {
     // la variable camera recoit la valeur de mapRef
@@ -141,8 +169,8 @@ export default function SearchScreen({ navigation }) {
     }
   };
 
+  // fonction qui permet d'animer l'animated view qui s'affiche au moment de l'appui sur le bouton Continue
   const fadeIn = () => {
-    // Will change fadeAnim value to 1 in 5 seconds
     Animated.timing(fadeAnim, {
       toValue: 0,
       duration: 1500,
@@ -179,6 +207,39 @@ export default function SearchScreen({ navigation }) {
     setAnimatedViewVisible(true);
   };
 
+  // fonction pour récupérer la valeur de l'input destination
+  const getAddress = () => {
+    // console.log(placesRef.current?.getAddressText());
+  };
+
+  // Fonction pour le Date Picker
+  const handleDatePicker = (el) => {
+    if (el.type == "set") {
+      setDate(new Date(el.nativeEvent.timestamp));
+      setOpenDate(false);
+      // setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
+      // console.log();
+      return;
+    } else {
+      setOpenDate(false);
+      return;
+    }
+  };
+
+  // Fonction pour le Date Picker
+  const handleTimePicker = (el) => {
+    if (el.type == "set") {
+      setTime(new Date(el.nativeEvent.timestamp));
+      setOpenTime(false);
+      // setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
+      // console.log();
+      return;
+    } else {
+      setOpenTime(false);
+      return;
+    }
+  };
+
   /* ********************************************************************** */
 
   /* VARIABLES */
@@ -197,12 +258,20 @@ export default function SearchScreen({ navigation }) {
   // useRef pour la reference de MapView
   const mapRef = useRef(null);
 
+  /*    utilisation de placesRef sur les GooglePlaceAutocomplete, permet d'utiliser la fonction getAddress
+  qui récupère la valeur des inputs */
+  const placesRef = useRef();
+
   /* ********************************************************************** */
 
   /* RETURN de la fonction SEARCHSCREEN */
   return (
     <SafeAreaView style={styles.container}>
-      <TopBar toggleModal={toggleModal} style={styles.topBar}></TopBar>
+      <TopBar
+        toggleModal={toggleModal}
+        style={styles.topBar}
+        navigation={navigation}
+      ></TopBar>
 
       <MapView
         ref={mapRef}
@@ -233,9 +302,10 @@ export default function SearchScreen({ navigation }) {
           label="Origin"
           placeholder="From"
           fetchDetails={true}
+          ref={placesRef}
           onPress={(data, details = null) => {
             // 'details' is provided when fetchDetails = true
-            // setOrigin(details);
+            getAddress();
             const position = {
               latitude: details?.geometry.location.lat,
               longitude: details?.geometry.location.lng,
@@ -244,29 +314,34 @@ export default function SearchScreen({ navigation }) {
               ...position,
               description: data.structured_formatting.secondary_text,
             });
-            console.log("coordones position depart", position);
             moveTo(position);
           }}
           query={{
             key: GOOGLE_API_KEY,
             language: "en",
           }}
+          renderRightButton={() =>
+            placesRef.current?.getAddressText() ? (
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => {
+                  placesRef.current?.setAddressText("");
+                }}
+              >
+                <AntDesign name="closecircleo" size={15} color="#000000" />
+              </TouchableOpacity>
+            ) : null
+          }
         />
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={() => {
-            setInputOne("");
-          }}
-        >
-          <AntDesign name="closecircleo" size={15} color="#000000" />
-        </TouchableOpacity>
       </View>
       <View style={styles.destinationContainer}>
         <GooglePlacesAutocomplete
           label="Destination"
           placeholder="To"
           fetchDetails={true}
+          ref={placesRef}
           onPress={(data, details = null) => {
+            getAddress();
             // 'details' is provided when fetchDetails = true
             // TODO: remove the unnecessary (position, setArrivalLocation)
             const position = {
@@ -277,7 +352,6 @@ export default function SearchScreen({ navigation }) {
               ...position,
               description: data.structured_formatting.secondary_text,
             });
-            console.log("coordones position arrival", position);
             moveTo(position);
             handleContinueButton();
 
@@ -293,10 +367,19 @@ export default function SearchScreen({ navigation }) {
             key: GOOGLE_API_KEY,
             language: "en",
           }}
+          renderRightButton={() =>
+            placesRef.current?.getAddressText() ? (
+              <TouchableOpacity
+                style={styles.closeButton}
+                onPress={() => {
+                  placesRef.current?.setAddressText("");
+                }}
+              >
+                <AntDesign name="closecircleo" size={15} color="#000000" />
+              </TouchableOpacity>
+            ) : null
+          }
         />
-        <TouchableOpacity style={styles.closeButton}>
-          <AntDesign name="closecircleo" size={15} color="#000000" />
-        </TouchableOpacity>
       </View>
       {distance && duration && (
         <View style={styles.viewDistanceDuration}>
@@ -328,16 +411,107 @@ export default function SearchScreen({ navigation }) {
             },
           ]}
         >
+          <View style={styles.datePicker}>
+            <StyledRegularText title="Pick your date: " />
+            <TouchableOpacity
+              style={styles.dateButton}
+              onPress={() => {
+                setOpenDate(true);
+                setDepartureDate(true);
+              }}
+            >
+              <FontAwesome5 name="calendar-alt" size={25} />
+            </TouchableOpacity>
+          </View>
+
+          {departureDate && (
+            <View>
+              <StyledRegularText
+                title={`Departure Date: ${date.getDate()}/${
+                  date.getMonth() + 1
+                }/${date.getFullYear()}`}
+              />
+            </View>
+          )}
+
+          <View style={styles.timePicker}>
+            <StyledRegularText title="Pick your time: " />
+            <TouchableOpacity
+              style={styles.timeButton}
+              onPress={() => {
+                setOpenTime(true);
+                setDepartureTime(true);
+              }}
+            >
+              <FontAwesome5 name="clock" size={25} />
+            </TouchableOpacity>
+          </View>
+
+          {departureTime && (
+            <View>
+              <StyledRegularText
+                title={`Departure Time: ${time.getHours()}:${time.getMinutes()}`}
+              />
+            </View>
+          )}
+
+          <View style={styles.timeSlider}>
+            <StyledRegularText title={`Max Waiting Time: ${rangeTime} mn`} />
+            <Slider
+              style={{ width: 200, height: 40 }}
+              step={5}
+              onValueChange={(value) => {
+                setRangeTime(value);
+                setSearchData((searchData) => ({
+                  ...searchData,
+                  rangeTime: value,
+                }));
+              }}
+              thumbTintColor="rgba(30, 168, 95, 1)"
+              minimumValue={0}
+              maximumValue={60}
+            />
+          </View>
+          <View style={styles.distanceSlider}>
+            <StyledRegularText
+              title={`Max drop-off distance from Home: ${rangeDistance} meters`}
+            />
+            <Slider
+              style={{ width: 200, height: 40 }}
+              step={100}
+              onValueChange={(value) => {
+                setRangeDistance(value);
+              }}
+              thumbTintColor="rgba(30, 168, 95, 1)"
+              minimumValue={0}
+              maximumValue={1000}
+            />
+          </View>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
               handleSearch();
-              // navigation.navigate("SearchResult");
             }}
           >
             <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
           </TouchableOpacity>
         </Animated.View>
+      )}
+      {openDate && (
+        <DateTimePicker
+          value={date}
+          onChange={handleDatePicker}
+          onTouchCancel={() => setOpenDate(false)}
+          mode="date"
+        />
+      )}
+      {openTime && (
+        <DateTimePicker
+          value={time}
+          onChange={handleTimePicker}
+          onTouchCancel={() => setOpenTime(false)}
+          mode="time"
+        />
       )}
     </SafeAreaView>
   );
@@ -385,6 +559,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     marginRight: 8,
+    marginTop: 15,
   },
   viewDistanceDuration: {
     position: "absolute",
@@ -415,7 +590,22 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 14,
   },
-
+  timeButton: {
+    width: "20%",
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 1)",
+  },
+  dateButton: {
+    width: "20%",
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 1)",
+  },
   fadingContainer: {
     zIndex: 1,
     borderRadius: 10,
@@ -432,5 +622,35 @@ const styles = StyleSheet.create({
   fadingText: {
     fontSize: 28,
     color: "black",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    width: "90%",
+    borderBottomWidth: 1,
+    height: "10%",
+    minHeight: 40,
+    margin: 3,
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  datePicker: {
+    width: "80%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  timePicker: {
+    width: "80%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  timeSlider: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  distanceSlider: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
