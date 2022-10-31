@@ -15,7 +15,7 @@ import {
   View,
   TouchableOpacity,
   Animated,
-  TextInput,
+  Text,
 } from "react-native";
 import { useRef, useState, useEffect } from "react";
 import * as Location from "expo-location";
@@ -57,6 +57,9 @@ const INITIAL_POSITION = {
   longitudeDelta: LONGITUDE_DELTA,
 };
 
+// adresse vercel back end
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
   /****** ETATS ******/
@@ -96,11 +99,53 @@ export default function SearchScreen({ navigation }) {
   const [continueButton, setContinueButton] = useState(false);
 
   // Etats pour date et time picker
+  // const [date, setDate] = useState(new Date());
+  // const [openDate, setOpenDate] = useState(false);
+  // const [openTime, setOpenTime] = useState(false);
+  // const [departureDate, setDepartureDate] = useState(null);
+  // const [departureTime, setDepartureTime] = useState(null);
+
+  /* **************************************************** */
+  // etats et fonction du date and time picker
   const [date, setDate] = useState(new Date());
-  const [openDate, setOpenDate] = useState(false);
-  const [openTime, setOpenTime] = useState(false);
-  const [departureDate, setDepartureDate] = useState(null);
-  const [departureTime, setDepartureTime] = useState(null);
+  const [mode, setMode] = useState("date"); // permet de changer entre le mode "date" et "time"
+  const [show, setShow] = useState(false); // montre ou cache le date/time picker
+  const [selectedDateJS, setSelectedDateJS] = useState(null);
+  const [formattedDate, setFormattedDate] = useState(null); // date formatée en string exploitable par la database
+  const [formattedTime, setFormattedTime] = useState(null); // time formaté en string exploitable par la database
+  const [formattedTimeAndDate, setFormattedTimeAndDate] = useState(null);
+  const onChange = (event, selectedDate) => {
+    setShow(Platform.OS === "ios");
+    setDate(selectedDate);
+
+    // date et heure créés en utilisant le date picker
+    setSelectedDateJS(new Date(selectedDate));
+
+    // formate l'heure en string pour l'afficher sur la page ("20/01/2000 09:50")
+    setFormattedDate(
+      `${selectedDateJS.getDate()}/${
+        selectedDateJS.getMonth() + 1
+      }/${selectedDateJS.getFullYear()}`
+    );
+    setFormattedTime(
+      `${selectedDateJS.getHours()}:${selectedDateJS.getMinutes()}`
+    );
+
+    // formate l'heure en string pour l'afficher sur la page ("20/01/2000 09:50")
+    setFormattedTimeAndDate(
+      `${selectedDateJS.getDate()}/${
+        selectedDateJS.getMonth() + 1
+      }/${selectedDateJS.getFullYear()} ${selectedDateJS.getHours()}:${selectedDateJS.getMinutes()}`
+    );
+  };
+
+  const showMode = (currentMode) => {
+    // permet de set le mode du date/time picker à afficher (date ou time)
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  /* **************************************************** */
 
   const [animatedViewVisible, setAnimatedViewVisible] = useState(false);
 
@@ -135,17 +180,18 @@ export default function SearchScreen({ navigation }) {
   // fonction appelée quand l'utilisateur appuie sur le bouton "Search"
   const handleSearch = () => {
     // assigne les paramètres de recherche (coordonnées, etc) à un objet, qui est ensuite passé à l'écran suivant pour le fetch
-    // setSearchData((searchData) => ({
-    //   ...searchData,
-    //   departureCoordsLat: departureLocation.latitude,
-    //   departureCoordsLong: departureLocation.longitude,
-    //   arrivalCoordsLat: arrivalLocation.latitude,
-    //   arrivalCoordsLong: arrivalLocation.longitude,
-    // }));
+    setSearchData((searchData) => ({
+      ...searchData,
+      maxDist: rangeDistance / 1000,
+      minDate: formattedTimeAndDate,
+    }));
 
-    console.log(searchData);
+    console.log("resultat de la recherche:", searchData);
+    console.log(formattedTimeAndDate);
+    // console.log(rangeDistance);
+    // console.log(rangeTime);
 
-    navigation.navigate("SearchParameters", { searchData });
+    // navigation.navigate("SearchParameters", { searchData });
   };
 
   // fonction qui permet de changer la vue de la caméra
@@ -201,11 +247,11 @@ export default function SearchScreen({ navigation }) {
 
   // fonction pour récupérer la valeur de l'input destination
   const getAddress = () => {
-    console.log(placesRef.current?.getAddressText());
+    // console.log(placesRef.current?.getAddressText());
   };
 
   // Fonction pour le Date Picker
-  const handleDatePicker = (el) => {
+  /*   const handleDatePicker = (el) => {
     if (el.type == "set") {
       setDate(new Date(el.nativeEvent.timestamp));
       setOpenDate(false);
@@ -216,10 +262,10 @@ export default function SearchScreen({ navigation }) {
       setOpenDate(false);
       return;
     }
-  };
+  }; */
 
   // Fonction pour le Date Picker
-  const handleTimePicker = (el) => {
+  /*   const handleTimePicker = (el) => {
     if (el.type == "set") {
       setDate(new Date(el.nativeEvent.timestamp));
       setOpenTime(false);
@@ -230,7 +276,7 @@ export default function SearchScreen({ navigation }) {
       setOpenTime(false);
       return;
     }
-  };
+  }; */
 
   /* ********************************************************************** */
 
@@ -306,7 +352,7 @@ export default function SearchScreen({ navigation }) {
               ...position,
               description: data.structured_formatting.secondary_text,
             });
-            console.log("coordones position depart", position);
+            // console.log("coordones position depart", position);
             moveTo(position);
           }}
           query={{
@@ -345,7 +391,7 @@ export default function SearchScreen({ navigation }) {
               ...position,
               description: data.structured_formatting.secondary_text,
             });
-            console.log("coordones position arrival", position);
+            // console.log("coordones position arrival", position);
             moveTo(position);
             handleContinueButton();
 
@@ -405,7 +451,7 @@ export default function SearchScreen({ navigation }) {
             },
           ]}
         >
-          <View style={styles.inputContainer}>
+          {/*           <View style={styles.inputContainer}>
             <TextInput
               style={styles.input}
               placeholder="Departure Date"
@@ -426,45 +472,87 @@ export default function SearchScreen({ navigation }) {
             <TouchableOpacity onPress={() => setOpenTime(true)}>
               <FontAwesome5 name="clock" size={25} />
             </TouchableOpacity>
+          </View> */}
+
+          <View style={styles.datePicker}>
+            <StyledRegularText title="Pick your date: " />
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => showMode("date")}
+            >
+              <FontAwesome5 name="calendar-alt" size={25} />
+            </TouchableOpacity>
           </View>
-          <View>
+
+          {formattedDate && (
+            <View>
+              <Text>Departure : {formattedDate}</Text>
+            </View>
+          )}
+
+          <View style={styles.timePicker}>
+            <StyledRegularText title="Pick your time: " />
+            <TouchableOpacity
+              style={styles.button}
+              onPress={() => showMode("time")}
+            >
+              <FontAwesome5 name="clock" size={25} />
+            </TouchableOpacity>
+          </View>
+
+          {formattedTime && (
+            <View>
+              <Text>Time : {formattedTime}</Text>
+            </View>
+          )}
+
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
+          )}
+          <View style={styles.timeSlider}>
+            <StyledRegularText title={`Max Waiting Time: ${rangeTime} mn`} />
+            <Slider
+              style={{ width: 200, height: 40 }}
+              step={5}
+              onValueChange={(value) => setRangeTime(value)}
+              thumbTintColor="rgba(30, 168, 95, 1)"
+              minimumValue={0}
+              maximumValue={60}
+            />
+          </View>
+          <View style={styles.distanceSlider}>
             <StyledRegularText
-              title={`Max Waiting Time: ${Math.floor(rangeTime * 100)} mn`}
+              title={`Max drop-off distance from Home: ${rangeDistance} meters`}
             />
             <Slider
               style={{ width: 200, height: 40 }}
+              step={100}
+              onValueChange={(value) => setRangeDistance(value)}
+              thumbTintColor="rgba(30, 168, 95, 1)"
               minimumValue={0}
-              maximumValue={1}
-              minimumTrackTintColor="#FFFFFF"
-              maximumTrackTintColor="#000000"
-            />
-          </View>
-          <View>
-            <StyledRegularText
-              title={`Max drop-off distance from Home: ${Math.floor(
-                rangeDistance * 100
-              )} meters`}
-            />
-            <Slider
-              style={{ width: 200, height: 40 }}
-              minimumValue={0}
-              maximumValue={1}
-              minimumTrackTintColor="#FFFFFF"
-              maximumTrackTintColor="#000000"
+              maximumValue={1000}
             />
           </View>
           <TouchableOpacity
             style={styles.button}
             onPress={() => {
               handleSearch();
-              // navigation.navigate("SearchResult");
+              // console.log("max time", rangeTime);
+              // console.log("max distance", rangeDistance);
             }}
           >
             <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
           </TouchableOpacity>
         </Animated.View>
       )}
-      {openDate && (
+      {/*       {openDate && (
         <DateTimePicker
           value={date}
           onChange={handleDatePicker}
@@ -481,7 +569,7 @@ export default function SearchScreen({ navigation }) {
           onTouchCancel={() => setOpenTime(false)}
           mode="time"
         />
-      )}
+      )} */}
     </SafeAreaView>
   );
 }
@@ -586,5 +674,25 @@ const styles = StyleSheet.create({
     margin: 3,
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  datePicker: {
+    width: "80%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  timePicker: {
+    width: "80%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  timeSlider: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  distanceSlider: {
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
