@@ -20,6 +20,9 @@ import {
 import { useRef, useState, useEffect } from "react";
 import * as Location from "expo-location";
 
+// Import du Slider
+import Slider from "@react-native-community/slider";
+
 // Import pour gérer le date picker
 import DateTimePicker from "@react-native-community/datetimepicker";
 import formatDate from "../modules/formatDate";
@@ -57,6 +60,11 @@ const INITIAL_POSITION = {
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
   /****** ETATS ******/
+
+  // états pour stocker les valeurs des sliders
+  const [rangeTime, setRangeTime] = useState(0);
+  const [rangeDistance, setRangeDistance] = useState(0);
+
   /* états pour stocker la valeur distance (distance entre 2 points sur la carte)
   et la valeur duration (durée de trajet entre 2 points sur la carte) */
   const [distance, setDistance] = useState(null);
@@ -89,7 +97,8 @@ export default function SearchScreen({ navigation }) {
 
   // Etats pour date et time picker
   const [date, setDate] = useState(new Date());
-  const [open, setOpen] = useState(false);
+  const [openDate, setOpenDate] = useState(false);
+  const [openTime, setOpenTime] = useState(false);
   const [departureDate, setDepartureDate] = useState(null);
   const [departureTime, setDepartureTime] = useState(null);
 
@@ -199,12 +208,26 @@ export default function SearchScreen({ navigation }) {
   const handleDatePicker = (el) => {
     if (el.type == "set") {
       setDate(new Date(el.nativeEvent.timestamp));
-      setOpen(false);
+      setOpenDate(false);
       setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
       console.log();
       return;
     } else {
-      setOpen(false);
+      setOpenDate(false);
+      return;
+    }
+  };
+
+  // Fonction pour le Date Picker
+  const handleTimePicker = (el) => {
+    if (el.type == "set") {
+      setDate(new Date(el.nativeEvent.timestamp));
+      setOpenTime(false);
+      setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
+      console.log();
+      return;
+    } else {
+      setOpenTime(false);
       return;
     }
   };
@@ -387,7 +410,7 @@ export default function SearchScreen({ navigation }) {
               onChangeText={(value) => setDepartureDate(value)}
               value={departureDate}
             />
-            <TouchableOpacity onPress={() => setOpen(true)}>
+            <TouchableOpacity onPress={() => setOpenDate(true)}>
               <FontAwesome5 name="calendar-alt" size={25} />
             </TouchableOpacity>
           </View>
@@ -398,9 +421,35 @@ export default function SearchScreen({ navigation }) {
               onChangeText={(value) => setDepartureTime(value)}
               value={departureTime}
             />
-            <TouchableOpacity onPress={() => setOpen(true)}>
-              <FontAwesome5 name="calendar-alt" size={25} />
+            <TouchableOpacity onPress={() => setOpenTime(true)}>
+              <FontAwesome5 name="clock" size={25} />
             </TouchableOpacity>
+          </View>
+          <View>
+            <StyledRegularText
+              title={`Max Waiting Time: ${Math.floor(rangeTime * 100)} mn`}
+            />
+            <Slider
+              style={{ width: 200, height: 40 }}
+              minimumValue={0}
+              maximumValue={1}
+              minimumTrackTintColor="#FFFFFF"
+              maximumTrackTintColor="#000000"
+            />
+          </View>
+          <View>
+            <StyledRegularText
+              title={`Max drop-off distance from Home: ${Math.floor(
+                rangeDistance * 100
+              )} meters`}
+            />
+            <Slider
+              style={{ width: 200, height: 40 }}
+              minimumValue={0}
+              maximumValue={1}
+              minimumTrackTintColor="#FFFFFF"
+              maximumTrackTintColor="#000000"
+            />
           </View>
           <TouchableOpacity
             style={styles.button}
@@ -413,21 +462,21 @@ export default function SearchScreen({ navigation }) {
           </TouchableOpacity>
         </Animated.View>
       )}
-      {open && (
+      {openDate && (
         <DateTimePicker
           value={date}
-          // onChange={handleDatePicker}
-          onChange={console.log}
-          onTouchCancel={() => setOpen(false)}
+          onChange={handleDatePicker}
+          // onChange={console.log}
+          onTouchCancel={() => setOpenDate(false)}
           mode="date"
         />
       )}
-      {open && (
+      {openTime && (
         <DateTimePicker
           value={date}
-          // onChange={handleDatePicker}
-          onChange={console.log}
-          onTouchCancel={() => setOpen(false)}
+          onChange={handleTimePicker}
+          // onChange={console.log}
+          onTouchCancel={() => setOpenTime(false)}
           mode="time"
         />
       )}
