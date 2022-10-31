@@ -17,6 +17,13 @@ import HomeScreen from "./screens/HomeScreen";
 import NotificationScreen from "./screens/NotificationScreen";
 import SearchScreen from "./screens/SearchScreen";
 import TripScreen from "./screens/TripScreen";
+import SearchParametersScreen from "./screens/SearchParametersScreen";
+import SettingsScreen from "./screens/SettingsScreen";
+import PersonalInformationScreen from "./screens/PersonalInformationScreen";
+import SecuritySettingsScreen from "./screens/SecuritySettingsScreen";
+import EditDateOfBirthScreen from "./screens/EditDateOfBirth";
+import EditGenderScreen from "./screens/EditGender";
+import EditLanguagesScreen from "./screens/EditLanguages";
 
 // Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -33,6 +40,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import SearchResultScreen from "./screens/SearchResultScreen";
+import ChatScreen from "./screens/ChatScreen";
 
 const reducers = combineReducers({ user });
 const persistConfig = {
@@ -60,12 +68,14 @@ const TabNavigator = () => {
         tabBarIcon: ({ color, size }) => {
           let iconName = "";
 
-          if (route.name === "My Trips") {
+          if (route.name === "My Profile") {
             iconName = "luggage";
           } else if (route.name === "Search") {
             iconName = "search";
           } else if (route.name === "Notification") {
             iconName = "notifications";
+          } else if (route.name === "Chat") {
+            return <View style={{ display: "none" }}></View>;
           }
           return <MaterialIcons name={iconName} size={size} color={color} />;
         },
@@ -74,7 +84,7 @@ const TabNavigator = () => {
         tabBarStyle: { paddingBottom: 10, paddingTop: 5, height: 55 },
         headerShown: false,
         tabBarButton: (props) => {
-          if (route.name === "Trip") {
+          if (route.name === "Chat" || route.name === "Trip") {
             return null;
           } else {
             return <Pressable {...props}></Pressable>;
@@ -82,10 +92,11 @@ const TabNavigator = () => {
         },
       })}
     >
-      <Tab.Screen name="My Trips" component={HomeScreen} />
+      <Tab.Screen name="My Profile" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
       <Tab.Screen name="Trip" component={TripScreen} />
+      <Tab.Screen name="Chat" component={ChatScreen} />
     </Tab.Navigator>
   );
 };
@@ -105,7 +116,30 @@ export default function App() {
               name="PhoneVerification"
               component={PhoneVerification}
             />
+            <Stack.Screen name="Search" component={SearchScreen} />
             <Stack.Screen name="SearchResult" component={SearchResultScreen} />
+            <Stack.Screen
+              name="SearchParameters"
+              component={SearchParametersScreen}
+            />
+            <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen
+              name="PersonalInformation"
+              component={PersonalInformationScreen}
+            />
+            <Stack.Screen
+              name="SecuritySettings"
+              component={SecuritySettingsScreen}
+            />
+            <Stack.Screen
+              name="EditDateOfBirth"
+              component={EditDateOfBirthScreen}
+            />
+            <Stack.Screen name="EditGender" component={EditGenderScreen} />
+            <Stack.Screen
+              name="EditLanguages"
+              component={EditLanguagesScreen}
+            />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>
