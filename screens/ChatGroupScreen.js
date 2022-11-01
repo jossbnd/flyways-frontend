@@ -46,7 +46,11 @@ export default function ChatScreen({ navigation, route: { params } }) {
   };
 
   // Scroll to end à l'initialisation de la page (animated false pour scroll instantané)
-  scrollViewRef.current.scrollToEnd({ animated: false });
+  useEffect(() => {
+    
+    scrollViewRef.current.scrollToEnd({ animated: false });
+
+  }, []);
 
   //   Fonction au clic sur 'send message'
   const handleMessage = () => {

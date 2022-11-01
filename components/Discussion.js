@@ -97,7 +97,7 @@ export default function Discussion(props) {
         <View style={styles.descriptionBody}>
           <StyledRegularText
             key={0}
-            title={'"' + messages[messages.length - 1].text + '"'}
+            title={messages.length != 0 ? '"' + messages[messages.length - 1].text + '"' : ''}
             style={{ fontSize: 12, fontStyle: "italic" }}
           />
         </View>
