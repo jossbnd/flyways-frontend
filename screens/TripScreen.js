@@ -34,7 +34,6 @@ export default function TripScreen({ navigation, route: { params } }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [distance, setDistance] = useState();
   const [time, setTime] = useState();
-  const [request, setRequest] = useState(true);
 
   const user = useSelector((state) => state.user.value);
 
@@ -199,6 +198,22 @@ export default function TripScreen({ navigation, route: { params } }) {
           <Text style={{ fontSize: 12, color: "#000000" }}>
             {placesLeft} seat avail.
           </Text>
+        </View>
+        <View style={styles.buttonCard}>
+          <TouchableOpacity
+            style={styles.requestButton}
+            onPress={() => {
+              console.log(params.tripData.date);
+            }}
+          >
+            <FontAwesome
+              name="ellipsis-v"
+              size={25}
+              style={{ color: "#FFFFFF", marginTop: 10 }}
+            />
+            <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
+          </TouchableOpacity>
+          <Text style={{ fontSize: 12, color: "#000000" }}></Text>
         </View>
       </View>
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
