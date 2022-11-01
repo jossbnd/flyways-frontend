@@ -22,10 +22,18 @@ import { useRef } from "react";
 // Import icones
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
+// Pusher Config
+import { PUSHER_KEY, PUSHER_CLUSTER } from "../environmentVar";
+import Pusher from "pusher-js/react-native";
+
+// Import Moment to format date
+import moment from "moment";
+
 // BACK END ADDRESS
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+// const BACK_END_ADDRESS = "http://192.168.1.13:3000";
 
-export default function ChatScreen({ navigation, route: { params } }) {
+export default function ChatGroupScreen({ navigation, route: { params } }) {
   // Récupérer les infos du trip
   const trip = params.props;
 
@@ -46,10 +54,43 @@ export default function ChatScreen({ navigation, route: { params } }) {
   };
 
   // Scroll to end à l'initialisation de la page (animated false pour scroll instantané)
-  scrollViewRef.current.scrollToEnd({ animated: false });
+  useEffect(() => {
+    // Scroll à la fin des messages au chargement
+    scrollViewRef.current.scrollToEnd({ animated: false });
 
-  //   Fonction au clic sur 'send message'
-  const handleMessage = () => {
+    // Initialiser objet pusher
+    const pusher = new Pusher(PUSHER_KEY, { cluster: PUSHER_CLUSTER });
+
+    // L'utilisateur rejoint le channel
+    fetch(`${BACK_END_ADDRESS}/trips/joinchat/${trip.token}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...user }),
+    });
+
+    // Mise en place des écoutes des nouveaux messages
+    const subscription = pusher.subscribe(trip.token);
+    subscription.bind("pusher:subscription_succeeded", () => {
+      subscription.bind("message", handleReceiveMessage);
+    });
+
+    // Se déconnecter quand l'écran se détruit
+    return () => {
+      fetch(`${BACK_END_ADDRESS}/trips/leavechat/${trip.token}`, {
+        method: "DELETE",
+      });
+      pusher.disconnect();
+    };
+  }, []);
+
+  // Fonction sui se déclenche quand il y a un nouveau message détecté sur Pusher
+  const handleReceiveMessage = (data) => {
+    scrollViewRef.current.scrollToEnd({ animated: true });
+    setMessages((messages) => [...messages, data]);
+  };
+
+  // Fonction au clic sur 'send message'
+  const handlePostMessage = () => {
     // Scroll to end quand nouveau message (animated true pour scroll progressif)
     scrollViewRef.current.scrollToEnd();
 
@@ -68,14 +109,7 @@ export default function ChatScreen({ navigation, route: { params } }) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify(newMessage),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          console.log(data);
-        });
-
-      // Pour re-render la page avec le nouveau message
-      setMessages([...messages, newMessage]);
+      });
 
       // Vider l'input messageText
       setMessageText(null);
@@ -138,8 +172,8 @@ export default function ChatScreen({ navigation, route: { params } }) {
             message.firstName +
             " " +
             message.lastName[0] +
-            "." +
-            " - 31/10 at 7:00pm"
+            ". - " +
+            moment(message.date).calendar()
           }
         />
       </View>
@@ -165,7 +199,7 @@ export default function ChatScreen({ navigation, route: { params } }) {
           onChangeText={(value) => setMessageText(value)}
           value={messageText}
         />
-        <TouchableOpacity style={styles.sendButton} onPress={handleMessage}>
+        <TouchableOpacity style={styles.sendButton} onPress={handlePostMessage}>
           <MaterialIcons name="send" color="#ffffff" size={24} />
         </TouchableOpacity>
       </View>
