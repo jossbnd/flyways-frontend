@@ -63,7 +63,7 @@ const INITIAL_POSITION = {
 };
 
 // adresse vercel back end
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";4
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 // const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
 
 // FONCTION principale SEARCHSCREEN

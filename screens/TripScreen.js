@@ -5,6 +5,7 @@ import {
   View,
   TouchableOpacity,
   Image,
+  ScrollView,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
@@ -28,15 +29,24 @@ import { GOOGLE_API_KEY } from "../environmentVar";
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 import { useEffect } from "react";
+import user from "../reducers/user";
+import { usePreventRemoveContext } from "@react-navigation/native";
 
 export default function TripScreen({ navigation, route: { params } }) {
   //ETATS
   const [modalVisible, setModalVisible] = useState(false);
   const [distance, setDistance] = useState();
   const [time, setTime] = useState();
+  const [canJoin, setCanJoin] = useState(true);
+  const [showButtonRequest, setShowButtonRequest] = useState(true);
 
-  const destination = useSelector((state) => state.user.value.actualDestination);
-  console.log(destination)
+  const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
+
+  const passengerToken = useSelector((state) => state.user.value.token);
+  const destination = useSelector(
+    (state) => state.user.value.actualDestination
+  );
+  console.log(destination);
 
   let dist;
   if (distance >= 1) {
@@ -66,10 +76,11 @@ export default function TripScreen({ navigation, route: { params } }) {
   };
 
   const dateJS = new Date(params.tripData.date); // créée une date JS
-  const dateFormatted = `${ // formate la date pour qu'elle soit lisible
+  const dateFormatted = `${
+    // formate la date pour qu'elle soit lisible
     dateJS.getMonth() + 1
   }/${dateJS.getDate()}/${dateJS.getFullYear()}`;
-  const timeFormatted = `${dateJS.getHours()}:${dateJS.getMinutes()}` // formate l'heure pour qu'elle soit lisible
+  const timeFormatted = `${dateJS.getHours()}:${dateJS.getMinutes()}`; // formate l'heure pour qu'elle soit lisible
 
   // title de marker-arrival
   const arrivalAddress = destination.description;
@@ -78,15 +89,15 @@ export default function TripScreen({ navigation, route: { params } }) {
     setModalVisible(!modalVisible);
   };
 
-  //const placesLeft = props.capacity - props.passengersNumber; // calcul des places restantes sur le trip
+  const placesLeft =
+    params.tripData.capacity - params.tripData.passengers.length; // calcul des places restantes sur le trip
 
-  const placesLeft = 2;
+  // useEffect(() => {
 
-  useEffect(() => {
-    if (placesLeft === 0) {
-      setRequest(false);
-    }
-  }, []);
+  //   if (placesLeft === 0) {
+  //     setRequest(false);
+  //   }
+  // }, []);
 
   const passengers = params.tripData.passengers.map((passenger, i) => {
     return (
@@ -100,31 +111,52 @@ export default function TripScreen({ navigation, route: { params } }) {
           />
         </TouchableOpacity>
         <StyledRegularText
-          // title={passenger[i].firstName + " " + passenger[i].lastName}
+          title={passenger.firstName + " " + passenger.lastName[0] + "."}
           style={styles.userText}
         />
       </View>
     );
   });
 
+  const handleRequest = () => {
+    const joinRequest = {
+      tripId: params.tripData.tripId,
+      passengerToken: passengerToken,
+    };
+
+    console.log(joinRequest);
+    fetch(`${BACK_END_ADDRESS}/trips/addPassenger`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(joinRequest),
+    })
+      .then((res) => res.json())
+      .then((foundID) => {
+        console.log(foundID);
+      });
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
       <View style={styles.card}>
         <StyledRegularText title="Drop-off point :" style={styles.titlecard} />
-        <StyledRegularText title={params.tripData.arrivalCoords.description} style={styles.descripcard} />
-
-        <StyledRegularText title="Destination :" style={styles.titlecard} />
-        <StyledRegularText title={destination.description} style={styles.descripcard} />
-
-
+        <StyledRegularText
+          title={params.tripData.arrivalCoords.description}
+          style={styles.descripcard}
+        />
+        <Text style={styles.datatrip}>{dist} from destination - {Math.ceil(time)} min</Text>
+        <StyledRegularText title="Destination :" style={styles.titlecard2} />
+        <StyledRegularText
+          title={destination.description}
+          style={styles.descripcard}
+        />
         <View style={styles.datecard}>
           <Text style={styles.date}>{dateFormatted}</Text>
-          <Text style={styles.date}>{timeFormatted}</Text>
+          <Text style={styles.time}>{timeFormatted}</Text>
         </View>
         {/* <Text style={styles.descripcard}>{params.tripData.arrivalCoords.description}</Text> */}
-        <Text style={styles.datatrip}>{dist} from destination</Text>
-        <Text style={styles.datatrip}>{Math.ceil(time)} min</Text>
+        
       </View>
       <View style={styles.divtextmap}>
         <Text style={styles.titlemap}>Distance to your destination</Text>
@@ -159,7 +191,7 @@ export default function TripScreen({ navigation, route: { params } }) {
             }
           )
         }
-        // propietes optionales à activer/ desactiver
+        // propietes optionales à activer/desactiver
         // zoomEnabled={false}
         // scrollEnabled={false}
       >
@@ -191,42 +223,49 @@ export default function TripScreen({ navigation, route: { params } }) {
         />
       </MapView>
       <View style={styles.passengersBar}>
-        {passengers}
-
-        <View style={styles.buttonCard}>
-          <TouchableOpacity
-            style={styles.requestButton}
-            onPress={() => {
-              console.log(params.tripData);
-            }}
-          >
-            <FontAwesome
-              name="plus"
-              size={25}
-              style={{ color: "#FFFFFF", marginTop: 10 }}
-            />
-            <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Send request</Text>
-          </TouchableOpacity>
-          <Text style={{ fontSize: 12, color: "#000000" }}>
-            {placesLeft} seat avail.
-          </Text>
-        </View>
-        <View style={styles.buttonCard}>
-          <TouchableOpacity
-            style={styles.requestButton}
-            onPress={() => {
-              console.log(params.tripData.date);
-            }}
-          >
-            <FontAwesome
-              name="ellipsis-v"
-              size={25}
-              style={{ color: "#FFFFFF", marginTop: 10 }}
-            />
-            <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
-          </TouchableOpacity>
-          <Text style={{ fontSize: 12, color: "#000000" }}></Text>
-        </View>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          {passengers}
+          {placesLeft > 0 && canJoin ? (
+            <View style={styles.buttonCard}>
+              <TouchableOpacity
+                style={styles.requestButton}
+                onPress={() => {
+                  handleRequest();
+                }}
+              >
+                <FontAwesome
+                  name="plus"
+                  size={25}
+                  style={{ color: "#FFFFFF", marginTop: 10 }}
+                />
+                <Text style={{ fontSize: 8, color: "#FFFFFF" }}>
+                  Send request
+                </Text>
+              </TouchableOpacity>
+              <Text style={{ fontSize: 12, color: "#000000" }}>
+                {placesLeft} seat avail.
+              </Text>
+            </View>
+          ) : (
+            <></>
+          )}
+          <View style={styles.buttonCard}>
+            <TouchableOpacity
+              style={styles.requestButton}
+              onPress={() => {
+                handleRequest();
+              }}
+            >
+              <FontAwesome
+                name="ellipsis-v"
+                size={25}
+                style={{ color: "#FFFFFF", marginTop: 10 }}
+              />
+              <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
+            </TouchableOpacity>
+            <Text style={{ fontSize: 12, color: "#000000" }}></Text>
+          </View>
+        </ScrollView>
       </View>
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
@@ -260,24 +299,38 @@ const styles = StyleSheet.create({
     color: "#1B9756",
     fontSize: 20,
   },
-  datecard: {
+  titlecard2: {
     flex: 0.2,
+    justifyContent: "flex-start",
+    marginLeft: 40,
+    marginTop: 10,
+    color: "#1B9756",
+    fontSize: 20,
+  },
+  datecard: {
+    flex: 0.1,
     position: "absolute",
-    marginLeft: 220,
-    marginTop: 40,
+    marginLeft: 240,
+    marginTop: 30,
   },
   date: {
     color: "#1B9756",
   },
+  time: {
+    marginLeft:20,
+    color: "#1B9756",
+  },
   descripcard: {
-    flex: 0.2,
+    flex: 0.1,
     justifyContent: "flex-start",
+    marginTop: 2,
     marginLeft: 40,
     color: "#1B9756",
   },
   datatrip: {
-    flex: 0.1,
+    flex: 0.15,
     justifyContent: "flex-start",
+    marginTop: 5,
     marginLeft: 40,
     color: "#1EA85F",
     opacity: 0.5,
