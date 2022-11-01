@@ -151,18 +151,19 @@ export default function SearchScreen({ navigation }) {
         date.getMonth() + 1
       }/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
 
-      const informationToSend = {
-        ...searchData,
-        minDate: formattedDate,
-        maxDist: rangeDistance / 1000,
-        rangeTime: rangeTime,
-      };
+    const searchDataComplete = {
+      ...searchData,
+      minDate: formattedDate,
+      maxDist: rangeDistance / 1000,
+      rangeTime: rangeTime,
+    };
 
-      console.log("resultat de la recherche:", informationToSend);
+    // console.log(searchDataComplete);
 
-      navigation.navigate("SearchParameters", { searchData });
-    }
+    navigation.navigate("SearchResult", { searchDataComplete })
+    // navigation.navigate("SearchParameters", { searchData });
   };
+}
 
   // fonction qui permet de changer la vue de la caméra
   const moveTo = async (position) => {
@@ -226,7 +227,6 @@ export default function SearchScreen({ navigation }) {
       setDate(new Date(el.nativeEvent.timestamp));
       setOpenDate(false);
       // setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
-      // console.log();
       return;
     } else {
       setOpenDate(false);
@@ -240,7 +240,6 @@ export default function SearchScreen({ navigation }) {
       setTime(new Date(el.nativeEvent.timestamp));
       setOpenTime(false);
       // setDepartureDate(formatDate(new Date(el.nativeEvent.timestamp)));
-      // console.log();
       return;
     } else {
       setOpenTime(false);
@@ -554,6 +553,7 @@ export default function SearchScreen({ navigation }) {
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {

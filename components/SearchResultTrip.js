@@ -12,6 +12,9 @@ import {
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
+// Import hook Navigation
+import { useNavigation } from "@react-navigation/native";
+
 // Import des icones drapeau
 import CountryFlag from "react-native-country-flag";
 
@@ -23,6 +26,9 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function SearchResultTrip(props) {
+  // variable qui stocke la methode useNavigation
+  const navigation = useNavigation();
+
   // map une icone drapeau par langue parlée
   const languages = props.passengers[0].languagesSpoken.map((language, i) => {
     return (
@@ -54,7 +60,14 @@ export default function SearchResultTrip(props) {
   }
 
   return (
-    <TouchableOpacity style={styles.container}>
+    <TouchableOpacity
+      // navigation={navigation}
+      style={styles.container}
+      onPress={() => {
+        console.log(props);
+        navigation.navigate("Trip", { tripData: props });
+      }}
+    >
       <View style={styles.descriptionText}>
         <View style={styles.leaderData}>
           {/* leaderData contient avatar, name, rating dans un bloc*/}
