@@ -21,8 +21,8 @@ import StyledBoldText from "../components/StyledBoldText";
 import SearchResultTrip from "../components/SearchResultTrip";
 import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
 
-// const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
-const BACK_END_ADDRESS = "http://192.168.10.172:3000";
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
+// const BACK_END_ADDRESS = "http://192.168.1.20:3000";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;

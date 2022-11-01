@@ -163,6 +163,7 @@ export default function SearchScreen({ navigation }) {
     navigation.navigate("SearchResult", { searchDataComplete })
     // navigation.navigate("SearchParameters", { searchData });
   };
+}
 
   // fonction qui permet de changer la vue de la caméra
   const moveTo = async (position) => {
@@ -552,6 +553,7 @@ export default function SearchScreen({ navigation }) {
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
