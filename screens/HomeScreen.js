@@ -160,6 +160,12 @@ export default function HomeScreen({ navigation }) {
       </TouchableOpacity>
       {/* REMOVE */}
 
+      {/* TODO: REMOVE THIS WHEN DONE */}
+      <TouchableOpacity onPress={() => navigation.navigate("Review")}>
+        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Review Trip</Text>
+      </TouchableOpacity>
+      {/* REMOVE */}
+
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={pickImage}>
           <Image

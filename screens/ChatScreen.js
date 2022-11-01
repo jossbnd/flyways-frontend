@@ -19,24 +19,36 @@ import StyledBoldText from "../components/StyledBoldText";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-
 
 export default function ChatScreen({ navigation }) {
   // Etats
   const [modalVisible, setModalVisible] = useState(false);
   const [search, setSearch] = useState(null);
   const [messages, setMessages] = useState([
-    { userToken:'rV_x_NcHrhZgXbkbJ34VMih_8aK3CIPg', firstName:'John', lastName: 'Doe', text: "Hello" },
-    { userToken:'tPGNf15pQLPAb_byqpj8Qoi9MsLfMb1V', firstName:'Joss', lastName: 'Bon', text: "I should be there in a minute, see you there guys" },
-    { userToken:'UoswI6AR19Q6vO5sbn4YvbWzj5uqlNn3', firstName:'Chiri', lastName: 'Kitsu', text: "I should be there in a minute, see you guys" },
-
+    {
+      userToken: "rV_x_NcHrhZgXbkbJ34VMih_8aK3CIPg",
+      firstName: "John",
+      lastName: "Doe",
+      text: "Hello",
+    },
+    {
+      userToken: "tPGNf15pQLPAb_byqpj8Qoi9MsLfMb1V",
+      firstName: "Joss",
+      lastName: "Bon",
+      text: "I should be there in a minute, see you there guys",
+    },
+    {
+      userToken: "UoswI6AR19Q6vO5sbn4YvbWzj5uqlNn3",
+      firstName: "Chiri",
+      lastName: "Kitsu",
+      text: "I should be there in a minute, see you guys",
+    },
   ]);
-  const [trips, setTrips] = useState([]);      
+  const [trips, setTrips] = useState([]);
   const user = useSelector((state) => state.user.value);
 
   // A l'initialisation, récupérer tous les trips associées (avec >1 passengers) au User et afficher les discussions
@@ -62,10 +74,8 @@ export default function ChatScreen({ navigation }) {
   };
 
   let tripsDiscussions = trips.map((trip, i) => {
-    return (
-      <Discussion key={i} {...trip} messages={messages} />
-    )
-  })
+    return <Discussion key={i} {...trip} messages={messages} />;
+  });
 
   return (
     <SafeAreaView style={styles.container}>

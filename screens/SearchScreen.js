@@ -58,8 +58,8 @@ const INITIAL_POSITION = {
 };
 
 // adresse vercel back end
-// const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+// const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
 
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
@@ -151,19 +151,19 @@ export default function SearchScreen({ navigation }) {
         date.getMonth() + 1
       }/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
 
-    const searchDataComplete = {
-      ...searchData,
-      minDate: formattedDate,
-      maxDist: rangeDistance / 1000,
-      rangeTime: rangeTime,
-    };
+      const searchDataComplete = {
+        ...searchData,
+        minDate: formattedDate,
+        maxDist: rangeDistance / 1000,
+        rangeTime: rangeTime,
+      };
 
-    // console.log(searchDataComplete);
+      // console.log(searchDataComplete);
 
-    navigation.navigate("SearchResult", { searchDataComplete })
-    // navigation.navigate("SearchParameters", { searchData });
+      navigation.navigate("SearchResult", { searchDataComplete });
+      // navigation.navigate("SearchParameters", { searchData });
+    }
   };
-}
 
   // fonction qui permet de changer la vue de la caméra
   const moveTo = async (position) => {
@@ -553,7 +553,6 @@ export default function SearchScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
