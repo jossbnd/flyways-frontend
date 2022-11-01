@@ -145,7 +145,9 @@ export default function TripScreen({ navigation, route: { params } }) {
           title={params.tripData.arrivalCoords.description}
           style={styles.descripcard}
         />
-        <Text style={styles.datatrip}>{dist} from destination - {Math.ceil(time)} min</Text>
+        <Text style={styles.datatrip}>
+          {dist} from destination - {Math.ceil(time)} min
+        </Text>
         <StyledRegularText title="Destination :" style={styles.titlecard2} />
         <StyledRegularText
           title={destination.description}
@@ -156,7 +158,6 @@ export default function TripScreen({ navigation, route: { params } }) {
           <Text style={styles.time}>{timeFormatted}</Text>
         </View>
         {/* <Text style={styles.descripcard}>{params.tripData.arrivalCoords.description}</Text> */}
-        
       </View>
       <View style={styles.divtextmap}>
         <Text style={styles.titlemap}>Distance to your destination</Text>
@@ -317,7 +318,7 @@ const styles = StyleSheet.create({
     color: "#1B9756",
   },
   time: {
-    marginLeft:20,
+    marginLeft: 20,
     color: "#1B9756",
   },
   descripcard: {
@@ -333,7 +334,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     marginLeft: 40,
     color: "#1EA85F",
-    opacity: 0.5,
+    opacity: 0.7,
   },
   divtextmap: {
     width: "85%",
