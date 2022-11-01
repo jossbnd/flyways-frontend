@@ -18,6 +18,7 @@ import {
   Text,
 } from "react-native";
 import { useRef, useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import * as Location from "expo-location";
 
 // Import du Slider
@@ -37,6 +38,9 @@ import MapViewDirections from "react-native-maps-directions";
 
 import { GOOGLE_API_KEY } from "../environmentVar";
 
+// import fonction pour stocker la destination finale de l'utilisateur dans le store
+import { storeActualDestination } from "../reducers/user";
+
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
@@ -44,6 +48,7 @@ import { Marker } from "react-native-maps";
 
 // Import Icones
 import AntDesign from "react-native-vector-icons/AntDesign";
+import { useDispatch } from "react-redux";
 
 // variables pour afficher la map a son initialisation sur un point geographique par defaut
 const { width, height } = Dimensions.get("window");
@@ -58,11 +63,14 @@ const INITIAL_POSITION = {
 };
 
 // adresse vercel back end
-// const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";4
+// const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
 
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
+  // stockage des coordonnées de la destination réelle dans le store
+  const user = useSelector((state) => state.user.value);
+  const dispatch = useDispatch();
   /****** ETATS ******/
 
   // états pour stocker les valeurs des sliders
@@ -151,19 +159,19 @@ export default function SearchScreen({ navigation }) {
         date.getMonth() + 1
       }/${date.getFullYear()} ${time.getHours()}:${time.getMinutes()}`;
 
-    const searchDataComplete = {
-      ...searchData,
-      minDate: formattedDate,
-      maxDist: rangeDistance / 1000,
-      rangeTime: rangeTime,
-    };
+      const searchDataComplete = {
+        ...searchData,
+        minDate: formattedDate,
+        maxDist: rangeDistance / 1000,
+        rangeTime: rangeTime,
+      };
 
-    // console.log(searchDataComplete);
+      // console.log(searchDataComplete);
 
-    navigation.navigate("SearchResult", { searchDataComplete })
-    // navigation.navigate("SearchParameters", { searchData });
+      navigation.navigate("SearchResult", { searchDataComplete });
+      // navigation.navigate("SearchParameters", { searchData });
+    }
   };
-}
 
   // fonction qui permet de changer la vue de la caméra
   const moveTo = async (position) => {
@@ -369,6 +377,15 @@ export default function SearchScreen({ navigation }) {
               arrivalCoordsLat: details?.geometry.location.lat,
               arrivalCoordsLong: details?.geometry.location.lng,
             }));
+
+            // stockage de l'adresse finale de l'utilisateur dans le store, pour l'afficher plus tard
+            dispatch(
+              storeActualDestination({
+                latitude: details?.geometry.location.lat,
+                longitude: details?.geometry.location.lng,
+                description: data.description,
+              })
+            );
           }}
           query={{
             key: GOOGLE_API_KEY,
@@ -553,7 +570,6 @@ export default function SearchScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
