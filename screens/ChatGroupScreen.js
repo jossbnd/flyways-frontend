@@ -13,12 +13,16 @@ import ProfilModal from "../components/ProfilModal";
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
+
+// Import des hooks
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useRef } from "react";
 
 // Import icones
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
+// BACK END ADDRESS
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function ChatScreen({ navigation, route: { params } }) {
@@ -27,7 +31,11 @@ export default function ChatScreen({ navigation, route: { params } }) {
 
   // Etats
   const [modalVisible, setModalVisible] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [messageText, setMessageText] = useState(null);
+  const [messages, setMessages] = useState(trip.messages);
+
+  // Ref de la scroll view de la discussion pour pouvoir scroll to end à chaque message
+  const scrollViewRef = useRef();
 
   // Récupérer les infos du main user (en particulier son token)
   const user = useSelector((state) => state.user.value);
@@ -37,9 +45,43 @@ export default function ChatScreen({ navigation, route: { params } }) {
     setModalVisible(!modalVisible);
   };
 
+  // Scroll to end à l'initialisation de la page (animated false pour scroll instantané)
+  scrollViewRef.current.scrollToEnd({ animated: false });
+
   //   Fonction au clic sur 'send message'
   const handleMessage = () => {
-    setMessage(null);
+    // Scroll to end quand nouveau message (animated true pour scroll progressif)
+    scrollViewRef.current.scrollToEnd();
+
+    // Création de l'objet newMessage à envoyer dans le back end
+    if (messageText) {
+      const newMessage = {
+        userToken: user.token,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        text: messageText,
+        date: new Date(),
+      };
+
+      // Route pour poster un nouveau message
+      fetch(`${BACK_END_ADDRESS}/trips/postmessage/${trip.token}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(newMessage),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+        });
+
+      // Pour re-render la page avec le nouveau message
+      setMessages([...messages, newMessage]);
+
+      // Vider l'input messageText
+      setMessageText(null);
+    } else {
+      return;
+    }
   };
 
   // Conception des composants image du profil en header du screen
@@ -65,7 +107,7 @@ export default function ChatScreen({ navigation, route: { params } }) {
   });
 
   // Conception des composants messages
-  const messagesData = trip.messages.map((message, i) => {
+  const messagesData = messages.map((message, i) => {
     return (
       <View
         key={i}
@@ -113,13 +155,15 @@ export default function ChatScreen({ navigation, route: { params } }) {
           {passengersData}
         </ScrollView>
       </View>
-      <ScrollView style={styles.discussionContainer}>{messagesData}</ScrollView>
+      <ScrollView style={styles.discussionContainer} ref={scrollViewRef}>
+        {messagesData}
+      </ScrollView>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Send a message..."
-          onChangeText={(value) => setMessage(value)}
-          value={message}
+          onChangeText={(value) => setMessageText(value)}
+          value={messageText}
         />
         <TouchableOpacity style={styles.sendButton} onPress={handleMessage}>
           <MaterialIcons name="send" color="#ffffff" size={24} />
@@ -156,8 +200,8 @@ const styles = StyleSheet.create({
   discussionContainer: {
     width: "100%",
     borderBottomWidth: 0.5,
-    flex: 1,
     padding: 10,
+    height: "100%",
   },
   message: {
     paddingTop: 12,
