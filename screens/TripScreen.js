@@ -35,7 +35,8 @@ export default function TripScreen({ navigation, route: { params } }) {
   const [distance, setDistance] = useState();
   const [time, setTime] = useState();
 
-  const user = useSelector((state) => state.user.value);
+  const destination = useSelector((state) => state.user.value.actualDestination);
+  console.log(destination)
 
   let dist;
   if (distance >= 1) {
@@ -56,16 +57,22 @@ export default function TripScreen({ navigation, route: { params } }) {
     longitude: params.tripData.arrivalCoords.longitude,
   };
   // title de marker-depart
-  const departureAddress = "2 Rue du Temple";
+  const departureAddress = params.tripData.arrivalCoords.description;
 
   const arrivalLocation = {
     // où la personne veut arriver
-    latitude: 48.8629287,
-    longitude: 2.364912,
+    latitude: destination.latitude,
+    longitude: destination.longitude,
   };
 
+  const dateJS = new Date(params.tripData.date); // créée une date JS
+  const dateFormatted = `${ // formate la date pour qu'elle soit lisible
+    dateJS.getMonth() + 1
+  }/${dateJS.getDate()}/${dateJS.getFullYear()}`;
+  const timeFormatted = `${dateJS.getHours()}:${dateJS.getMinutes()}` // formate l'heure pour qu'elle soit lisible
+
   // title de marker-arrival
-  const arrivalAddress = "110 Rue de Turenne";
+  const arrivalAddress = destination.description;
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -104,11 +111,16 @@ export default function TripScreen({ navigation, route: { params } }) {
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
       <View style={styles.card}>
-        <StyledRegularText title="Destination" style={styles.titlecard} />
-        {/* <StyledRegularText title={params.tripData.arrivalCoords.description} style={styles.descripcard} /> */}
+        <StyledRegularText title="Drop-off point :" style={styles.titlecard} />
+        <StyledRegularText title={params.tripData.arrivalCoords.description} style={styles.descripcard} />
+
+        <StyledRegularText title="Destination :" style={styles.titlecard} />
+        <StyledRegularText title={destination.description} style={styles.descripcard} />
+
+
         <View style={styles.datecard}>
-          <Text style={styles.date}>{params.tripData.date}</Text>
-          <Text style={styles.date}>10:30 am</Text>
+          <Text style={styles.date}>{dateFormatted}</Text>
+          <Text style={styles.date}>{timeFormatted}</Text>
         </View>
         {/* <Text style={styles.descripcard}>{params.tripData.arrivalCoords.description}</Text> */}
         <Text style={styles.datatrip}>{dist} from destination</Text>
@@ -185,7 +197,7 @@ export default function TripScreen({ navigation, route: { params } }) {
           <TouchableOpacity
             style={styles.requestButton}
             onPress={() => {
-              console.log(params.tripData.date);
+              console.log(params.tripData);
             }}
           >
             <FontAwesome

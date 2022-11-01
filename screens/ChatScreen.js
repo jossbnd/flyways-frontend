@@ -30,12 +30,7 @@ export default function ChatScreen({ navigation }) {
   // Etats
   const [modalVisible, setModalVisible] = useState(false);
   const [search, setSearch] = useState(null);
-  const [messages, setMessages] = useState([
-    { userToken:'rV_x_NcHrhZgXbkbJ34VMih_8aK3CIPg', firstName:'John', lastName: 'Doe', text: "Hello" },
-    { userToken:'tPGNf15pQLPAb_byqpj8Qoi9MsLfMb1V', firstName:'Joss', lastName: 'Bon', text: "I should be there in a minute, see you there guys" },
-    { userToken:'UoswI6AR19Q6vO5sbn4YvbWzj5uqlNn3', firstName:'Chiri', lastName: 'Kitsu', text: "I should be there in a minute, see you guys" },
 
-  ]);
   const [trips, setTrips] = useState([]);      
   const user = useSelector((state) => state.user.value);
 
@@ -63,7 +58,7 @@ export default function ChatScreen({ navigation }) {
 
   let tripsDiscussions = trips.map((trip, i) => {
     return (
-      <Discussion key={i} {...trip} messages={messages} />
+      <Discussion key={i} {...trip} />
     )
   })
 

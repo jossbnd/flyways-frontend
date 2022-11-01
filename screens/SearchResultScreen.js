@@ -20,6 +20,7 @@ import StyledBoldText from "../components/StyledBoldText";
 // Import du composant
 import SearchResultTrip from "../components/SearchResultTrip";
 import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
+import TripScreen from "./TripScreen";
 
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
 // const BACK_END_ADDRESS = "http://192.168.1.20:3000";
@@ -50,6 +51,7 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
           // si des trips ont été trouvés, affiche les trips trouvés
           setSearchResult(
             foundTrips.sortedResult.map((trip, i) => {
+              // const tripDataComplete = {...trip, searchDataComplete}
               return (
                 <SearchResultTrip key={i} {...trip} /> // map les données du trip
               );
@@ -58,6 +60,7 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
         } else {
           setSearchResult(() => {
             // si aucun trip n'a été trouvé, propose de créer un nouveau trip
+            console.log(foundTrips);
             return (
               <View style={styles.container}>
                 <StyledRegularText
