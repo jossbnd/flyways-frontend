@@ -50,7 +50,11 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
           setSearchResult(
             foundTrips.sortedResult.map((trip, i) => {
               return (
-                <SearchResultTrip key={i} {...trip} /> // map les données du trip
+                <SearchResultTrip
+                  onPress={() => navigation.navigate("TripScreen")}
+                  key={i}
+                  {...trip}
+                /> // map les données du trip
               );
             })
           );
