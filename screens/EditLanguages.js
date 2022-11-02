@@ -29,11 +29,7 @@ const BACK_END_ADDRESS_LOCAL = "http://192.168.10.172:3000";
 
 export default function EditLanguagesScreen({ navigation }) {
   const [flags, setFlags] = useState(null);
-  // const [newLanguage, setNewLanguage] = useState(null);
   const [countryCode, setCountryCode] = useState(null);
-  const [msg, setMsg] = useState(null);
-
-  let newLanguage = null;
 
   const user = useSelector((state) => state.user.value);
 
@@ -45,31 +41,36 @@ export default function EditLanguagesScreen({ navigation }) {
         setFlags(
           languages.languagesSpoken.map((language, i) => {
             return (
-              <CountryFlag
+              <TouchableOpacity
                 key={i}
-                isoCode={language}
                 style={styles.flag}
-                size={64}
-              />
+                onPress={() => {
+                  fetch(
+                    `${BACK_END_ADDRESS_LOCAL}/users/removeLanguage/${user.token}`,
+                    {
+                      method: "PUT",
+                      headers: { "content-type": "application/json" },
+                      body: JSON.stringify({ language }),
+                    }
+                  )
+                    .then((res) => res.json())
+                    .then((data) => {
+                      console.log(data)
+                    });
+                }}
+              >
+                <CountryFlag
+                  key={i}
+                  isoCode={language}
+                  style={styles.flag}
+                  size={64}
+                />
+              </TouchableOpacity>
             );
           })
         );
       });
   }, [flags]); // refait le fetch à chaque fois qu'une langue est ajoutée/supprimée
-
-  const handleSubmit = () => {
-    // fetch(`${BACK_END_ADDRESS_LOCAL}/users/update/${user.token}`, {
-    //   method: "PUT",
-    //   headers: { "content-type": "application/json" },
-    //   body: JSON.stringify({ gender }),
-    // })
-    //   .then((res) => res.json())
-    //   .then((data) => {
-    //     if (data.result) {
-    //       setMsg("User languages have been updated");
-    //     }
-    //   });
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -80,14 +81,16 @@ export default function EditLanguagesScreen({ navigation }) {
         countryCode={countryCode}
         withFlag
         onSelect={(country) => {
-          language = country.cca2;
+          let language = country.cca2;
           fetch(`${BACK_END_ADDRESS_LOCAL}/users/addLanguage/${user.token}`, {
             method: "PUT",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({language}),
+            body: JSON.stringify({ language }),
           })
             .then((res) => res.json())
-            .then((data) => console.log(data));
+            .then((data) => {
+              console.log(data);
+            });
         }}
       ></CountryPicker>
 
@@ -96,12 +99,6 @@ export default function EditLanguagesScreen({ navigation }) {
       </View>
 
       {flags && <View>{flags}</View>}
-
-      {msg && <Text>{msg}</Text>}
-
-      {/* <TouchableOpacity onPress={() => handleSubmit()} style={styles.button}>
-        <Text>Submit</Text>
-      </TouchableOpacity> */}
     </SafeAreaView>
   );
 }
@@ -114,21 +111,8 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
   },
-  dateAndCalendar: {
-    flexDirection: "row",
-  },
-  button: {
-    width: "75%",
-    height: 40,
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(30, 168, 95, 0.5)",
-  },
-
-  // yes
   flag: {
-    marginLeft: 2,
+    margin: 4,
     borderRadius: 4,
   },
 });

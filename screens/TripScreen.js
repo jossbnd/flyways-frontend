@@ -82,7 +82,6 @@ export default function TripScreen({ navigation, route: { params } }) {
   useEffect(() => {
     // vérifie si l'utilisateur fait déjà partie du trip en comparant les tokens
     setCanJoin(true);
-    // console.log("aaa")
     for (let passenger of params.tripData.passengers) {
       // s'il fait déjà partie du trip, cache le bouton "join trip"
       passenger.passengerToken === user.token ? setCanJoin(false) : null;

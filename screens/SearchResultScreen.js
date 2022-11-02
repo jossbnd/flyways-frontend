@@ -6,7 +6,6 @@ import {
   Dimensions,
   ScrollView,
   TouchableOpacity,
-  Touchable,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
@@ -23,8 +22,8 @@ import SearchResultTrip from "../components/SearchResultTrip";
 import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
 import TripScreen from "./TripScreen";
 
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
-// const BACK_END_ADDRESS = "http://192.168.1.20:3000";
+// const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
+const BACK_END_ADDRESS = "http://192.168.10.172:3000";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
