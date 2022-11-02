@@ -122,7 +122,7 @@ export default function ChatGroupScreen({ navigation, route: { params } }) {
   const passengersData = trip.passengers.map((passenger, i) => {
     return (
       <View key={i}>
-        <TouchableOpacity style={styles.imageContainer}>
+        <TouchableOpacity style={styles.imageContainer} onPress={() => navigation.navigate('Profile', { userToken: passenger.passengerToken })}>
           <Image
             style={styles.userImage}
             source={
