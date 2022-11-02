@@ -41,6 +41,7 @@ export default function TripScreen({ navigation, route: { params } }) {
   const [canJoin, setCanJoin] = useState(undefined); // état utilisé pour vérifier si l'utilisateur est déjà sur le trip ou non
   const [message, setMessage] = useState(null);
   const [passengers, setPassengers] = useState(undefined);
+  const [leader, setLeader] = useState(undefined);
 
   const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
 
@@ -79,16 +80,19 @@ export default function TripScreen({ navigation, route: { params } }) {
     );
   }, []);
 
-  // useEffect qui enlève le bouton "join trip" si l'utilisateur est déjà sur le trip
+  // useEffect qui enlève le bouton "join trip" si l'utilisateur est sur le trip ou Leader
   useEffect(() => {
+    setLeader(false);
+    if (params.tripData.passengers[0].passengerToken === user.token) {
+      setLeader(true);
+    }
     // vérifie si l'utilisateur fait déjà partie du trip en comparant les tokens
     setCanJoin(true);
-    // console.log("aaa")
     for (let passenger of params.tripData.passengers) {
-      // s'il fait déjà partie du trip, cache le bouton "join trip"
+      // s'il fait déjà partie du trip, cache le bouton "join trip
       passenger.passengerToken === user.token ? setCanJoin(false) : null;
     }
-  }, []);
+  }, [{ navigation }]);
 
   // mapRef pour le map
   const mapRef = useRef(null);
@@ -254,7 +258,7 @@ export default function TripScreen({ navigation, route: { params } }) {
       <View style={styles.passengersBar}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {passengers}
-          {placesLeft > 0 && canJoin ? (
+          {!leader && placesLeft > 0 && canJoin ? (
             <View style={styles.buttonCard}>
               <TouchableOpacity
                 style={styles.requestButton}
@@ -276,22 +280,43 @@ export default function TripScreen({ navigation, route: { params } }) {
           ) : (
             <></>
           )}
-          <View style={styles.buttonCard}>
-            <TouchableOpacity
-              style={styles.requestButton}
-              onPress={() => {
-                console.log("settings");
-              }}
-            >
-              <MaterialCommunityIcons
-                name="exit-run"
-                size={25}
-                style={{ color: "#FFFFFF", marginTop: 10 }}
-              />
-              <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
-            </TouchableOpacity>
-            <Text style={{ fontSize: 12, color: "#000000" }}></Text>
-          </View>
+          {leader ? (
+            <View style={styles.buttonCard}>
+              <TouchableOpacity
+                style={styles.requestButton}
+                onPress={() => {
+                  navigation.navigate("Review", { tripData: params.tripData });
+                  console.log(params.tripData);
+                }}
+              >
+                <FontAwesome
+                  name="flag-checkered"
+                  size={25}
+                  style={{ color: "#FFFFFF", marginTop: 10 }}
+                />
+                <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
+              </TouchableOpacity>
+              <Text style={{ fontSize: 12, color: "#000000" }}></Text>
+            </View>
+          ) : (
+            <View style={styles.buttonCard}>
+              <TouchableOpacity
+                style={styles.requestButton}
+                onPress={() => {
+                  navigation.navigate("Review", { tripData: params.tripData });
+                  console.log(params.tripData);
+                }}
+              >
+                <FontAwesome
+                  name="flag-checkered"
+                  size={25}
+                  style={{ color: "#FFFFFF", marginTop: 10 }}
+                />
+                <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
+              </TouchableOpacity>
+              <Text style={{ fontSize: 12, color: "#000000" }}></Text>
+            </View>
+          )}
         </ScrollView>
       </View>
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
