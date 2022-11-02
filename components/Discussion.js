@@ -85,7 +85,7 @@ export default function Discussion(props) {
             style={[styles.twoImage, styles.second]}
             source={
               passengers[2].profilePicture
-                ? { uri: passengers[1].profilePicture }
+                ? { uri: passengers[2].profilePicture }
                 : require("../assets/profile-picture.jpg")
             }
             resizeMode="contain"

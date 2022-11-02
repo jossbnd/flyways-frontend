@@ -69,9 +69,12 @@ export default function HomeScreen({ navigation }) {
           // Récupérer les trips, les stoker dans un états UpcomingTrips
           let tripsTemp = [];
           for (let trip of data.user.trips) {
+            // console.log("coucou", data.user.trips, "final");
             if (!trip.isDone) {
+              // let tripData =data.user.trips;
+              // console.log(tripData);
               let upcomingTrip = {
-                data: data.user.trips,
+                dataTrip: trip,
                 arrival:
                   trip.departureCoords.description.length < 15
                     ? trip.departureCoords.description
@@ -146,25 +149,13 @@ export default function HomeScreen({ navigation }) {
     return <UpcomingTrips key={i} {...trip} />;
   });
 
-  const handleTripScreen = () => {
-    setTest(!test);
+  const handleSearchScreen = () => {
+    navigation.navigate("Search");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
-
-      {/* TODO: REMOVE THIS WHEN DONE */}
-      <TouchableOpacity onPress={() => navigation.navigate("CreateTrip")}>
-        <Text>create trip</Text>
-      </TouchableOpacity>
-      {/* REMOVE */}
-
-      {/* TODO: REMOVE THIS WHEN DONE */}
-      <TouchableOpacity onPress={() => navigation.navigate("Review")}>
-        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Review Trip</Text>
-      </TouchableOpacity>
-      {/* REMOVE */}
 
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={pickImage}>
@@ -204,7 +195,7 @@ export default function HomeScreen({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.sarchButton}
-          onPress={() => handleTripScreen()}
+          onPress={() => handleSearchScreen()}
         >
           <StyledRegularText
             title="Search for a Trip"
