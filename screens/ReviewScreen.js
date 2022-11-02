@@ -38,8 +38,6 @@ export default function ReviewScreen({}) {
   /* A FAIRE */
   // à la place des infos en dur, mettre params.trips.passengers
   // afficher dernière lettre du nom de famille
-  // déplacer étoiles en haut à droite
-  // input à la place de bouton pour leave a comment
   // faire disparaître les views avec les avis une fois l'avis donné
   /* ******************** */
 

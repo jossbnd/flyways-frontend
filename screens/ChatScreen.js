@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  RefreshControl,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
@@ -16,7 +17,7 @@ import Discussion from "../components/Discussion";
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 
 // Import icones
@@ -24,10 +25,18 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
+<<<<<<< HEAD
+=======
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout));
+};
+
+>>>>>>> 1a029290ba72da59618f565608e1b31e10315c97
 export default function ChatScreen({ navigation }) {
   // Etats
   const [modalVisible, setModalVisible] = useState(false);
   const [search, setSearch] = useState(null);
+<<<<<<< HEAD
   const [messages, setMessages] = useState([
     {
       userToken: "rV_x_NcHrhZgXbkbJ34VMih_8aK3CIPg",
@@ -48,8 +57,18 @@ export default function ChatScreen({ navigation }) {
       text: "I should be there in a minute, see you guys",
     },
   ]);
+=======
+
+>>>>>>> 1a029290ba72da59618f565608e1b31e10315c97
   const [trips, setTrips] = useState([]);
   const user = useSelector((state) => state.user.value);
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
 
   // A l'initialisation, récupérer tous les trips associées (avec >1 passengers) au User et afficher les discussions
   useEffect(() => {
@@ -66,7 +85,7 @@ export default function ChatScreen({ navigation }) {
           setTrips(tripsTemp);
         }
       });
-  }, []);
+  }, [refreshing]);
 
   // Fonction pour déclencher le menu modal
   const toggleModal = () => {
@@ -74,7 +93,11 @@ export default function ChatScreen({ navigation }) {
   };
 
   let tripsDiscussions = trips.map((trip, i) => {
+<<<<<<< HEAD
     return <Discussion key={i} {...trip} messages={messages} />;
+=======
+    return <Discussion key={i} {...trip} />;
+>>>>>>> 1a029290ba72da59618f565608e1b31e10315c97
   });
 
   return (
@@ -93,7 +116,12 @@ export default function ChatScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.discussionsContainer}>
+      <ScrollView
+        style={styles.discussionsContainer}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         {tripsDiscussions}
       </ScrollView>
 

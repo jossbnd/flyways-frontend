@@ -13,21 +13,37 @@ import ProfilModal from "../components/ProfilModal";
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
+
+// Import des hooks
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useRef } from "react";
 
 // Import icones
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+// Pusher Config
+import { PUSHER_KEY, PUSHER_CLUSTER } from "../environmentVar";
+import Pusher from "pusher-js/react-native";
 
-export default function ChatScreen({ navigation, route: { params } }) {
+// Import Moment to format date
+import moment from "moment";
+
+// BACK END ADDRESS
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+// const BACK_END_ADDRESS = "http://192.168.1.13:3000";
+
+export default function ChatGroupScreen({ navigation, route: { params } }) {
   // Récupérer les infos du trip
   const trip = params.props;
 
   // Etats
   const [modalVisible, setModalVisible] = useState(false);
-  const [message, setMessage] = useState(null);
+  const [messageText, setMessageText] = useState(null);
+  const [messages, setMessages] = useState(trip.messages);
+
+  // Ref de la scroll view de la discussion pour pouvoir scroll to end à chaque message
+  const scrollViewRef = useRef();
 
   // Récupérer les infos du main user (en particulier son token)
   const user = useSelector((state) => state.user.value);
@@ -37,9 +53,69 @@ export default function ChatScreen({ navigation, route: { params } }) {
     setModalVisible(!modalVisible);
   };
 
-  //   Fonction au clic sur 'send message'
-  const handleMessage = () => {
-    setMessage(null);
+  // Scroll to end à l'initialisation de la page (animated false pour scroll instantané)
+  useEffect(() => {
+    // Scroll à la fin des messages au chargement
+    scrollViewRef.current.scrollToEnd({ animated: false });
+
+    // Initialiser objet pusher
+    const pusher = new Pusher(PUSHER_KEY, { cluster: PUSHER_CLUSTER });
+
+    // L'utilisateur rejoint le channel
+    fetch(`${BACK_END_ADDRESS}/trips/joinchat/${trip.token}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ ...user }),
+    });
+
+    // Mise en place des écoutes des nouveaux messages
+    const subscription = pusher.subscribe(trip.token);
+    subscription.bind("pusher:subscription_succeeded", () => {
+      subscription.bind("message", handleReceiveMessage);
+    });
+
+    // Se déconnecter quand l'écran se détruit
+    return () => {
+      fetch(`${BACK_END_ADDRESS}/trips/leavechat/${trip.token}`, {
+        method: "DELETE",
+      });
+      pusher.disconnect();
+    };
+  }, []);
+
+  // Fonction sui se déclenche quand il y a un nouveau message détecté sur Pusher
+  const handleReceiveMessage = (data) => {
+    scrollViewRef.current.scrollToEnd({ animated: true });
+    setMessages((messages) => [...messages, data]);
+  };
+
+  // Fonction au clic sur 'send message'
+  const handlePostMessage = () => {
+    // Scroll to end quand nouveau message (animated true pour scroll progressif)
+    scrollViewRef.current.scrollToEnd();
+
+    // Création de l'objet newMessage à envoyer dans le back end
+    if (messageText) {
+      const newMessage = {
+        userToken: user.token,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        text: messageText,
+        date: new Date(),
+      };
+
+      // Route pour poster un nouveau message
+      fetch(`${BACK_END_ADDRESS}/trips/postmessage/${trip.token}`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(newMessage),
+      });
+
+      // Vider l'input messageText
+      setMessageText(null);
+    } else {
+      return;
+    }
   };
 
   // Conception des composants image du profil en header du screen
@@ -65,7 +141,7 @@ export default function ChatScreen({ navigation, route: { params } }) {
   });
 
   // Conception des composants messages
-  const messagesData = trip.messages.map((message, i) => {
+  const messagesData = messages.map((message, i) => {
     return (
       <View
         key={i}
@@ -96,8 +172,8 @@ export default function ChatScreen({ navigation, route: { params } }) {
             message.firstName +
             " " +
             message.lastName[0] +
-            "." +
-            " - 31/10 at 7:00pm"
+            ". - " +
+            moment(message.date).calendar()
           }
         />
       </View>
@@ -113,15 +189,17 @@ export default function ChatScreen({ navigation, route: { params } }) {
           {passengersData}
         </ScrollView>
       </View>
-      <ScrollView style={styles.discussionContainer}>{messagesData}</ScrollView>
+      <ScrollView style={styles.discussionContainer} ref={scrollViewRef}>
+        {messagesData}
+      </ScrollView>
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="Send a message..."
-          onChangeText={(value) => setMessage(value)}
-          value={message}
+          onChangeText={(value) => setMessageText(value)}
+          value={messageText}
         />
-        <TouchableOpacity style={styles.sendButton} onPress={handleMessage}>
+        <TouchableOpacity style={styles.sendButton} onPress={handlePostMessage}>
           <MaterialIcons name="send" color="#ffffff" size={24} />
         </TouchableOpacity>
       </View>
@@ -156,8 +234,8 @@ const styles = StyleSheet.create({
   discussionContainer: {
     width: "100%",
     borderBottomWidth: 0.5,
-    flex: 1,
     padding: 10,
+    height: "100%",
   },
   message: {
     paddingTop: 12,
