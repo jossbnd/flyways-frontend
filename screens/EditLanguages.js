@@ -25,7 +25,8 @@ import CountryPicker from "react-native-country-picker-modal";
 // Import des icones drapeau
 import CountryFlag from "react-native-country-flag";
 
-const BACK_END_ADDRESS_LOCAL = "http://192.168.10.172:3000";
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
+// const BACK_END_ADDRESS_LOCAL = "http://192.168.10.172:3000";
 
 export default function EditLanguagesScreen({ navigation }) {
   const [flags, setFlags] = useState(null);
@@ -34,7 +35,7 @@ export default function EditLanguagesScreen({ navigation }) {
   const user = useSelector((state) => state.user.value);
 
   useEffect(() => {
-    fetch(`${BACK_END_ADDRESS_LOCAL}/users/languages/${user.token}`)
+    fetch(`${BACK_END_ADDRESS}/users/languages/${user.token}`)
       .then((res) => res.json())
       .then((languages) => {
         // map un drapeau par langue parlée

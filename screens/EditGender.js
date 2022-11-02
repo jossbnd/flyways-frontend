@@ -21,7 +21,8 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 // Import de la dropdown list
 import SelectList from "react-native-dropdown-select-list";
 
-const BACK_END_ADDRESS_LOCAL = "http://192.168.1.96:3000";
+// const BACK_END_ADDRESS_LOCAL = "http://192.168.1.96:3000";
+const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function EditGenderScreen({ navigation }) {
   const [gender, setGender] = useState(null);
