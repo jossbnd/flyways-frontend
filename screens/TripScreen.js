@@ -160,7 +160,7 @@ export default function TripScreen({ navigation, route: { params } }) {
               />
             </View>
           );
-          setPassengers(passengers => [...passengers, currentUser]);
+          setPassengers((passengers) => [...passengers, currentUser]);
         } else {
         }
       });
@@ -266,9 +266,7 @@ export default function TripScreen({ navigation, route: { params } }) {
                   size={25}
                   style={{ color: "#FFFFFF", marginTop: 10 }}
                 />
-                <Text style={{ fontSize: 8, color: "#FFFFFF" }}>
-                  Join trip
-                </Text>
+                <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Join trip</Text>
               </TouchableOpacity>
               <Text style={{ fontSize: 12, color: "#000000" }}>
                 {placesLeft} seats avail.
@@ -281,7 +279,7 @@ export default function TripScreen({ navigation, route: { params } }) {
             <TouchableOpacity
               style={styles.requestButton}
               onPress={() => {
-                console.log("settings")
+                console.log("settings");
               }}
             >
               <FontAwesome
