@@ -12,6 +12,7 @@ import TopBar from "../components/TopBar";
 import ProfilModal from "../components/ProfilModal";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Marker } from "react-native-maps";
 
 //import redux
@@ -250,8 +251,12 @@ export default function TripScreen({ navigation, route: { params } }) {
           }}
         />
       </MapView>
-      <View style={styles.passengersBar}>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      <View>
+        <ScrollView
+          style={styles.passengersBar}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
           {passengers}
           {placesLeft > 0 && canJoin ? (
             <View style={styles.buttonCard}>
@@ -282,8 +287,8 @@ export default function TripScreen({ navigation, route: { params } }) {
                 console.log("settings");
               }}
             >
-              <FontAwesome
-                name="ellipsis-v"
+              <MaterialCommunityIcons
+                name="exit-run"
                 size={25}
                 style={{ color: "#FFFFFF", marginTop: 10 }}
               />
