@@ -147,7 +147,6 @@ export default function HomeScreen({ navigation }) {
 
   const handleTripScreen = () => {
     setTest(!test);
-    navigation.navigate("Trip");
   };
 
   return (
