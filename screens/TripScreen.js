@@ -12,6 +12,7 @@ import TopBar from "../components/TopBar";
 import ProfilModal from "../components/ProfilModal";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Marker } from "react-native-maps";
 
 //import redux
@@ -160,7 +161,7 @@ export default function TripScreen({ navigation, route: { params } }) {
               />
             </View>
           );
-          setPassengers(passengers => [...passengers, currentUser]);
+          setPassengers((passengers) => [...passengers, currentUser]);
         } else {
         }
       });
@@ -250,8 +251,12 @@ export default function TripScreen({ navigation, route: { params } }) {
           }}
         />
       </MapView>
-      <View style={styles.passengersBar}>
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      <View>
+        <ScrollView
+          style={styles.passengersBar}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+        >
           {passengers}
           {placesLeft > 0 && canJoin ? (
             <View style={styles.buttonCard}>
@@ -266,9 +271,7 @@ export default function TripScreen({ navigation, route: { params } }) {
                   size={25}
                   style={{ color: "#FFFFFF", marginTop: 10 }}
                 />
-                <Text style={{ fontSize: 8, color: "#FFFFFF" }}>
-                  Join trip
-                </Text>
+                <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Join trip</Text>
               </TouchableOpacity>
               <Text style={{ fontSize: 12, color: "#000000" }}>
                 {placesLeft} seats avail.
@@ -281,11 +284,11 @@ export default function TripScreen({ navigation, route: { params } }) {
             <TouchableOpacity
               style={styles.requestButton}
               onPress={() => {
-                console.log("settings")
+                console.log("settings");
               }}
             >
-              <FontAwesome
-                name="ellipsis-v"
+              <MaterialCommunityIcons
+                name="exit-run"
                 size={25}
                 style={{ color: "#FFFFFF", marginTop: 10 }}
               />
