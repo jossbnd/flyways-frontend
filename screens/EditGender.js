@@ -39,7 +39,7 @@ export default function EditGenderScreen({ navigation }) {
   const user = useSelector((state) => state.user.value);
 
   const handleSubmit = () => {
-    fetch(`${BACK_END_ADDRESS_LOCAL}/users/update/${user.token}`, {
+    fetch(`${BACK_END_ADDRESS}/users/update/${user.token}`, {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ gender }),

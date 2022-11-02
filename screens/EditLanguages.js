@@ -47,7 +47,7 @@ export default function EditLanguagesScreen({ navigation }) {
                 style={styles.flag}
                 onPress={() => {
                   fetch(
-                    `${BACK_END_ADDRESS_LOCAL}/users/removeLanguage/${user.token}`,
+                    `${BACK_END_ADDRESS}/users/removeLanguage/${user.token}`,
                     {
                       method: "PUT",
                       headers: { "content-type": "application/json" },
@@ -83,7 +83,7 @@ export default function EditLanguagesScreen({ navigation }) {
         withFlag
         onSelect={(country) => {
           let language = country.cca2;
-          fetch(`${BACK_END_ADDRESS_LOCAL}/users/addLanguage/${user.token}`, {
+          fetch(`${BACK_END_ADDRESS}/users/addLanguage/${user.token}`, {
             method: "PUT",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ language }),
