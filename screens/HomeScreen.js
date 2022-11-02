@@ -71,6 +71,7 @@ export default function HomeScreen({ navigation }) {
           for (let trip of data.user.trips) {
             if (!trip.isDone) {
               let upcomingTrip = {
+                data: data.user.trips,
                 arrival:
                   trip.departureCoords.description.length < 15
                     ? trip.departureCoords.description
