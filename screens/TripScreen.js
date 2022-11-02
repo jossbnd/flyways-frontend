@@ -37,8 +37,7 @@ export default function TripScreen({ navigation, route: { params } }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [distance, setDistance] = useState();
   const [time, setTime] = useState();
-  const [canJoin, setCanJoin] = useState(true);
-  const [showButtonRequest, setShowButtonRequest] = useState(true);
+  const [canJoin, setCanJoin] = useState(undefined); // état utilisé pour vérifier si l'utilisateur est déjà sur le trip ou non
 
   const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
 
@@ -46,8 +45,8 @@ export default function TripScreen({ navigation, route: { params } }) {
   const destination = useSelector(
     (state) => state.user.value.actualDestination
   );
-  console.log(destination);
 
+  // affichage de la distance en km ou en m
   let dist;
   if (distance >= 1) {
     // si la distance to destination est sup ou égale à 1 km, affiche la dist en km
@@ -56,6 +55,18 @@ export default function TripScreen({ navigation, route: { params } }) {
     // si la distance est en dessous de 1 km, affiche la dist en m
     dist = `${Math.round(distance * 1000)} m`;
   }
+
+  // FIXME: fonctionne mais avec un temps de retard (doit recharger le screen pour fonctionner)
+  // faire en sorte de refaire le useEffect au chargement de la page
+  useEffect(() => {
+    // vérifie si l'utilisateur fait déjà partie du trip en comparant les tokens
+    setCanJoin(true);
+    // console.log("aaa")
+    for (let passenger of params.tripData.passengers) {
+      // s'il fait déjà partie du trip, cache le bouton "join trip"
+      passenger.passengerToken === passengerToken ? setCanJoin(false) : null;
+    }
+  }, []);
 
   // mapRef pour le map
   const mapRef = useRef(null);
@@ -76,11 +87,12 @@ export default function TripScreen({ navigation, route: { params } }) {
   };
 
   const dateJS = new Date(params.tripData.date); // créée une date JS
-  const dateFormatted = `${
-    // formate la date pour qu'elle soit lisible
+  // formate la date pour qu'elle soit lisible
+  const formattedDate = `${dateJS.getDate()}/${
     dateJS.getMonth() + 1
-  }/${dateJS.getDate()}/${dateJS.getFullYear()}`;
-  const timeFormatted = `${dateJS.getHours()}:${dateJS.getMinutes()}`; // formate l'heure pour qu'elle soit lisible
+  }/${dateJS.getFullYear()}`;
+  // formate l'heure pour qu'elle soit lisible
+  const formattedTime = `${dateJS.getHours()}:${dateJS.getMinutes()}`;
 
   // title de marker-arrival
   const arrivalAddress = destination.description;
@@ -92,19 +104,11 @@ export default function TripScreen({ navigation, route: { params } }) {
   const placesLeft =
     params.tripData.capacity - params.tripData.passengers.length; // calcul des places restantes sur le trip
 
-  // useEffect(() => {
-
-  //   if (placesLeft === 0) {
-  //     setRequest(false);
-  //   }
-  // }, []);
-
   const passengers = params.tripData.passengers.map((passenger, i) => {
     return (
       <View key={i} style={styles.passengerIcon}>
         <TouchableOpacity style={styles.passenger}>
           <Image
-            // source={{ uri: passenger[i].profilePicture }}
             source={{ uri: passenger.profilePicture }}
             style={styles.profilePicture}
             resizeMode="contain"
@@ -119,20 +123,20 @@ export default function TripScreen({ navigation, route: { params } }) {
   });
 
   const handleRequest = () => {
+    // envoie le trip Id et le passenger token au backend pour ajouter le passager au trip
     const joinRequest = {
       tripId: params.tripData.tripId,
       passengerToken: passengerToken,
     };
 
-    console.log(joinRequest);
     fetch(`${BACK_END_ADDRESS}/trips/addPassenger`, {
       method: "PUT",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(joinRequest),
     })
       .then((res) => res.json())
-      .then((foundID) => {
-        console.log(foundID);
+      .then((data) => {
+        console.log(data);
       });
   };
 
@@ -154,14 +158,12 @@ export default function TripScreen({ navigation, route: { params } }) {
           style={styles.descripcard}
         />
         <View style={styles.datecard}>
-          <Text style={styles.date}>{dateFormatted}</Text>
-          <Text style={styles.time}>{timeFormatted}</Text>
+          <Text style={styles.date}>{formattedDate}</Text>
+          <Text style={styles.time}>{formattedTime}</Text>
         </View>
         {/* <Text style={styles.descripcard}>{params.tripData.arrivalCoords.description}</Text> */}
       </View>
-      <View style={styles.divtextmap}>
-        <Text style={styles.titlemap}>Distance to your destination</Text>
-      </View>
+      <View style={styles.divtextmap}></View>
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -219,7 +221,6 @@ export default function TripScreen({ navigation, route: { params } }) {
           onReady={(data) => {
             setDistance(data.distance);
             setTime(data.duration);
-            console.log(data.distance, data.duration);
           }}
         />
       </MapView>

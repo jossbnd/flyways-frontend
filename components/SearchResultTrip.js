@@ -64,7 +64,7 @@ export default function SearchResultTrip(props) {
       // navigation={navigation}
       style={styles.container}
       onPress={() => {
-        console.log(props);
+        // console.log(props);
         navigation.navigate("Trip", { tripData: props });
       }}
     >

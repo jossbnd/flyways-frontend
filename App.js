@@ -29,7 +29,6 @@ import SearchResultScreen from "./screens/SearchResultScreen";
 import ChatScreen from "./screens/ChatScreen";
 import ChatGroupScreen from "./screens/ChatGroupScreen";
 
-
 // Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -44,7 +43,6 @@ import user from "./reducers/user";
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 
 const reducers = combineReducers({ user });
 const persistConfig = {
@@ -88,7 +86,11 @@ const TabNavigator = () => {
         tabBarStyle: { paddingBottom: 10, paddingTop: 5, height: 55 },
         headerShown: false,
         tabBarButton: (props) => {
-          if (route.name === "Chat" || route.name === "ChatGroup" || route.name === "Trip") {
+          if (
+            route.name === "Chat" ||
+            route.name === "ChatGroup" ||
+            route.name === "Trip"
+          ) {
             return null;
           } else {
             return <Pressable {...props}></Pressable>;
@@ -99,7 +101,6 @@ const TabNavigator = () => {
       <Tab.Screen name="My Profile" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
       <Tab.Screen name="Notification" component={NotificationScreen} />
-      <Tab.Screen name="Trip" component={TripScreen} />
       <Tab.Screen name="Chat" component={ChatScreen} />
       <Tab.Screen name="ChatGroup" component={ChatGroupScreen} />
     </Tab.Navigator>
@@ -124,8 +125,12 @@ export default function App() {
             <Stack.Screen name="Search" component={SearchScreen} />
             <Stack.Screen name="SearchResult" component={SearchResultScreen} />
             <Stack.Screen name="CreateTrip" component={CreateTripScreen} />
-            <Stack.Screen name="SearchParameters" component={SearchParametersScreen} />
+            <Stack.Screen
+              name="SearchParameters"
+              component={SearchParametersScreen}
+            />
             <Stack.Screen name="Settings" component={SettingsScreen} />
+            <Stack.Screen name="Trip" component={TripScreen} />
             <Stack.Screen
               name="PersonalInformation"
               component={PersonalInformationScreen}
