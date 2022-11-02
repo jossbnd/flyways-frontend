@@ -90,8 +90,7 @@ const TabNavigator = () => {
           if (
             route.name === "Chat" ||
             route.name === "ChatGroup" ||
-            route.name === "Trip" ||
-            route.name === "Review"
+            route.name === "Trip"
           ) {
             return null;
           } else {
@@ -105,7 +104,6 @@ const TabNavigator = () => {
       <Tab.Screen name="Notification" component={NotificationScreen} />
       <Tab.Screen name="Chat" component={ChatScreen} />
       <Tab.Screen name="ChatGroup" component={ChatGroupScreen} />
-      <Tab.Screen name="Review" component={ReviewScreen} />
     </Tab.Navigator>
   );
 };
@@ -151,6 +149,7 @@ export default function App() {
               name="EditLanguages"
               component={EditLanguagesScreen}
             />
+            <Stack.Screen name="Review" component={ReviewScreen} />
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
           </Stack.Navigator>
         </NavigationContainer>

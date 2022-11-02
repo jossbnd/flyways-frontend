@@ -12,6 +12,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
@@ -29,6 +30,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function SearchResultScreen({ navigation, route: { params } }) {
+  const isFocused = useIsFocused(); // permet de refaire le fetch à chaque fois que l'utilisateur revient sur cette page
   const user = useSelector((state) => state.user.value); // pour utiliser le token de l'utilisateur
   const [searchResult, setSearchResult] = useState(null);
 
@@ -82,8 +84,10 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
 
   // useEffect qui charge les résultats automatiquement au chargement de la page
   useEffect(() => {
-    handleFetch();
-  }, []);
+    if (isFocused) {
+      handleFetch();
+    }
+  }, [isFocused]);
 
   return (
     <SafeAreaView style={styles.container}>
