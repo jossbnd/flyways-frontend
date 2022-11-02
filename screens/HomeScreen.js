@@ -74,7 +74,7 @@ export default function HomeScreen({ navigation }) {
               // let tripData =data.user.trips;
               // console.log(tripData);
               let upcomingTrip = {
-                dataTrip :trip,
+                dataTrip: trip,
                 arrival:
                   trip.departureCoords.description.length < 15
                     ? trip.departureCoords.description
@@ -150,24 +150,12 @@ export default function HomeScreen({ navigation }) {
   });
 
   const handleSearchScreen = () => {
-    setTest(!test);
+    navigation.navigate("Search");
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
-
-      {/* TODO: REMOVE THIS WHEN DONE */}
-      <TouchableOpacity onPress={() => navigation.navigate("CreateTrip")}>
-        <Text>create trip</Text>
-      </TouchableOpacity>
-      {/* REMOVE */}
-
-      {/* TODO: REMOVE THIS WHEN DONE */}
-      <TouchableOpacity onPress={() => navigation.navigate("Review")}>
-        <Text style={{ fontWeight: "bold", fontSize: 20 }}>Review Trip</Text>
-      </TouchableOpacity>
-      {/* REMOVE */}
 
       <View style={styles.profileContainer}>
         <TouchableOpacity onPress={pickImage}>

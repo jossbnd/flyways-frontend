@@ -43,26 +43,8 @@ export default function ReviewScreen({ navigation, route: { params } }) {
   const [count, setCount] = useState(1);
 
   // Etat qui déclare un tableau vide pour les reviews
-  const [passengers, setPassengers] = useState([
-    {
-      passengerToken: "i_n2UJ95rEk4NIUQTYB3TDAUj345-EXM",
-      firstName: "Keyser",
-      lastName: "Soze",
-      profilePicture: "profile-picture.jpg",
-    },
-    {
-      passengerToken: "tPGNf15pQLPAb_byqpj8Qoi9MsLfMb1V",
-      firstName: "John",
-      lastName: "S",
-      profilePicture: "profile-picture.jpg",
-    },
-    {
-      passengerToken: "UoswI6AR19Q6vO5sbn4YvbWzj5uqlNn3",
-      firstName: "John",
-      lastName: "S",
-      profilePicture: "profile-picture.jpg",
-    },
-  ]);
+  const { tripData } = params;
+  const [passengers, setPassengers] = useState(tripData.passengers);
   /* ******************** */
 
   /****** FONCTIONS ******/
