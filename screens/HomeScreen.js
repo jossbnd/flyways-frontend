@@ -69,8 +69,12 @@ export default function HomeScreen({ navigation }) {
           // Récupérer les trips, les stoker dans un états UpcomingTrips
           let tripsTemp = [];
           for (let trip of data.user.trips) {
+            // console.log("coucou", data.user.trips, "final");
             if (!trip.isDone) {
+              // let tripData =data.user.trips;
+              // console.log(tripData);
               let upcomingTrip = {
+                dataTrip :trip,
                 arrival:
                   trip.departureCoords.description.length < 15
                     ? trip.departureCoords.description
@@ -145,7 +149,7 @@ export default function HomeScreen({ navigation }) {
     return <UpcomingTrips key={i} {...trip} />;
   });
 
-  const handleTripScreen = () => {
+  const handleSearchScreen = () => {
     setTest(!test);
   };
 
@@ -203,7 +207,7 @@ export default function HomeScreen({ navigation }) {
         </View>
         <TouchableOpacity
           style={styles.sarchButton}
-          onPress={() => handleTripScreen()}
+          onPress={() => handleSearchScreen()}
         >
           <StyledRegularText
             title="Search for a Trip"
