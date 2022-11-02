@@ -251,12 +251,8 @@ export default function TripScreen({ navigation, route: { params } }) {
           }}
         />
       </MapView>
-      <View>
-        <ScrollView
-          style={styles.passengersBar}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-        >
+      <View style={styles.passengersBar}>
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {passengers}
           {placesLeft > 0 && canJoin ? (
             <View style={styles.buttonCard}>
