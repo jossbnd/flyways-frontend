@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
   commentInput: {
     height: "80%",
     width: 300,
-    backgroundColor: "rgba(30, 168, 95, 0.5)",
+    borderColor: "rgba(30, 168, 95, 0.5)",
     borderWidth: 1,
     marginTop: 15,
   },

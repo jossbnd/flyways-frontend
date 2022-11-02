@@ -25,41 +25,14 @@ import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
-<<<<<<< HEAD
-=======
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
 
->>>>>>> 1a029290ba72da59618f565608e1b31e10315c97
 export default function ChatScreen({ navigation }) {
   // Etats
   const [modalVisible, setModalVisible] = useState(false);
   const [search, setSearch] = useState(null);
-<<<<<<< HEAD
-  const [messages, setMessages] = useState([
-    {
-      userToken: "rV_x_NcHrhZgXbkbJ34VMih_8aK3CIPg",
-      firstName: "John",
-      lastName: "Doe",
-      text: "Hello",
-    },
-    {
-      userToken: "tPGNf15pQLPAb_byqpj8Qoi9MsLfMb1V",
-      firstName: "Joss",
-      lastName: "Bon",
-      text: "I should be there in a minute, see you there guys",
-    },
-    {
-      userToken: "UoswI6AR19Q6vO5sbn4YvbWzj5uqlNn3",
-      firstName: "Chiri",
-      lastName: "Kitsu",
-      text: "I should be there in a minute, see you guys",
-    },
-  ]);
-=======
-
->>>>>>> 1a029290ba72da59618f565608e1b31e10315c97
   const [trips, setTrips] = useState([]);
   const user = useSelector((state) => state.user.value);
 
@@ -93,11 +66,7 @@ export default function ChatScreen({ navigation }) {
   };
 
   let tripsDiscussions = trips.map((trip, i) => {
-<<<<<<< HEAD
-    return <Discussion key={i} {...trip} messages={messages} />;
-=======
     return <Discussion key={i} {...trip} />;
->>>>>>> 1a029290ba72da59618f565608e1b31e10315c97
   });
 
   return (

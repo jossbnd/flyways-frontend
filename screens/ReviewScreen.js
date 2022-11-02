@@ -107,9 +107,7 @@ const styles = StyleSheet.create({
     width: "85%",
   },
   topContainer: {
-    height: "20%",
-    borderColor: "#1EA85F",
-    borderWidth: 2,
+    height: "15%",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
