@@ -38,13 +38,12 @@ export default function TripScreen({ navigation, route: { params } }) {
   const [distance, setDistance] = useState();
   const [time, setTime] = useState();
   const [canJoin, setCanJoin] = useState(undefined); // état utilisé pour vérifier si l'utilisateur est déjà sur le trip ou non
+  const [message, setMessage] = useState(null);
+  const [passengers, setPassengers] = useState(undefined);
 
   const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
 
-  const passengerToken = useSelector((state) => state.user.value.token);
-  const destination = useSelector(
-    (state) => state.user.value.actualDestination
-  );
+  const user = useSelector((state) => state.user.value);
 
   // affichage de la distance en km ou en m
   let dist;
@@ -56,15 +55,37 @@ export default function TripScreen({ navigation, route: { params } }) {
     dist = `${Math.round(distance * 1000)} m`;
   }
 
-  // FIXME: fonctionne mais avec un temps de retard (doit recharger le screen pour fonctionner)
-  // faire en sorte de refaire le useEffect au chargement de la page
+  // useEffect pour afficher les passagers sous la map
+  useEffect(() => {
+    setPassengers(
+      params.tripData.passengers.map((passenger, i) => {
+        return (
+          <View key={i} style={styles.passengerIcon}>
+            <TouchableOpacity style={styles.passenger}>
+              <Image
+                source={{ uri: passenger.profilePicture }}
+                style={styles.profilePicture}
+                resizeMode="contain"
+              />
+            </TouchableOpacity>
+            <StyledRegularText
+              title={passenger.firstName + " " + passenger.lastName[0] + "."}
+              style={styles.userText}
+            />
+          </View>
+        );
+      })
+    );
+  }, []);
+
+  // useEffect qui enlève le bouton "join trip" si l'utilisateur est déjà sur le trip
   useEffect(() => {
     // vérifie si l'utilisateur fait déjà partie du trip en comparant les tokens
     setCanJoin(true);
     // console.log("aaa")
     for (let passenger of params.tripData.passengers) {
       // s'il fait déjà partie du trip, cache le bouton "join trip"
-      passenger.passengerToken === passengerToken ? setCanJoin(false) : null;
+      passenger.passengerToken === user.token ? setCanJoin(false) : null;
     }
   }, []);
 
@@ -82,8 +103,8 @@ export default function TripScreen({ navigation, route: { params } }) {
 
   const arrivalLocation = {
     // où la personne veut arriver
-    latitude: destination.latitude,
-    longitude: destination.longitude,
+    latitude: user.actualDestination.latitude,
+    longitude: user.actualDestination.longitude,
   };
 
   const dateJS = new Date(params.tripData.date); // créée une date JS
@@ -95,7 +116,7 @@ export default function TripScreen({ navigation, route: { params } }) {
   const formattedTime = `${dateJS.getHours()}:${dateJS.getMinutes()}`;
 
   // title de marker-arrival
-  const arrivalAddress = destination.description;
+  const arrivalAddress = user.actualDestination.description;
 
   const toggleModal = () => {
     setModalVisible(!modalVisible);
@@ -104,29 +125,11 @@ export default function TripScreen({ navigation, route: { params } }) {
   const placesLeft =
     params.tripData.capacity - params.tripData.passengers.length; // calcul des places restantes sur le trip
 
-  const passengers = params.tripData.passengers.map((passenger, i) => {
-    return (
-      <View key={i} style={styles.passengerIcon}>
-        <TouchableOpacity style={styles.passenger}>
-          <Image
-            source={{ uri: passenger.profilePicture }}
-            style={styles.profilePicture}
-            resizeMode="contain"
-          />
-        </TouchableOpacity>
-        <StyledRegularText
-          title={passenger.firstName + " " + passenger.lastName[0] + "."}
-          style={styles.userText}
-        />
-      </View>
-    );
-  });
-
-  const handleRequest = () => {
-    // envoie le trip Id et le passenger token au backend pour ajouter le passager au trip
+  const handleJoinRequest = () => {
+    // envoie le trip Id et le passenger token au backend pour ajouter le passager au trip en db
     const joinRequest = {
       tripId: params.tripData.tripId,
-      passengerToken: passengerToken,
+      passengerToken: user.token,
     };
 
     fetch(`${BACK_END_ADDRESS}/trips/addPassenger`, {
@@ -137,6 +140,29 @@ export default function TripScreen({ navigation, route: { params } }) {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        if (data.result) {
+          setMessage("Trip joined");
+          setCanJoin(false); // hides the "join trip" button
+
+          // ajout de l'utilisateur au trip, niveau frontend
+          const currentUser = (
+            <View key={passengers.length + 1} style={styles.passengerIcon}>
+              <TouchableOpacity style={styles.passenger}>
+                <Image
+                  source={{ uri: user.profilePicture }}
+                  style={styles.profilePicture}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+              <StyledRegularText
+                title={user.firstName + " " + user.lastName[0] + "."}
+                style={styles.userText}
+              />
+            </View>
+          );
+          setPassengers(passengers => [...passengers, currentUser]);
+        } else {
+        }
       });
   };
 
@@ -149,21 +175,21 @@ export default function TripScreen({ navigation, route: { params } }) {
           title={params.tripData.arrivalCoords.description}
           style={styles.descripcard}
         />
+        <StyledRegularText title="Destination :" style={styles.titlecard2} />
+        <StyledRegularText
+          title={user.actualDestination.description}
+          style={styles.descripcard}
+        />
         <Text style={styles.datatrip}>
           {dist} from destination - {Math.ceil(time)} min
         </Text>
-        <StyledRegularText title="Destination :" style={styles.titlecard2} />
-        <StyledRegularText
-          title={destination.description}
-          style={styles.descripcard}
-        />
         <View style={styles.datecard}>
           <Text style={styles.date}>{formattedDate}</Text>
           <Text style={styles.time}>{formattedTime}</Text>
         </View>
-        {/* <Text style={styles.descripcard}>{params.tripData.arrivalCoords.description}</Text> */}
       </View>
       <View style={styles.divtextmap}></View>
+      <Text>{message}</Text>
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -232,7 +258,7 @@ export default function TripScreen({ navigation, route: { params } }) {
               <TouchableOpacity
                 style={styles.requestButton}
                 onPress={() => {
-                  handleRequest();
+                  handleJoinRequest();
                 }}
               >
                 <FontAwesome
@@ -241,11 +267,11 @@ export default function TripScreen({ navigation, route: { params } }) {
                   style={{ color: "#FFFFFF", marginTop: 10 }}
                 />
                 <Text style={{ fontSize: 8, color: "#FFFFFF" }}>
-                  Send request
+                  Join trip
                 </Text>
               </TouchableOpacity>
               <Text style={{ fontSize: 12, color: "#000000" }}>
-                {placesLeft} seat avail.
+                {placesLeft} seats avail.
               </Text>
             </View>
           ) : (
@@ -255,7 +281,7 @@ export default function TripScreen({ navigation, route: { params } }) {
             <TouchableOpacity
               style={styles.requestButton}
               onPress={() => {
-                handleRequest();
+                console.log("settings")
               }}
             >
               <FontAwesome
