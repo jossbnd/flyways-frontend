@@ -33,7 +33,6 @@ export default function ChatScreen({ navigation }) {
   // Etats
   const [modalVisible, setModalVisible] = useState(false);
   const [search, setSearch] = useState(null);
-
   const [trips, setTrips] = useState([]);
   const user = useSelector((state) => state.user.value);
 

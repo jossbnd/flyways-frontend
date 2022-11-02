@@ -28,6 +28,7 @@ import EditLanguagesScreen from "./screens/EditLanguages";
 import SearchResultScreen from "./screens/SearchResultScreen";
 import ChatScreen from "./screens/ChatScreen";
 import ChatGroupScreen from "./screens/ChatGroupScreen";
+import ReviewScreen from "./screens/ReviewScreen";
 
 // Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -89,7 +90,8 @@ const TabNavigator = () => {
           if (
             route.name === "Chat" ||
             route.name === "ChatGroup" ||
-            route.name === "Trip"
+            route.name === "Trip" ||
+            route.name === "Review"
           ) {
             return null;
           } else {
@@ -103,6 +105,7 @@ const TabNavigator = () => {
       <Tab.Screen name="Notification" component={NotificationScreen} />
       <Tab.Screen name="Chat" component={ChatScreen} />
       <Tab.Screen name="ChatGroup" component={ChatGroupScreen} />
+      <Tab.Screen name="Review" component={ReviewScreen} />
     </Tab.Navigator>
   );
 };
