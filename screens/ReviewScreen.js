@@ -1,3 +1,7 @@
+/* A FAIRE */
+// à la place des infos en dur, mettre params.trips.passengers
+/* ******************** */
+
 import React from "react";
 
 // Import Composants
@@ -27,36 +31,33 @@ import { useSelector } from "react-redux";
 // adresse déploiement
 const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
-export default function ReviewScreen({}) {
+export default function ReviewScreen({ navigation, route: { params } }) {
+  console.log(params);
   /****** STORE REDUX ******/
   const user = useSelector((state) => state.user.value);
   /* ******************** */
   /****** ETATS ******/
   // Etat pour déclencher la modale
   const [modalVisible, setModalVisible] = useState(false);
-
-  /* A FAIRE */
-  // à la place des infos en dur, mettre params.trips.passengers
-  // afficher dernière lettre du nom de famille
-  // faire disparaître les views avec les avis une fois l'avis donné
-  /* ******************** */
+  // Etat qui est envoyé en props à l'enfant pour compter le nombre d'avis
+  const [count, setCount] = useState(1);
 
   // Etat qui déclare un tableau vide pour les reviews
-  const [passengersData, setPassengersData] = useState([
+  const [passengers, setPassengers] = useState([
     {
       passengerToken: "i_n2UJ95rEk4NIUQTYB3TDAUj345-EXM",
+      firstName: "Keyser",
+      lastName: "Soze",
+      profilePicture: "profile-picture.jpg",
+    },
+    {
+      passengerToken: "tPGNf15pQLPAb_byqpj8Qoi9MsLfMb1V",
       firstName: "John",
       lastName: "S",
       profilePicture: "profile-picture.jpg",
     },
     {
-      passengerToken: "i_n2UJ95rEk4NIUQTYB3TDAUj345-EXM",
-      firstName: "John",
-      lastName: "S",
-      profilePicture: "profile-picture.jpg",
-    },
-    {
-      passengerToken: "i_n2UJ95rEk4NIUQTYB3TDAUj345-EXM",
+      passengerToken: "UoswI6AR19Q6vO5sbn4YvbWzj5uqlNn3",
       firstName: "John",
       lastName: "S",
       profilePicture: "profile-picture.jpg",
@@ -70,28 +71,54 @@ export default function ReviewScreen({}) {
     setModalVisible(!modalVisible);
   };
 
+  const handleFinish = () => {
+    console.log(passengersData);
+    if (count === passengersData.length) {
+      navigation.navigate("My Profile");
+    }
+  };
+
+  const addCount = () => {
+    setCount(count + 1);
+  };
+
+  /* ******************** */
+
   /****** VARIABLES ******/
-  let reviewsTable = passengersData.map((passengers, i) => {
-    return <Review key={i} {...passengers} />;
+  let passengersData = passengers.map((passenger, i) => {
+    if (user.token === passenger.passengerToken) {
+      return;
+    } else {
+      return (
+        <Review key={i} {...passenger} isDone={false} addCount={addCount} />
+      );
+    }
   });
 
   /* ******************** */
 
-  // A l'initialisation, récupérer le dernier trip terminé par le User et afficher les participants
-  /* USE EFFECT pour noter les participants */
-
+  /* RETURN de la fonction REVIEWSCREEN */
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
-      <ScrollView contentContainerStyle={styles.reviewsContainer}>
-        <View style={styles.topContainer}>
-          <StyledBoldText
-            title="Did you enjoy your trip?"
-            style={{ fontSize: 40 }}
-          />
+      <View style={styles.topContainer}>
+        <StyledBoldText
+          title="Did you enjoy your trip?"
+          style={{ fontSize: 40 }}
+        />
+      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.reviewContainer}>{passengersData}</View>
+        <View style={styles.finishView}>
+          <TouchableOpacity
+            onPress={() => handleFinish()}
+            style={styles.finishButton}
+          >
+            <StyledBoldText title="FINISH" />
+          </TouchableOpacity>
         </View>
-        <View>{reviewsTable}</View>
       </ScrollView>
+
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
   );
@@ -103,14 +130,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: "100%",
   },
-  reviewsContainer: {
+  scrollContainer: {
     width: "85%",
+    paddingBottom: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
   topContainer: {
-    height: "15%",
+    height: "20%",
     alignItems: "center",
     justifyContent: "center",
     marginTop: 10,
-    marginBottom: 10,
+    padding: 10,
+  },
+  reviewContainer: {
+    marginTop: 20,
+  },
+  finishView: {
+    width: 200,
+  },
+  finishButton: {
+    borderRadius: 20,
+    height: 40,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#1EA85F",
+    padding: 10,
   },
 });
