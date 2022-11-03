@@ -116,8 +116,8 @@ export default function SignUpScreen({ navigation }) {
             setPasswordCheck(null);
             setErrorMessages([]);
 
-            // navigate vers PhoneScreen
-            navigation.navigate("Phone");
+            // navigate vers HomeScreen
+            navigation.navigate("TabNavigator");
             return;
           } else {
             setErrorMessages([data.error]);
