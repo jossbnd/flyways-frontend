@@ -1,5 +1,4 @@
 import {
-  Button,
   StyleSheet,
   Text,
   View,
@@ -14,6 +13,9 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Marker } from "react-native-maps";
+
+//Import hook Navigation
+import { useNavigation } from "@react-navigation/native";
 
 //import redux
 import { useRef, useState } from "react";
@@ -32,6 +34,9 @@ import StyledBoldText from "../components/StyledBoldText";
 import { useEffect } from "react";
 import user from "../reducers/user";
 import { usePreventRemoveContext } from "@react-navigation/native";
+
+// Import Moment to format date
+import moment from "moment";
 
 export default function TripScreen({ navigation, route: { params } }) {
   //ETATS
@@ -62,18 +67,25 @@ export default function TripScreen({ navigation, route: { params } }) {
     setPassengers(
       params.tripData.passengers.map((passenger, i) => {
         return (
-          <View key={i} style={styles.passengerIcon}>
-            <TouchableOpacity style={styles.passenger}>
+          <View key={i}>
+            <TouchableOpacity
+              style={styles.imageContainer}
+              onPress={() =>
+                navigation.navigate("Profile", {
+                  userToken: passenger.passengerToken,
+                })
+              }
+            >
               <Image
                 source={{ uri: passenger.profilePicture }}
                 style={styles.profilePicture}
                 resizeMode="contain"
               />
+              <StyledRegularText
+                title={passenger.firstName + " " + passenger.lastName[0] + "."}
+                style={styles.userText}
+              />
             </TouchableOpacity>
-            <StyledRegularText
-              title={passenger.firstName + " " + passenger.lastName[0] + "."}
-              style={styles.userText}
-            />
           </View>
         );
       })
@@ -113,12 +125,16 @@ export default function TripScreen({ navigation, route: { params } }) {
   };
 
   const dateJS = new Date(params.tripData.date); // créée une date JS
-  // formate la date pour qu'elle soit lisible
-  const formattedDate = `${dateJS.getDate()}/${
-    dateJS.getMonth() + 1
-  }/${dateJS.getFullYear()}`;
+  // // formate la date pour qu'elle soit lisible
+  // const formattedDate = `${dateJS.getDate()}/${
+  //   dateJS.getMonth() + 1
+  // }/${dateJS.getFullYear()}`;
   // formate l'heure pour qu'elle soit lisible
-  const formattedTime = `${dateJS.getHours()}:${dateJS.getMinutes()}`;
+  // const formattedTime = `${dateJS.getHours()}:${dateJS.getMinutes()}`;
+
+  //formattedDate with moment
+  const formattedDate = moment(params.tripData.date).format("ddd DD MMM YYYY ");
+  const formattedTime = moment(params.tripData.date).format("LT");
 
   // title de marker-arrival
   const arrivalAddress = user.actualDestination.description;
@@ -144,9 +160,9 @@ export default function TripScreen({ navigation, route: { params } }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         if (data.result) {
-          setMessage("Trip joined");
+          setMessage("Trip joined !");
           setCanJoin(false); // hides the "join trip" button
 
           // ajout de l'utilisateur au trip, niveau frontend
@@ -154,9 +170,18 @@ export default function TripScreen({ navigation, route: { params } }) {
             <View key={passengers.length + 1} style={styles.passengerIcon}>
               <TouchableOpacity style={styles.passenger}>
                 <Image
-                  source={{ uri: user.profilePicture }}
-                  style={styles.profilePicture}
+                  style={styles.userImage}
+                  source={
+                    passenger.profilePicture
+                      ? { uri: passenger.profilePicture }
+                      : require("../assets/profile-picture.jpg")
+                  }
                   resizeMode="contain"
+                  onPress={() =>
+                    navigation.navigate("Profile", {
+                      userToken: passenger.passengerToken,
+                    })
+                  }
                 />
               </TouchableOpacity>
               <StyledRegularText
@@ -186,15 +211,16 @@ export default function TripScreen({ navigation, route: { params } }) {
           style={styles.descripcard}
         />
         <Text style={styles.datatrip}>
-          {dist} from destination - {Math.ceil(time)} min
+          {dist} from Drop-off point - {Math.ceil(time)} min
         </Text>
         <View style={styles.datecard}>
           <Text style={styles.date}>{formattedDate}</Text>
           <Text style={styles.time}>{formattedTime}</Text>
         </View>
       </View>
-      <View style={styles.divtextmap}></View>
-      <Text>{message}</Text>
+      <View style={styles.divtextmap}>
+        <Text style={styles.message}>{message}</Text>
+      </View>
       <MapView
         ref={mapRef}
         style={styles.map}
@@ -229,12 +255,18 @@ export default function TripScreen({ navigation, route: { params } }) {
         // zoomEnabled={false}
         // scrollEnabled={false}
       >
-        <Marker title={departureAddress} coordinate={departureLocation}>
+        <Marker
+          title={departureAddress.slice(0, 20) + "..."}
+          coordinate={departureLocation}
+        >
           <View style={styles.marker}>
             <FontAwesome5 name="walking" size={30} />
           </View>
         </Marker>
-        <Marker title={arrivalAddress} coordinate={arrivalLocation}>
+        <Marker
+          title={arrivalAddress.slice(0, 20) + "..."}
+          coordinate={arrivalLocation}
+        >
           <View style={styles.marker}>
             <FontAwesome name="flag-checkered" size={30} />
           </View>
@@ -258,8 +290,9 @@ export default function TripScreen({ navigation, route: { params } }) {
       <View style={styles.passengersBar}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {passengers}
+
           {!leader && placesLeft > 0 && canJoin ? (
-            <View style={styles.buttonCard}>
+            <View>
               <TouchableOpacity
                 style={styles.requestButton}
                 onPress={() => {
@@ -281,12 +314,12 @@ export default function TripScreen({ navigation, route: { params } }) {
             <></>
           )}
           {leader ? (
-            <View style={styles.buttonCard}>
+            <View>
               <TouchableOpacity
-                style={styles.requestButton}
+                style={styles.Button}
                 onPress={() => {
                   navigation.navigate("Review", { tripData: params.tripData });
-                  console.log(params.tripData);
+                  // console.log(params.tripData);
                 }}
               >
                 <FontAwesome
@@ -299,12 +332,12 @@ export default function TripScreen({ navigation, route: { params } }) {
               <Text style={{ fontSize: 12, color: "#000000" }}></Text>
             </View>
           ) : (
-            <View style={styles.buttonCard}>
+            <View>
               <TouchableOpacity
-                style={styles.requestButton}
+                style={styles.Button}
                 onPress={() => {
                   navigation.navigate("Review", { tripData: params.tripData });
-                  console.log(params.tripData);
+                  // console.log(params.tripData);
                 }}
               >
                 <FontAwesome
@@ -326,8 +359,8 @@ export default function TripScreen({ navigation, route: { params } }) {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     alignItems: "center",
-    justifyContent: "flex-start",
   },
   card: {
     alignItems: "flex-start",
@@ -362,7 +395,7 @@ const styles = StyleSheet.create({
   datecard: {
     flex: 0.1,
     position: "absolute",
-    marginLeft: 240,
+    marginLeft: 220,
     marginTop: 30,
   },
   date: {
@@ -391,6 +424,9 @@ const styles = StyleSheet.create({
     width: "85%",
     alignItems: "flex-start",
   },
+  message: {
+    color: "black",
+  },
   map: {
     height: "38%",
     width: "100%",
@@ -399,54 +435,30 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   passengersBar: {
-    height: "16%",
-    width: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    height: "15%",
   },
-  passengerIcon: {
+  imageContainer: {
     height: "100%",
-    width: "20%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  passenger: {
+    width: 80,
     alignItems: "center",
     justifyContent: "center",
-    height: 70,
-    width: 70,
-    marginTop: 10,
-    marginLeft: 10,
-    marginRight: 10,
-    borderRadius: 35,
-    borderColor: "#1EA85F",
-    borderWidth: 2,
   },
   profilePicture: {
-    height: 70,
-    width: 70,
-    borderRadius: 40,
-    resizeMode: "contain",
+    height: 64,
+    width: 64,
+    borderRadius: 50,
+    marginBottom: 5,
   },
   userText: {
     color: "#000000",
   },
-  buttonCard: {
-    height: "100%",
-    width: "20%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  requestButton: {
-    height: 70,
-    width: 70,
-    borderRadius: 35,
-    backgroundColor: "#1B9756",
-    alignItems: "center",
-    justifyContent: "center",
+  Button: {
     marginTop: 10,
     marginLeft: 10,
-    marginRight: 10,
+    borderRadius: 50,
+    padding: 16,
+    backgroundColor: "#1EA85F",
+    alignItems: "center",
+    justifyContent: "center",
   },
 });
