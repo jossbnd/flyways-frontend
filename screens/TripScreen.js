@@ -63,18 +63,20 @@ export default function TripScreen({ navigation, route: { params } }) {
     setPassengers(
       params.tripData.passengers.map((passenger, i) => {
         return (
-          <View key={i} style={styles.passengerIcon}>
-            <TouchableOpacity style={styles.passenger}>
+          <View key={i}>
+            <TouchableOpacity style={styles.passenger} onPress={() => {
+              navigation.navigate("Profile", {userToken: passenger.passengerToken})
+            }}>
               <Image
                 source={{ uri: passenger.profilePicture }}
                 style={styles.profilePicture}
                 resizeMode="contain"
               />
+              <StyledRegularText
+                title={passenger.firstName + " " + passenger.lastName[0] + "."}
+                style={styles.userText}
+              />
             </TouchableOpacity>
-            <StyledRegularText
-              title={passenger.firstName + " " + passenger.lastName[0] + "."}
-              style={styles.userText}
-            />
           </View>
         );
       })
@@ -96,8 +98,8 @@ export default function TripScreen({ navigation, route: { params } }) {
   }, [{ navigation }]);
 
   useEffect(() => {
-    setCanJoin(canJoin)
-  }, [canJoin])
+    setCanJoin(canJoin);
+  }, [canJoin]);
 
   // mapRef pour le map
   const mapRef = useRef(null);
@@ -138,7 +140,7 @@ export default function TripScreen({ navigation, route: { params } }) {
   const handleJoinRequest = () => {
     // envoie le trip Id et le passenger token au backend pour ajouter le passager au trip en db
     setCanJoin(false); // hides the "join trip" button
-    setPressedJoin(pressedJoin + 1)
+    setPressedJoin(pressedJoin + 1);
     const joinRequest = {
       tripId: params.tripData.tripId,
       passengerToken: user.token,
@@ -268,7 +270,7 @@ export default function TripScreen({ navigation, route: { params } }) {
           {canJoin && pressedJoin === 0 ? (
             <View style={styles.buttonCard}>
               <TouchableOpacity
-                style={styles.requestButton}
+                style={styles.Button}
                 onPress={() => {
                   handleJoinRequest();
                   setCanJoin(false); // hides the "join trip" button
@@ -288,49 +290,49 @@ export default function TripScreen({ navigation, route: { params } }) {
           ) : (
             <></>
           )}
-          {
-            leader && (
-              <View style={styles.buttonCard}>
-                <TouchableOpacity
-                  style={styles.requestButton}
-                  onPress={() => {
-                    navigation.navigate("Review", {
-                      tripData: params.tripData,
-                    });
-                    console.log(params.tripData);
-                  }}
-                >
-                  <FontAwesome
-                    name="flag-checkered"
-                    size={25}
-                    style={{ color: "#FFFFFF", marginTop: 10 }}
-                  />
-                  <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
-                </TouchableOpacity>
-                <Text style={{ fontSize: 12, color: "#000000" }}></Text>
-              </View>
-            )
-            // : (
-            //   <View style={styles.buttonCard}>
-            //     <TouchableOpacity
-            //       style={styles.requestButton}
-            //       onPress={() => {
-            //         navigation.navigate("Review", { tripData: params.tripData });
-            //         console.log(params.tripData);
-            //       }}
-            //     >
-            //       <FontAwesome
-            //         name="flag-checkered"
-            //         size={25}
-            //         style={{ color: "#FFFFFF", marginTop: 10 }}
-            //       />
-            //       <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
-            //     </TouchableOpacity>
-            //     <Text style={{ fontSize: 12, color: "#000000" }}></Text>
-            //   </View>
-            // )
-          }
         </ScrollView>
+        {
+          leader && (
+            <View style={styles.buttonCard}>
+              <TouchableOpacity
+                style={styles.Button}
+                onPress={() => {
+                  navigation.navigate("Review", {
+                    tripData: params.tripData,
+                  });
+                  console.log(params.tripData);
+                }}
+              >
+                <FontAwesome
+                  name="flag-checkered"
+                  size={25}
+                  style={{ color: "#FFFFFF", marginTop: 10 }}
+                />
+                <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
+              </TouchableOpacity>
+              <Text style={{ fontSize: 12, color: "#000000" }}></Text>
+            </View>
+          )
+          // : (
+          //   <View style={styles.buttonCard}>
+          //     <TouchableOpacity
+          //       style={styles.requestButton}
+          //       onPress={() => {
+          //         navigation.navigate("Review", { tripData: params.tripData });
+          //         console.log(params.tripData);
+          //       }}
+          //     >
+          //       <FontAwesome
+          //         name="flag-checkered"
+          //         size={25}
+          //         style={{ color: "#FFFFFF", marginTop: 10 }}
+          //       />
+          //       <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
+          //     </TouchableOpacity>
+          //     <Text style={{ fontSize: 12, color: "#000000" }}></Text>
+          //   </View>
+          // )
+        }
       </View>
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
@@ -418,47 +420,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  passengerIcon: {
-    height: "100%",
-    width: "20%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
   passenger: {
     alignItems: "center",
     justifyContent: "center",
-    height: 70,
-    width: 70,
-    marginTop: 10,
-    marginLeft: 10,
-    marginRight: 10,
-    borderRadius: 35,
-    borderColor: "#1EA85F",
-    borderWidth: 2,
+    height: "100%",
+    width: 80,
   },
   profilePicture: {
-    height: 70,
-    width: 70,
-    borderRadius: 40,
-    resizeMode: "contain",
+    height: 64,
+    width: 64,
+    borderRadius: 50,
+    marginBottom: 5,
   },
   userText: {
     color: "#000000",
   },
-  buttonCard: {
-    height: "100%",
-    width: "20%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  requestButton: {
-    height: 70,
-    width: 70,
-    borderRadius: 35,
+  Button: {
+    height: 64,
+    width: 64,
+    borderRadius: 50,
     backgroundColor: "#1B9756",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
+    marginTop: 16,
     marginLeft: 10,
     marginRight: 10,
   },
