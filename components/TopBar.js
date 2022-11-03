@@ -34,7 +34,6 @@ export default function TopBar(props) {
         <Image
           style={styles.image}
           source={require("../assets/flyways-logo.png")}
-          onPress={() => navigation.navigate("TabNavigator")}
         />
       </TouchableOpacity>
       <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
