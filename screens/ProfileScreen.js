@@ -39,7 +39,7 @@ export default function ProfileScreen({ navigation, route: { params } }) {
   // Définition des états
   const [profilePicture, setProfilePicture] = useState(null);
   const [firstName, setFirstName] = useState(null);
-  const [lastName, setLastName] = useState(null);
+  const [lastName, setLastName] = useState('');
   const [averageRating, setAverageRating] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [languagesSpoken, setLanguagesSpoken] = useState([]);
@@ -124,7 +124,7 @@ export default function ProfileScreen({ navigation, route: { params } }) {
           />
         </View>
         <StyledBoldText
-          title={firstName + " " + lastName}
+          title={firstName + " " + lastName[0] + '.'}
           style={styles.userName}
         />
         <View style={styles.reviewContainer}>
