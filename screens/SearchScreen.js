@@ -247,6 +247,11 @@ export default function SearchScreen({ navigation }) {
     }
   };
 
+  // formatte les minutes
+  // ajoute un zéro si les minutes sont sous 10 (affiche 7:05 au lieu de 7:5)
+  let minutesFormatted = time.getMinutes();
+  minutesFormatted < 10 ? minutesFormatted = `0${minutesFormatted}` : null
+
   /* ********************************************************************** */
 
   /* VARIABLES */
@@ -488,7 +493,7 @@ export default function SearchScreen({ navigation }) {
             {departureTime && (
               <View>
                 <StyledRegularText
-                  title={`Departure Time: ${time.getHours()}:${time.getMinutes()}`}
+                  title={`Departure Time: ${time.getHours()}:${minutesFormatted}`}
                 />
               </View>
             )}
@@ -531,7 +536,7 @@ export default function SearchScreen({ navigation }) {
                 }}
                 thumbTintColor="rgba(30, 168, 95, 1)"
                 minimumValue={0}
-                maximumValue={1000}
+                maximumValue={2000}
               />
             </View>
             <TouchableOpacity
