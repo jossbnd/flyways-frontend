@@ -176,11 +176,11 @@ export default function TripScreen({ navigation, route: { params } }) {
                   style={styles.profilePicture}
                   resizeMode="contain"
                 />
-              </TouchableOpacity>
               <StyledRegularText
                 title={user.firstName + " " + user.lastName[0] + "."}
                 style={styles.userText}
               />
+              </TouchableOpacity>
             </View>
           );
           setPassengers((passengers) => [...passengers, currentUser]);
