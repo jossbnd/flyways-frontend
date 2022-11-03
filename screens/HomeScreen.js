@@ -66,6 +66,9 @@ export default function HomeScreen({ navigation }) {
           setAverageRating(data.user.averageRating);
           setReviews(data.user.reviews);
 
+          // mettre à jour le reducer avec la photo du user
+          dispatch(updateProfilePicture(data.user.profilePicture));
+
           // Récupérer les trips, les stoker dans un états UpcomingTrips
           let tripsTemp = [];
           for (let trip of data.user.trips) {
@@ -267,11 +270,11 @@ const styles = StyleSheet.create({
   upcomingTripsContainer: {
     width: "90%",
     marginTop: 10,
-    marginBottom: 150,
   },
   scrollContainer: {
     width: "100%",
     alignItems: "center",
+    marginBottom: 150,
   },
   underline: {
     textDecorationLine: "underline",
