@@ -83,7 +83,7 @@ export default function SearchResultTrip(props) {
           <View style={styles.nameAndRating}>
             {/* contient name et rating, pour les afficher verticalement*/}
             <StyledRegularText
-              title={`${props.passengers[0].firstName} ${props.passengers[0].lastName}`}
+              title={`${props.passengers[0].firstName} ${props.passengers[0].lastName[0]}.`}
               style={styles.name}
             />
             <View style={styles.userRating}>
@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginVertical: 8,
+    marginLeft: 8,
   },
   nameAndRating: {
     marginLeft: 8,
