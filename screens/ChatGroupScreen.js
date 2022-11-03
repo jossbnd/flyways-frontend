@@ -10,6 +10,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 import ProfilModal from "../components/ProfilModal";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
@@ -28,10 +30,6 @@ import Pusher from "pusher-js/react-native";
 
 // Import Moment to format date
 import moment from "moment";
-
-// BACK END ADDRESS
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-// const BACK_END_ADDRESS = "http://192.168.1.13:3000";
 
 export default function ChatGroupScreen({ navigation, route: { params } }) {
   // Récupérer les infos du trip

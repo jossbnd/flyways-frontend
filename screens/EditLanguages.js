@@ -11,6 +11,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
@@ -24,9 +26,6 @@ import CountryPicker from "react-native-country-picker-modal";
 
 // Import des icones drapeau
 import CountryFlag from "react-native-country-flag";
-
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-// const BACK_END_ADDRESS_LOCAL = "http://192.168.10.172:3000";
 
 export default function EditLanguagesScreen({ navigation }) {
   const [flags, setFlags] = useState(null);
@@ -56,7 +55,7 @@ export default function EditLanguagesScreen({ navigation }) {
                   )
                     .then((res) => res.json())
                     .then((data) => {
-                      console.log(data)
+                      console.log(data);
                     });
                 }}
               >
@@ -74,33 +73,33 @@ export default function EditLanguagesScreen({ navigation }) {
   }, [flags]); // refait le fetch à chaque fois qu'une langue est ajoutée/supprimée
 
   return (
-    <SafeAreaView style={styles.container}>
-      <TopBar></TopBar>
-      <StyledRegularText title="Edit languages :" style={styles.text} />
+      <SafeAreaView style={styles.container}>
+        <TopBar></TopBar>
 
-      <CountryPicker
-        countryCode={countryCode}
-        withFlag
-        onSelect={(country) => {
-          let language = country.cca2;
-          fetch(`${BACK_END_ADDRESS}/users/addLanguage/${user.token}`, {
-            method: "PUT",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ language }),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
-            });
-        }}
-      ></CountryPicker>
+        {/* AA */}
+        <CountryPicker
+          countryCode={countryCode}
+          withFlag
+          onSelect={(country) => {
+            let language = country.cca2;
+            fetch(`${BACK_END_ADDRESS}/users/addLanguage/${user.token}`, {
+              method: "PUT",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ language }),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(data);
+              });
+          }}
+        ></CountryPicker>
 
-      <View style={styles.inputContainer}>
-        <View style={styles.dateAndCalendar}></View>
-      </View>
+        <View style={styles.inputContainer}>
+          <View style={styles.dateAndCalendar}></View>
+        </View>
 
-      {flags && <View>{flags}</View>}
-    </SafeAreaView>
+        {flags && <View>{flags}</View>}
+      </SafeAreaView>
   );
 }
 

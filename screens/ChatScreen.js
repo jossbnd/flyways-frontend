@@ -14,6 +14,8 @@ import TopBar from "../components/TopBar";
 import ProfilModal from "../components/ProfilModal";
 import Discussion from "../components/Discussion";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
@@ -22,8 +24,6 @@ import { useSelector } from "react-redux";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));

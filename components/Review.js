@@ -38,10 +38,10 @@ export default function Review(props) {
   // Mise en place de la note
   const personalStars = [];
   for (let i = 0; i < 5; i++) {
-    let style = { color: "#f1c40f", fontSize: 32 };
+    let style = { color: "#f1c40f", fontSize: 28 };
     let name = "star-o";
     if (i < score) {
-      style = { color: "#f1c40f", fontSize: 32 };
+      style = { color: "#f1c40f", fontSize: 28 };
       name = "star";
     }
     personalStars.push(
@@ -129,13 +129,6 @@ export default function Review(props) {
           >
             <StyledBoldText title="DONE" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.reportButton}>
-            <MaterialIcons
-              name="report-problem"
-              size={30}
-              style={{ color: "rgba(240, 52, 52, 0.7)" }}
-            />
-          </TouchableOpacity>
         </View>
       </View>
     </View>
@@ -145,16 +138,16 @@ export default function Review(props) {
 const styles = StyleSheet.create({
   card: {
     height: 200,
-    width: "100%",
+    width: "90%",
     marginTop: 5,
     marginBottom: 20,
     borderColor: "rgba(30, 168, 95, 0.5)",
-    borderWidth: 3,
+    borderWidth: 1,
     borderRadius: 8,
     alignItems: "center",
   },
   topCard: {
-    width: "100%",
+    width: "90%",
     marginTop: 10,
     marginLeft: 10,
     flexDirection: "row",
@@ -162,15 +155,14 @@ const styles = StyleSheet.create({
   },
   topCardName: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
-    width: 100,
+    marginLeft: 10,
+    width: '30%',
   },
-
   profilePicture: {
-    height: 50,
-    width: 50,
-    borderWidth: 1,
-    borderColor: "black",
+    height: 48,
+    width: 48,
+    borderRadius: 50,
+    marginBottom: 5,
   },
   bottomCard: {
     width: "100%",
@@ -180,26 +172,25 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
   },
   buttonsView: {
-    width: 340,
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    width: '100%',
+    justifyContent: "center",
+    alignItems: 'center',
     marginTop: 20,
     marginBottom: 20,
   },
   doneButton: {
+    width: 100,
     borderColor: "#1EA85F",
     backgroundColor: "rgba(30, 168, 95, 0.5)",
     borderWidth: 1,
     borderRadius: 20,
     padding: 5,
     alignItems: "center",
-    marginRight: 110,
   },
-  reportButton: {},
   commentInput: {
     height: "80%",
     width: 300,
-    borderColor: "rgba(30, 168, 95, 0.5)",
+    borderColor: "rgba(0, 0, 0, 0.4)",
     borderWidth: 1,
     marginTop: 15,
     padding: 5,
@@ -213,14 +204,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   scoreView: {
-    marginLeft: 20,
+    marginLeft: 30
   },
   notation: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-evenly",
     width: "60%",
-    paddingRight: 15,
-    marginLeft: 5,
   },
 });

@@ -13,6 +13,8 @@ import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
@@ -21,9 +23,6 @@ import StyledBoldText from "../components/StyledBoldText";
 import SearchResultTrip from "../components/SearchResultTrip";
 import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
 import TripScreen from "./TripScreen";
-
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
-// const BACK_END_ADDRESS = "http://192.168.10.172:3000";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -91,7 +90,7 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
   return (
     <SafeAreaView style={styles.container}>
       <TopBar></TopBar>
-      <ScrollView style={styles.resultContainer}>{searchResult}</ScrollView>
+      <ScrollView contentContainerStyle={styles.resultContainer}>{searchResult}</ScrollView>
     </SafeAreaView>
   );
 }
@@ -102,9 +101,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   resultContainer: {
-    width: windowWidth * 0.98,
-    height: windowHeight * 0.85,
-    top: 16,
+    alignItems: "center",
+    width: windowWidth,
+    top: 10,
+    paddingBottom: 40,
   },
   noResults: {
     marginVertical: 20,
