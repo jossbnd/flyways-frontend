@@ -104,6 +104,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: windowWidth,
     top: 10,
+    paddingBottom: 40,
   },
   noResults: {
     marginVertical: 20,

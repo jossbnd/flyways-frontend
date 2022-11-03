@@ -162,9 +162,9 @@ const styles = StyleSheet.create({
     width: windowWidth*0.9,
     backgroundColor: "#efefef",
     borderRadius: 5,
-    borderBottomWidth: 0.5,
     paddingHorizontal: 6,
     marginBottom: 6,
+    borderWidth: 0.5,
 
     // shadow
     shadowColor: "#000",
