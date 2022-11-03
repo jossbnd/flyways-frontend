@@ -7,6 +7,7 @@ import {
   View,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { BACK_END_ADDRESS } from "../environmentVar";
 
 // Import pour gérer le date picker
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -22,9 +23,6 @@ import StyledBoldText from "../components/StyledBoldText";
 // Import Store Redux
 import { useDispatch } from "react-redux";
 import { login } from "../reducers/user";
-
-// Mettre son adresse back end ici
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function SignUpScreen({ navigation }) {
   // Création états inputs

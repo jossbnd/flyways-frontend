@@ -23,6 +23,8 @@ import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { updateProfilePicture } from "../reducers/user";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 // Import FontAwesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -35,8 +37,6 @@ import * as ImagePicker from "expo-image-picker";
 
 // Cloudinary
 import { CLOUDINARY_CLOUD_NAME } from "../environmentVar";
-
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function HomeScreen({ navigation }) {
   // Etats

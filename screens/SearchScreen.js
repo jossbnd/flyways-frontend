@@ -62,10 +62,6 @@ const INITIAL_POSITION = {
   longitudeDelta: LONGITUDE_DELTA,
 };
 
-// adresse vercel back end
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-// const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
-
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
   // stockage des coordonnées de la destination réelle dans le store

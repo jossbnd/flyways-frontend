@@ -24,12 +24,11 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 //Import hooks + redux
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-
-// adresse déploiement
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function ReviewScreen({ navigation, route: { params } }) {
   console.log(params);

@@ -15,15 +15,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../reducers/user";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 // Import des fonts
 import StyledBoldText from "../components/StyledBoldText";
 import StyledRegularText from "../components/StyledRegularText";
 
 // Import des icons
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-
-// Mettre son adresse back end ici
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function LoginScreen({ navigation }) {
   // Création états inputs

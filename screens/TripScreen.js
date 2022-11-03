@@ -26,7 +26,7 @@ import { useDispatch } from "react-redux";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 
-import { GOOGLE_API_KEY } from "../environmentVar";
+import { GOOGLE_API_KEY, BACK_END_ADDRESS } from "../environmentVar";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
@@ -47,8 +47,6 @@ export default function TripScreen({ navigation, route: { params } }) {
   const [message, setMessage] = useState(null);
   const [passengers, setPassengers] = useState(undefined);
   const [leader, setLeader] = useState(undefined);
-
-  const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
 
   const user = useSelector((state) => state.user.value);
 

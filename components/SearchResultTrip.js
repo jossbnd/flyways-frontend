@@ -60,7 +60,7 @@ export default function SearchResultTrip(props) {
   }
 
   return (
-    <TouchableOpacity
+      <TouchableOpacity
       // navigation={navigation}
       style={styles.container}
       onPress={() => {
@@ -111,25 +111,19 @@ export default function SearchResultTrip(props) {
 
         <View style={styles.fromToContainer}>
           <View style={styles.fromTo}>
-            <StyledRegularText title={`FROM :`} style={styles.fromToItem} />
-            <StyledRegularText
-              title={props.departureCoords.description}
-              style={styles.nameAndRatingItem}
-            />
+            <StyledRegularText title={`FROM`} style={styles.fromToItem} />
+            <Text numberOfLines={1} >{props.departureCoords.description}</Text>
           </View>
           <View style={styles.fromTo}>
-            <StyledRegularText title={`TO :`} style={styles.fromToItem} />
-            <StyledRegularText
-              title={props.arrivalCoords.description}
-              style={styles.nameAndRatingItem}
-            />
+            <StyledRegularText title={`TO`} style={styles.fromToItem} />
+            <Text numberOfLines={1} >{props.arrivalCoords.description}</Text>
           </View>
         </View>
 
         <View style={styles.bottomData}>
           <View style={styles.bottomDataContainer}>
             <StyledRegularText
-              title="Departure:"
+              title="Departure"
               style={styles.bottomDataItem}
             />
             <StyledRegularText
@@ -140,7 +134,7 @@ export default function SearchResultTrip(props) {
 
           <View style={styles.bottomDataContainer}>
             <StyledRegularText
-              title="Drop-off distance:"
+              title="Drop-off distance"
               style={styles.bottomDataItem}
             />
             <StyledRegularText title={dist} style={styles.bottomDataItem} />
@@ -148,7 +142,7 @@ export default function SearchResultTrip(props) {
 
           <View style={styles.bottomDataContainer}>
             <StyledRegularText
-              title="Places left:"
+              title="Places left"
               style={styles.bottomDataItem}
             />
             <StyledRegularText
@@ -165,15 +159,11 @@ export default function SearchResultTrip(props) {
 const styles = StyleSheet.create({
   // TODO:
   container: {
-    width: "99.5%",
-    height: 220,
+    width: windowWidth*0.9,
     backgroundColor: "#efefef",
     borderRadius: 5,
     borderBottomWidth: 0.5,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 16,
+    paddingHorizontal: 6,
     marginBottom: 6,
 
     // shadow
@@ -186,25 +176,18 @@ const styles = StyleSheet.create({
     shadowRadius: 4.65,
     elevation: 7,
   },
-  greenText: {
-    color: "#1B9756",
-  },
   leaderData: {
-    flex: 1,
     flexDirection: "row",
-    marginTop: 12,
+    alignItems: "center",
+    marginVertical: 8,
   },
   nameAndRating: {
-    flex: 1,
-    flexDirection: "column",
-    marginLeft: 6,
+    marginLeft: 8,
   },
   nameAndRatingItem: {
-    marginBottom: 6,
-    color: "#1B9756",
+    // color: "#1B9756",
   },
   name: {
-    color: "#1B9756",
     fontSize: 16,
   },
   flag: {
@@ -212,7 +195,6 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   languages: {
-    color: "#1B9756",
     flex: 1,
     flexDirection: "row",
     justifyContent: "flex-end",
@@ -221,33 +203,33 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   fromToContainer: {
-    flex: 1,
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "space-around",
+    marginLeft: 8,
+    marginVertical: 4,
   },
   fromTo: {
-    marginTop: 18,
-    marginRight: 10,
+    // marginTop: 8,
+    // marginRight: 10,
   },
   fromToItem: {
-    color: "#1B9756",
-    textAlign: "center",
-    marginBottom: 6,
+    // textAlign: "center",
+    // marginBottom: 6,
   },
   bottomData: {
-    flex: 1,
     flexDirection: "row",
-    alignItems: "flex-end",
-    marginBottom: 12,
+    justifyContent: "space-around",
+    marginVertical: 8,
+    // borderWidth: 1,
   },
   bottomDataItem: {
-    marginRight: 12,
+    // marginRight: 12,
     textAlign: "center",
     color: "#1B9756",
   },
   bottomDataContainer: {
     borderWidth: 1,
-    marginRight: 2,
+    // marginRight: 2,
     padding: 4,
     borderRadius: 4,
     borderColor: "#1B9756",
