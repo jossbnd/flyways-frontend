@@ -165,7 +165,7 @@ export default function TripScreen({ navigation, route: { params } }) {
       .then((data) => {
         console.log(data);
         if (data.result) {
-          setMessage("Trip joined");
+          // setMessage("Trip joined");
 
           // ajout de l'utilisateur au trip, niveau frontend
           const currentUser = (
@@ -293,9 +293,7 @@ export default function TripScreen({ navigation, route: { params } }) {
                 />
                 <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Join trip</Text>
               </TouchableOpacity>
-              <Text style={{ fontSize: 12, color: "#000000" }}>
-                {placesLeft} seats avail.
-              </Text>
+              <Text style={{ fontSize: 14, color: "#000000", left: 3 }}>{placesLeft} seats avail.</Text>
             </View>
           ) : (
             <></>
@@ -461,8 +459,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#1B9756",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 16,
+    marginTop: 19,
     marginLeft: 10,
     marginRight: 10,
+    marginBottom: 3
   },
+  buttonCard: {
+    alignItems: 'center'
+  }
 });

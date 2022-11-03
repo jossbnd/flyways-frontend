@@ -86,7 +86,7 @@ export default function ReviewScreen({ navigation, route: { params } }) {
       <View style={styles.topContainer}>
         <StyledBoldText
           title="Did you enjoy your trip?"
-          style={{ fontSize: 46, textAlign: "center" }}
+          style={{ fontSize: 46, textAlign: "center", marginBottom: -15 }}
         />
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
