@@ -207,8 +207,8 @@ export default function TripScreen({ navigation, route: { params } }) {
           {dist} from destination - {Math.ceil(time)} min
         </Text>
         <View style={styles.datecard}>
-          <Text style={styles.date}>{formattedDate}</Text>
-          <Text style={styles.time}>{formattedTime}</Text>
+          <Text style={styles.date}>{formattedDate} {formattedTime}</Text>
+          {/* <Text style={styles.time}>{formattedTime}</Text> */}
         </View>
       </View>
       <View style={styles.divtextmap}></View>
@@ -360,35 +360,44 @@ const styles = StyleSheet.create({
     width: "90%",
     marginTop: 20,
     marginBottom: 20,
-    shadowColor: "black",
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.5,
-    elevation: 4,
+    
+    // shadowColor: "black",
+    // shadowOffset: { width: 2, height: 2 },
+    // shadowOpacity: 0.5,
+    borderWidth: 0.5,
+    borderRadius: 5,
     shadowRadius: 4,
     borderRadius: 8,
-    color: "#1B9756",
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 0,
+    //   height: 3,
+    // },
+    // shadowOpacity: 0.29,
+    // shadowRadius: 4.65,
+    // elevation: 5,
   },
   titlecard: {
     flex: 0.2,
     justifyContent: "flex-start",
-    marginLeft: 40,
+    marginLeft: 20,
     marginTop: 40,
-    // color: "#1B9756",
+    color: "#1B9756",
     fontSize: 20,
   },
   titlecard2: {
     flex: 0.2,
     justifyContent: "flex-start",
-    marginLeft: 40,
+    marginLeft: 20,
     marginTop: 10,
-    // color: "#1B9756",
+    color: "#1B9756",
     fontSize: 20,
   },
   datecard: {
     flex: 0.1,
     position: "absolute",
-    marginLeft: 240,
-    marginTop: 30,
+    marginLeft: 200,
+    marginTop: 42,
   },
   date: {
     // color: "#1B9756",
@@ -401,14 +410,14 @@ const styles = StyleSheet.create({
     flex: 0.1,
     justifyContent: "flex-start",
     marginTop: 2,
-    marginLeft: 40,
+    marginLeft: 20,
     // color: "#1B9756",
   },
   datatrip: {
     flex: 0.15,
     justifyContent: "flex-start",
     marginTop: 5,
-    marginLeft: 40,
+    marginLeft: 20,
     // color: "#1EA85F",
     opacity: 0.7,
   },
