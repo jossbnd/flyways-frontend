@@ -18,6 +18,8 @@ import StyledBoldText from "../components/StyledBoldText";
 import { useEffect, useState } from "react";
 import { useIsFocused } from "@react-navigation/native";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 // Import FontAwesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
@@ -30,10 +32,6 @@ import moment from "moment";
 // Pour styliser la Scrollview Reviews
 import { Dimensions } from "react-native";
 
-// BACK END ADDRESS
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-// const BACK_END_ADDRESS = "http://192.168.1.13:3000";
-
 export default function ProfileScreen({ navigation, route: { params } }) {
   // Récupérer le token de l'utilisateur - le fetch sera fait à partir de ça
   const { userToken } = params;
@@ -41,7 +39,7 @@ export default function ProfileScreen({ navigation, route: { params } }) {
   // Définition des états
   const [profilePicture, setProfilePicture] = useState(null);
   const [firstName, setFirstName] = useState(null);
-  const [lastName, setLastName] = useState(null);
+  const [lastName, setLastName] = useState('');
   const [averageRating, setAverageRating] = useState(null);
   const [reviews, setReviews] = useState([]);
   const [languagesSpoken, setLanguagesSpoken] = useState([]);
@@ -126,7 +124,7 @@ export default function ProfileScreen({ navigation, route: { params } }) {
           />
         </View>
         <StyledBoldText
-          title={firstName + " " + lastName}
+          title={firstName + " " + lastName[0] + '.'}
           style={styles.userName}
         />
         <View style={styles.reviewContainer}>

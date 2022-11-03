@@ -26,7 +26,6 @@ import Slider from "@react-native-community/slider";
 
 // Import pour gérer le date picker
 import DateTimePicker from "@react-native-community/datetimepicker";
-import formatDate from "../modules/formatDate";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -62,10 +61,6 @@ const INITIAL_POSITION = {
   longitudeDelta: LONGITUDE_DELTA,
 };
 
-// adresse vercel back end
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-// const BACK_END_ADDRESS = "https://192.168.10.168:3000/";
-
 // FONCTION principale SEARCHSCREEN
 export default function SearchScreen({ navigation }) {
   // stockage des coordonnées de la destination réelle dans le store
@@ -96,9 +91,6 @@ export default function SearchScreen({ navigation }) {
   // creation d etats pour recuperer les valeurs des "details" des inputs qui contiennent les valeurs necessaires
   // pour faire la recherche: latitute et longitude
   const [origin, setOrigin] = useState({});
-
-  // états pour stocker la value des inputs
-  const [inputOne, setInputOne] = useState("");
 
   // état et fonction pour gérer le fonctionnement de la modale profile
   const [modalVisible, setModalVisible] = useState(false);
@@ -254,6 +246,11 @@ export default function SearchScreen({ navigation }) {
       return;
     }
   };
+
+  // formatte les minutes
+  // ajoute un zéro si les minutes sont sous 10 (affiche 7:05 au lieu de 7:5)
+  let minutesFormatted = time.getMinutes();
+  minutesFormatted < 10 ? minutesFormatted = `0${minutesFormatted}` : null
 
   /* ********************************************************************** */
 
@@ -420,7 +417,7 @@ export default function SearchScreen({ navigation }) {
               fadeIn();
             }}
           >
-            <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
+            <StyledBoldText title="CONTINUE" style={styles.buttonText} />
           </TouchableOpacity>
         </View>
       )}
@@ -442,113 +439,115 @@ export default function SearchScreen({ navigation }) {
                 setAnimatedViewVisible(false);
               }}
             >
-              <FontAwesome5 name="window-close" size={30} />
+              <AntDesign name="closecircleo" size={20} color="#000000" />
             </TouchableOpacity>
           </View>
-          <View style={styles.datePicker}>
-            <StyledRegularText title="Pick your date: " />
+          <View style={styles.formulaire}>
+            <View style={styles.datePicker}>
+              <StyledRegularText title="Pick your date: " />
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => {
+                  setOpenDate(true);
+                  setDepartureDate(true);
+                  setErrorMessages(false);
+                }}
+              >
+                <FontAwesome5 name="calendar-alt" size={25} />
+              </TouchableOpacity>
+            </View>
+
+            {departureDate && (
+              <View>
+                <StyledRegularText
+                  title={`Departure Date: ${date.getDate()}/${
+                    date.getMonth() + 1
+                  }/${date.getFullYear()}`}
+                />
+              </View>
+            )}
+
+            {errorMessages && (
+              <View style={{ marginTop: -20 }}>
+                <StyledRegularText
+                  title={"Please pick a departure date"}
+                  style={{ color: "red" }}
+                />
+              </View>
+            )}
+
+            <View style={styles.timePicker}>
+              <StyledRegularText title="Pick your time: " />
+              <TouchableOpacity
+                style={styles.timeButton}
+                onPress={() => {
+                  setOpenTime(true);
+                  setDepartureTime(true);
+                  setErrorMessages(false);
+                }}
+              >
+                <FontAwesome5 name="clock" size={25} />
+              </TouchableOpacity>
+            </View>
+
+            {departureTime && (
+              <View>
+                <StyledRegularText
+                  title={`Departure Time: ${time.getHours()}:${minutesFormatted}`}
+                />
+              </View>
+            )}
+
+            {errorMessages && (
+              <View style={{ marginTop: -20 }}>
+                <StyledRegularText
+                  title={"Please pick a departure time"}
+                  style={{ color: "red" }}
+                />
+              </View>
+            )}
+
+            <View style={styles.timeSlider}>
+              <StyledRegularText title={`Max Waiting Time: ${rangeTime} mn`} />
+              <Slider
+                style={{ width: 200, height: 40 }}
+                step={5}
+                onValueChange={(value) => {
+                  setRangeTime(value);
+                  setSearchData((searchData) => ({
+                    ...searchData,
+                    rangeTime: value,
+                  }));
+                }}
+                thumbTintColor="rgba(30, 168, 95, 1)"
+                minimumValue={0}
+                maximumValue={60}
+              />
+            </View>
+            <View style={styles.distanceSlider}>
+              <StyledRegularText
+                title={`Max drop-off distance: ${rangeDistance} meters`}
+              />
+              <Slider
+                style={{ width: 200, height: 40 }}
+                step={100}
+                onValueChange={(value) => {
+                  setRangeDistance(value);
+                }}
+                thumbTintColor="rgba(30, 168, 95, 1)"
+                minimumValue={0}
+                maximumValue={2000}
+              />
+            </View>
             <TouchableOpacity
-              style={styles.dateButton}
+              style={styles.button}
               onPress={() => {
-                setOpenDate(true);
-                setDepartureDate(true);
-                setErrorMessages(false);
+                handleContinue();
               }}
             >
-              <FontAwesome5 name="calendar-alt" size={25} />
+              <StyledBoldText title="CONTINUE" style={styles.buttonText} />
             </TouchableOpacity>
           </View>
-
-          {departureDate && (
-            <View>
-              <StyledRegularText
-                title={`Departure Date: ${date.getDate()}/${
-                  date.getMonth() + 1
-                }/${date.getFullYear()}`}
-              />
-            </View>
-          )}
-
-          {errorMessages && (
-            <View style={{ marginTop: -20 }}>
-              <StyledRegularText
-                title={"Please pick a departure date"}
-                style={{ color: "red" }}
-              />
-            </View>
-          )}
-
-          <View style={styles.timePicker}>
-            <StyledRegularText title="Pick your time: " />
-            <TouchableOpacity
-              style={styles.timeButton}
-              onPress={() => {
-                setOpenTime(true);
-                setDepartureTime(true);
-                setErrorMessages(false);
-              }}
-            >
-              <FontAwesome5 name="clock" size={25} />
-            </TouchableOpacity>
-          </View>
-
-          {departureTime && (
-            <View>
-              <StyledRegularText
-                title={`Departure Time: ${time.getHours()}:${time.getMinutes()}`}
-              />
-            </View>
-          )}
-
-          {errorMessages && (
-            <View style={{ marginTop: -20 }}>
-              <StyledRegularText
-                title={"Please pick a departure time"}
-                style={{ color: "red" }}
-              />
-            </View>
-          )}
-
-          <View style={styles.timeSlider}>
-            <StyledRegularText title={`Max Waiting Time: ${rangeTime} mn`} />
-            <Slider
-              style={{ width: 200, height: 40 }}
-              step={5}
-              onValueChange={(value) => {
-                setRangeTime(value);
-                setSearchData((searchData) => ({
-                  ...searchData,
-                  rangeTime: value,
-                }));
-              }}
-              thumbTintColor="rgba(30, 168, 95, 1)"
-              minimumValue={0}
-              maximumValue={60}
-            />
-          </View>
-          <View style={styles.distanceSlider}>
-            <StyledRegularText
-              title={`Max drop-off distance from Home: ${rangeDistance} meters`}
-            />
-            <Slider
-              style={{ width: 200, height: 40 }}
-              step={100}
-              onValueChange={(value) => {
-                setRangeDistance(value);
-              }}
-              thumbTintColor="rgba(30, 168, 95, 1)"
-              minimumValue={0}
-              maximumValue={1000}
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => {
-              handleContinue();
-            }}
-          >
-            <StyledBoldText title="CONTINUE ?" style={styles.buttonText} />
-          </TouchableOpacity>
         </Animated.View>
       )}
       {openDate && (
@@ -612,8 +611,9 @@ const styles = StyleSheet.create({
     top: 150,
   },
   closeButton: {
-    marginRight: 8,
-    marginTop: 15,
+    position: "absolute",
+    right: 12,
+    top: 17,
   },
   viewDistanceDuration: {
     position: "absolute",
@@ -623,23 +623,15 @@ const styles = StyleSheet.create({
     top: 210,
     alignItems: "center",
     justifyContent: "space-evenly",
-    borderRadius: 10,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    borderRadius: 20,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
   },
   continuePopover: {
-    top: 620,
     position: "absolute",
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  button: {
     width: "90%",
-    height: 40,
-    borderRadius: 20,
+    height: "100%",
     alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(30, 168, 95, 1)",
+    justifyContent: "flex-end",
   },
   buttonText: {
     fontSize: 14,
@@ -663,18 +655,18 @@ const styles = StyleSheet.create({
   fadingContainer: {
     zIndex: 1,
     borderRadius: 10,
-    height: "75%",
+    height: "60%",
     width: "90%",
     position: "absolute",
     backgroundColor: "rgba(255, 255, 255, 1)",
     borderWidth: 1,
     borderColor: "rgba(30, 168, 95, 1)",
     alignItems: "center",
-    justifyContent: "space-between",
     paddingTop: 5,
     paddingBottom: 40,
     paddingLeft: 20,
     paddingRight: 10,
+    marginBottom: "5%",
   },
   fadingText: {
     fontSize: 28,
@@ -689,6 +681,12 @@ const styles = StyleSheet.create({
     margin: 3,
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  formulaire: {
+    height: "95%",
+    marginTop: 10,
+    alignItems: "center",
+    justifyContent: "space-around",
   },
   datePicker: {
     width: "80%",
@@ -715,5 +713,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
+  },
+  button: {
+    width: 250,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 1)",
   },
 });

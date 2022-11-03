@@ -14,15 +14,14 @@ import TopBar from "../components/TopBar";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import formatDate from "../modules/formatDate";
 
+import { BACK_END_ADDRESS } from "../environmentVar";
+
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-
-const BACK_END_ADDRESS_LOCAL = "http://192.168.1.96:3000";
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 
 export default function EditDateOfBirthScreen({ navigation }) {

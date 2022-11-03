@@ -21,15 +21,15 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+
+import { BACK_END_ADDRESS } from "../environmentVar";
 
 //Import hooks + redux
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-
-// adresse déploiement
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 export default function ReviewScreen({ navigation, route: { params } }) {
   console.log(params);
@@ -56,7 +56,7 @@ export default function ReviewScreen({ navigation, route: { params } }) {
   const handleFinish = () => {
     console.log(passengersData);
     if (count === passengersData.length) {
-      navigation.navigate("My Profile");
+      navigation.navigate("Ending");
     }
   };
 
@@ -86,7 +86,7 @@ export default function ReviewScreen({ navigation, route: { params } }) {
       <View style={styles.topContainer}>
         <StyledBoldText
           title="Did you enjoy your trip?"
-          style={{ fontSize: 40 }}
+          style={{ fontSize: 46, textAlign: "center" }}
         />
       </View>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -113,17 +113,16 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   scrollContainer: {
-    width: "85%",
+    width: Dimensions.get("window").width,
     paddingBottom: 20,
     alignItems: "center",
     justifyContent: "center",
   },
   topContainer: {
     height: "20%",
+    width: "90%",
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 10,
-    padding: 10,
   },
   reviewContainer: {
     marginTop: 20,

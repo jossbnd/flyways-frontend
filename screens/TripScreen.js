@@ -27,7 +27,7 @@ import { useDispatch } from "react-redux";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 
-import { GOOGLE_API_KEY } from "../environmentVar";
+import { GOOGLE_API_KEY, BACK_END_ADDRESS } from "../environmentVar";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
@@ -50,8 +50,6 @@ export default function TripScreen({ navigation, route: { params } }) {
   const [leader, setLeader] = useState(undefined); // état pour checker si user is leader
   const [confirmExit, setConfirmExit] = useState(false); //état pour popover "finish trip"
   const [confirmJoin, setConfirmJoin] = useState(false); // état pour popover "joint trip"
-
-  const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
 
   const user = useSelector((state) => state.user.value);
 

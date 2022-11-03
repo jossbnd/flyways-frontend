@@ -30,6 +30,7 @@ import ChatScreen from "./screens/ChatScreen";
 import ChatGroupScreen from "./screens/ChatGroupScreen";
 import ReviewScreen from "./screens/ReviewScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import EndingScreen from "./screens/EndingScreen";
 
 // Import icons
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -76,7 +77,7 @@ const TabNavigator = () => {
             iconName = "luggage";
           } else if (route.name === "Search") {
             iconName = "search";
-          } else if (route.name === "Notification") {
+          } else if (route.name === "Notifications") {
             iconName = "notifications";
           } else if (route.name === "Chat") {
             return <View style={{ display: "none" }}></View>;
@@ -103,7 +104,7 @@ const TabNavigator = () => {
     >
       <Tab.Screen name="My Profile" component={HomeScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Notification" component={NotificationScreen} />
+      <Tab.Screen name="Notifications" component={NotificationScreen} />
       <Tab.Screen name="Chat" component={ChatScreen} />
     </Tab.Navigator>
   );
@@ -154,8 +155,7 @@ export default function App() {
             <Stack.Screen name="TabNavigator" component={TabNavigator} />
             <Stack.Screen name="ChatGroup" component={ChatGroupScreen} />
             <Stack.Screen name="Profile" component={ProfileScreen} />
-
-
+            <Stack.Screen name="Ending" component={EndingScreen} />
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>
