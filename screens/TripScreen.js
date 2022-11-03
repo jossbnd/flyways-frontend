@@ -429,7 +429,7 @@ const styles = StyleSheet.create({
   },
   map: {
     height: "38%",
-    width: "95%",
+    width: "100%",
     backgroundColor: "gray",
     alignItems: "center",
     justifyContent: "center",
