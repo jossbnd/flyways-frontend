@@ -84,7 +84,7 @@ export default function TripScreen({ navigation, route: { params } }) {
               />
               <StyledRegularText
                 title={
-                  passenger.firstName.slice(0, 8) +
+                  passenger.firstName.slice(0, 7) +
                   " " +
                   passenger.lastName[0] +
                   "."
@@ -96,7 +96,7 @@ export default function TripScreen({ navigation, route: { params } }) {
         );
       })
     );
-  }, [confirmJoin]);
+  }, []);
 
   // useEffect qui enlève le bouton "join trip" si l'utilisateur est sur le trip ou Leader
   useEffect(() => {
@@ -111,6 +111,7 @@ export default function TripScreen({ navigation, route: { params } }) {
       passenger.passengerToken === user.token ? setCanJoin(false) : null;
     }
   }, [{ navigation }]);
+
 
   // mapRef pour le map
   const mapRef = useRef(null);
@@ -166,40 +167,39 @@ export default function TripScreen({ navigation, route: { params } }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        // console.log(data);
+        console.log(data);
         if (data.result) {
           setMessage("Trip joined !");
-          setCanJoin(false); // hides the "join trip" button
 
           // ajout de l'utilisateur au trip, niveau frontend
           const currentUser = (
-            <View key={passengers.length + 1} style={styles.passengerIcon}>
-              <TouchableOpacity style={styles.passenger}>
+            <View key={passengers.length + 1}>
+              <TouchableOpacity style={styles.imageContainer}>
                 <Image
-                  style={styles.userImage}
-                  source={
-                    passenger.profilePicture
-                      ? { uri: passenger.profilePicture }
-                      : require("../assets/profile-picture.jpg")
-                  }
+                  style={styles.profilePicture}
+                  source={{
+                    uri: user.profilePicture,
+                  }}
                   resizeMode="contain"
                   onPress={() =>
                     navigation.navigate("Profile", {
-                      userToken: passenger.passengerToken,
+                      userToken: user.passengerToken,
                     })
                   }
                 />
+                <StyledRegularText
+                  title={
+                    user.firstName.slice(0, 7) + " " + user.lastName[0] + "."
+                  }
+                  style={styles.userText}
+                />
               </TouchableOpacity>
-              <StyledRegularText
-                title={user.firstName + " " + user.lastName[0] + "."}
-                style={styles.userText}
-              />
             </View>
           );
           setPassengers((passengers) => [...passengers, currentUser]);
-        } else {
         }
       });
+    setConfirmJoin(false);
   };
 
   return (
@@ -302,7 +302,7 @@ export default function TripScreen({ navigation, route: { params } }) {
           <View>
             <TouchableOpacity
               style={styles.Button}
-              onPress={() => setCanJoin(true)}
+              onPress={() => setConfirmJoin(true)}
             >
               <FontAwesome name="plus" size={25} style={{ color: "#FFFFFF" }} />
               <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Join trip</Text>
@@ -324,6 +324,9 @@ export default function TripScreen({ navigation, route: { params } }) {
             </TouchableOpacity>
           </View>
         ) : (
+          <></>
+        )}
+        {!canJoin && (
           <View>
             <TouchableOpacity
               style={styles.Button}
@@ -361,7 +364,10 @@ export default function TripScreen({ navigation, route: { params } }) {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={styles.buttonPopover}
-              onPress={() => handleJoinRequest()}
+              onPress={() => {
+                handleJoinRequest();
+                setCanJoin(false);
+              }} // hides the "join trip" button}
             >
               <StyledBoldText title="Yes" style={styles.buttonText} />
             </TouchableOpacity>
@@ -393,10 +399,11 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.29,
-    elevation: 7,
-    shadowRadius: 4.65,
+    elevation: 0,
+    shadowRadius: 1,
     borderRadius: 8,
     color: "#1B9756",
+    borderWidth: 0.5,
   },
   titlecard: {
     flex: 0.2,
