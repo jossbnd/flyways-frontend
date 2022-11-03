@@ -211,7 +211,16 @@ export default function HomeScreen({ navigation }) {
           style={styles.upcomingTripsTitle}
         />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.upcomingTripsContainer}>{upcomingTripsData}</View>
+          {upcomingTripsData.length ? (
+            <View style={styles.upcomingTripsContainer}>
+              {upcomingTripsData}
+            </View>
+          ) : (
+            <StyledRegularText
+              title="No upcoming trips yet"
+              style={{ marginTop: 20, fontSize: 12, fontStyle: "italic" }}
+            />
+          )}
         </ScrollView>
       </View>
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
