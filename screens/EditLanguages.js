@@ -10,6 +10,7 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
+import ProfilModal from "../components/ProfilModal";
 
 import { BACK_END_ADDRESS } from "../environmentVar";
 
@@ -30,6 +31,14 @@ import CountryFlag from "react-native-country-flag";
 export default function EditLanguagesScreen({ navigation }) {
   const [flags, setFlags] = useState(null);
   const [countryCode, setCountryCode] = useState(null);
+
+  // état et fonction pour gérer le fonctionnement de la modale profile
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // fonction pour rendre la modale profile visible
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
 
   const user = useSelector((state) => state.user.value);
 
@@ -73,33 +82,38 @@ export default function EditLanguagesScreen({ navigation }) {
   }, [flags]); // refait le fetch à chaque fois qu'une langue est ajoutée/supprimée
 
   return (
-      <SafeAreaView style={styles.container}>
-        <TopBar></TopBar>
+    <SafeAreaView style={styles.container}>
+      <TopBar toggleModal={toggleModal}></TopBar>
 
-        {/* AA */}
-        <CountryPicker
-          countryCode={countryCode}
-          withFlag
-          onSelect={(country) => {
-            let language = country.cca2;
-            fetch(`${BACK_END_ADDRESS}/users/addLanguage/${user.token}`, {
-              method: "PUT",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({ language }),
-            })
-              .then((res) => res.json())
-              .then((data) => {
-                console.log(data);
-              });
-          }}
-        ></CountryPicker>
+      {/* AA */}
+      <CountryPicker
+      preferredCountries={['FR', 'GB', 'KR', 'CL']}
+      withAlphaFilter={false}
+        containerButtonStyle={styles.button}
+        withFilter={true}
+        countryCode={countryCode}
+        withFlag
+        onSelect={(country) => {
+          let language = country.cca2;
+          fetch(`${BACK_END_ADDRESS}/users/addLanguage/${user.token}`, {
+            method: "PUT",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ language }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              console.log(data);
+            });
+        }}
+      ></CountryPicker>
 
-        <View style={styles.inputContainer}>
-          <View style={styles.dateAndCalendar}></View>
-        </View>
+      <View style={styles.inputContainer}>
+        <View style={styles.dateAndCalendar}></View>
+      </View>
 
-        {flags && <View>{flags}</View>}
-      </SafeAreaView>
+      {flags && <View>{flags}</View>}
+      <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
+    </SafeAreaView>
   );
 }
 
@@ -114,5 +128,15 @@ const styles = StyleSheet.create({
   flag: {
     margin: 4,
     borderRadius: 4,
+  },
+  button: {
+    width: 200,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 0.5)",
+    marginTop: 20,
+    marginBottom: 20,
   },
 });
