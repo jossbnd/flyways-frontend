@@ -24,6 +24,8 @@ import { useDispatch } from "react-redux";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 
+import moment from "moment";
+
 import { GOOGLE_API_KEY } from "../environmentVar";
 
 // Import des fonts
@@ -64,9 +66,14 @@ export default function TripScreen({ navigation, route: { params } }) {
       params.tripData.passengers.map((passenger, i) => {
         return (
           <View key={i}>
-            <TouchableOpacity style={styles.passenger} onPress={() => {
-              navigation.navigate("Profile", {userToken: passenger.passengerToken})
-            }}>
+            <TouchableOpacity
+              style={styles.passenger}
+              onPress={() => {
+                navigation.navigate("Profile", {
+                  userToken: passenger.passengerToken,
+                });
+              }}
+            >
               <Image
                 source={{ uri: passenger.profilePicture }}
                 style={styles.profilePicture}
@@ -126,6 +133,9 @@ export default function TripScreen({ navigation, route: { params } }) {
   }/${dateJS.getFullYear()}`;
   // formate l'heure pour qu'elle soit lisible
   const formattedTime = `${dateJS.getHours()}:${dateJS.getMinutes()}`;
+  // formattedDate with moment
+  // const formattedDate = moment(params.tripData.date).format("ddd DD MMM YYYY ");
+  // const formattedTime = moment(params.tripData.date).format("LT");
 
   // title de marker-arrival
   const arrivalAddress = user.actualDestination.description;
@@ -363,7 +373,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     marginLeft: 40,
     marginTop: 40,
-    color: "#1B9756",
+    // color: "#1B9756",
     fontSize: 20,
   },
   titlecard2: {
@@ -371,7 +381,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     marginLeft: 40,
     marginTop: 10,
-    color: "#1B9756",
+    // color: "#1B9756",
     fontSize: 20,
   },
   datecard: {
@@ -381,25 +391,25 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   date: {
-    color: "#1B9756",
+    // color: "#1B9756",
   },
   time: {
     marginLeft: 20,
-    color: "#1B9756",
+    // color: "#1B9756",
   },
   descripcard: {
     flex: 0.1,
     justifyContent: "flex-start",
     marginTop: 2,
     marginLeft: 40,
-    color: "#1B9756",
+    // color: "#1B9756",
   },
   datatrip: {
     flex: 0.15,
     justifyContent: "flex-start",
     marginTop: 5,
     marginLeft: 40,
-    color: "#1EA85F",
+    // color: "#1EA85F",
     opacity: 0.7,
   },
   divtextmap: {
