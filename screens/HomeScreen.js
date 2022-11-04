@@ -285,6 +285,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     width: "100%",
+    height:"60%",
     alignItems: "center",
     marginBottom: 150,
   },
