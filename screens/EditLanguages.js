@@ -10,6 +10,9 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
+import ProfilModal from "../components/ProfilModal";
+
+import { BACK_END_ADDRESS } from "../environmentVar";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
@@ -25,12 +28,17 @@ import CountryPicker from "react-native-country-picker-modal";
 // Import des icones drapeau
 import CountryFlag from "react-native-country-flag";
 
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-// const BACK_END_ADDRESS_LOCAL = "http://192.168.10.172:3000";
-
 export default function EditLanguagesScreen({ navigation }) {
   const [flags, setFlags] = useState(null);
   const [countryCode, setCountryCode] = useState(null);
+
+  // état et fonction pour gérer le fonctionnement de la modale profile
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // fonction pour rendre la modale profile visible
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
 
   const user = useSelector((state) => state.user.value);
 
@@ -56,7 +64,7 @@ export default function EditLanguagesScreen({ navigation }) {
                   )
                     .then((res) => res.json())
                     .then((data) => {
-                      console.log(data)
+                      console.log(data);
                     });
                 }}
               >
@@ -75,10 +83,14 @@ export default function EditLanguagesScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <TopBar></TopBar>
-      <StyledRegularText title="Edit languages :" style={styles.text} />
+      <TopBar toggleModal={toggleModal}></TopBar>
 
+      {/* AA */}
       <CountryPicker
+      preferredCountries={['FR', 'GB', 'KR', 'CL']}
+      withAlphaFilter={false}
+        containerButtonStyle={styles.button}
+        withFilter={true}
         countryCode={countryCode}
         withFlag
         onSelect={(country) => {
@@ -100,6 +112,7 @@ export default function EditLanguagesScreen({ navigation }) {
       </View>
 
       {flags && <View>{flags}</View>}
+      <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
   );
 }
@@ -115,5 +128,15 @@ const styles = StyleSheet.create({
   flag: {
     margin: 4,
     borderRadius: 4,
+  },
+  button: {
+    width: 200,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(30, 168, 95, 0.5)",
+    marginTop: 20,
+    marginBottom: 20,
   },
 });

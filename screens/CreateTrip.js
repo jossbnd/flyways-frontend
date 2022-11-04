@@ -22,7 +22,7 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
 import MapViewDirections from "react-native-maps-directions";
 
-import { GOOGLE_API_KEY } from "../environmentVar";
+import { GOOGLE_API_KEY, BACK_END_ADDRESS } from "../environmentVar";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -38,9 +38,6 @@ import StyledBoldText from "../components/StyledBoldText";
 // Import Store Redux
 import { useDispatch } from "react-redux";
 import { login } from "../reducers/user";
-
-// Mettre son adresse back end ici
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
 
 // TODO: REMOVE THE UNNECESSARY STUFF LEFT FROM THE MAP
 

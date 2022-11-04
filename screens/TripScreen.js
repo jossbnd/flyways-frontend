@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
@@ -13,6 +14,9 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Marker } from "react-native-maps";
+
+//Import hook Navigation
+import { useNavigation } from "@react-navigation/native";
 
 //Import hook Navigation
 import { useNavigation } from "@react-navigation/native";
@@ -26,7 +30,7 @@ import { useDispatch } from "react-redux";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 
-import { GOOGLE_API_KEY } from "../environmentVar";
+import { GOOGLE_API_KEY, BACK_END_ADDRESS } from "../environmentVar";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
@@ -38,17 +42,20 @@ import { usePreventRemoveContext } from "@react-navigation/native";
 // Import Moment to format date
 import moment from "moment";
 
+// Import Moment to format date
+import moment from "moment";
+
 export default function TripScreen({ navigation, route: { params } }) {
   //ETATS
   const [modalVisible, setModalVisible] = useState(false);
   const [distance, setDistance] = useState();
   const [time, setTime] = useState();
   const [canJoin, setCanJoin] = useState(undefined); // état utilisé pour vérifier si l'utilisateur est déjà sur le trip ou non
-  const [message, setMessage] = useState(null);
-  const [passengers, setPassengers] = useState(undefined);
-  const [leader, setLeader] = useState(undefined);
-
-  const BACK_END_ADDRESS = "https://flyways-backend.vercel.app";
+  const [message, setMessage] = useState(null); //état de confirmation request trip
+  const [passengers, setPassengers] = useState(undefined); // état pour aberger donnés passengers
+  const [leader, setLeader] = useState(undefined); // état pour checker si user is leader
+  const [confirmExit, setConfirmExit] = useState(false); //état pour popover "finish trip"
+  const [confirmJoin, setConfirmJoin] = useState(false); // état pour popover "joint trip"
 
   const user = useSelector((state) => state.user.value);
 
@@ -77,12 +84,21 @@ export default function TripScreen({ navigation, route: { params } }) {
               }
             >
               <Image
-                source={{ uri: passenger.profilePicture }}
+                source={
+                  passenger.profilePicture
+                    ? { uri: passenger.profilePicture }
+                    : require("../assets/profile-picture.jpg")
+                }
                 style={styles.profilePicture}
                 resizeMode="contain"
               />
               <StyledRegularText
-                title={passenger.firstName + " " + passenger.lastName[0] + "."}
+                title={
+                  passenger.firstName.slice(0, 8) +
+                  " " +
+                  passenger.lastName[0] +
+                  "."
+                }
                 style={styles.userText}
               />
             </TouchableOpacity>
@@ -104,7 +120,7 @@ export default function TripScreen({ navigation, route: { params } }) {
       // s'il fait déjà partie du trip, cache le bouton "join trip
       passenger.passengerToken === user.token ? setCanJoin(false) : null;
     }
-  }, [{ navigation }]);
+  }, []);
 
   // mapRef pour le map
   const mapRef = useRef(null);
@@ -115,7 +131,7 @@ export default function TripScreen({ navigation, route: { params } }) {
     latitude: params.tripData.arrivalCoords.latitude,
     longitude: params.tripData.arrivalCoords.longitude,
   };
-  // title de marker-depart
+  // titre de marker-depart
   const departureAddress = params.tripData.arrivalCoords.description;
 
   const arrivalLocation = {
@@ -125,10 +141,10 @@ export default function TripScreen({ navigation, route: { params } }) {
   };
 
   const dateJS = new Date(params.tripData.date); // créée une date JS
-  // // formate la date pour qu'elle soit lisible
-  // const formattedDate = `${dateJS.getDate()}/${
-  //   dateJS.getMonth() + 1
-  // }/${dateJS.getFullYear()}`;
+  // // // formate la date pour qu'elle soit lisible
+  // // const formattedDate = `${dateJS.getDate()}/${
+  // //   dateJS.getMonth() + 1
+  // // }/${dateJS.getFullYear()}`;
   // formate l'heure pour qu'elle soit lisible
   // const formattedTime = `${dateJS.getHours()}:${dateJS.getMinutes()}`;
 
@@ -136,7 +152,7 @@ export default function TripScreen({ navigation, route: { params } }) {
   const formattedDate = moment(params.tripData.date).format("ddd DD MMM YYYY ");
   const formattedTime = moment(params.tripData.date).format("LT");
 
-  // title de marker-arrival
+  // titre de marker-arrival
   const arrivalAddress = user.actualDestination.description;
 
   const toggleModal = () => {
@@ -160,42 +176,40 @@ export default function TripScreen({ navigation, route: { params } }) {
     })
       .then((res) => res.json())
       .then((data) => {
-        // console.log(data);
+        // // console.log(data);
         if (data.result) {
-          setMessage("Trip joined !");
-          setCanJoin(false); // hides the "join trip" button
-
+          setConfirmJoin(false); //hide popover confirmation
+         
           // ajout de l'utilisateur au trip, niveau frontend
           const currentUser = (
-            <View key={passengers.length + 1} style={styles.passengerIcon}>
-              <TouchableOpacity style={styles.passenger}>
+            <View key={passengers.length + 1}>
+              <TouchableOpacity style={styles.imageContainer}>
                 <Image
-                  style={styles.userImage}
-                  source={
-                    passenger.profilePicture
-                      ? { uri: passenger.profilePicture }
-                      : require("../assets/profile-picture.jpg")
-                  }
+                  style={styles.profilePicture}
+                  source={{uri:user.profilePicture }}
                   resizeMode="contain"
                   onPress={() =>
                     navigation.navigate("Profile", {
-                      userToken: passenger.passengerToken,
+                      userToken: user.passengerToken,
                     })
                   }
                 />
+                <StyledRegularText
+                  title={
+                    user.firstName.slice(0, 7) + " " + user.lastName[0] + "."
+                  }
+                  style={styles.userText}
+                />
               </TouchableOpacity>
-              <StyledRegularText
-                title={user.firstName + " " + user.lastName[0] + "."}
-                style={styles.userText}
-              />
             </View>
           );
           setPassengers((passengers) => [...passengers, currentUser]);
-        } else {
         }
       });
+      
+      setMessage("Trip joined !");
   };
-
+  
   return (
     <SafeAreaView style={styles.container}>
       <TopBar toggleModal={toggleModal} />
@@ -287,71 +301,95 @@ export default function TripScreen({ navigation, route: { params } }) {
           }}
         />
       </MapView>
+
       <View style={styles.passengersBar}>
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
           {passengers}
-
-          {!leader && placesLeft > 0 && canJoin ? (
-            <View>
-              <TouchableOpacity
-                style={styles.requestButton}
-                onPress={() => {
-                  handleJoinRequest();
-                }}
-              >
-                <FontAwesome
-                  name="plus"
-                  size={25}
-                  style={{ color: "#FFFFFF", marginTop: 10 }}
-                />
-                <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Join trip</Text>
-              </TouchableOpacity>
-              <Text style={{ fontSize: 12, color: "#000000" }}>
-                {placesLeft} seats avail.
-              </Text>
-            </View>
-          ) : (
-            <></>
-          )}
-          {leader ? (
-            <View>
-              <TouchableOpacity
-                style={styles.Button}
-                onPress={() => {
-                  navigation.navigate("Review", { tripData: params.tripData });
-                  // console.log(params.tripData);
-                }}
-              >
-                <FontAwesome
-                  name="flag-checkered"
-                  size={25}
-                  style={{ color: "#FFFFFF", marginTop: 10 }}
-                />
-                <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
-              </TouchableOpacity>
-              <Text style={{ fontSize: 12, color: "#000000" }}></Text>
-            </View>
-          ) : (
-            <View>
-              <TouchableOpacity
-                style={styles.Button}
-                onPress={() => {
-                  navigation.navigate("Review", { tripData: params.tripData });
-                  // console.log(params.tripData);
-                }}
-              >
-                <FontAwesome
-                  name="flag-checkered"
-                  size={25}
-                  style={{ color: "#FFFFFF", marginTop: 10 }}
-                />
-                <Text style={{ fontSize: 8, color: "#FFFFFF" }}></Text>
-              </TouchableOpacity>
-              <Text style={{ fontSize: 12, color: "#000000" }}></Text>
-            </View>
-          )}
-        </ScrollView>
+          </ScrollView>
+        {!leader && canJoin && placesLeft>0 ? (
+          <View>
+            <TouchableOpacity
+              style={styles.Button}
+              onPress={() => setConfirmJoin(true)}
+            >
+              <FontAwesome name="plus" size={25} style={{ color: "#FFFFFF" }} />
+              <Text style={{ fontSize: 8, color: "#FFFFFF" }}>Join trip</Text>
+            </TouchableOpacity>
+            <Text style={{ fontSize: 12, color: "#000000" }}>
+              {placesLeft} seats avail.
+            </Text>
+          </View>
+        ):(<></>)}
+        {leader ? ( // buton de exit trip leader
+          <View>
+            <TouchableOpacity
+              style={styles.Button}
+              onPress={() => setConfirmExit(true)}
+            >
+              <FontAwesome name="flag-checkered" size={25} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+        {!canJoin && !leader ? ( //buton de exit trip leader
+          <View>
+            <TouchableOpacity
+              style={styles.Button}
+              onPress={() => setConfirmExit(true)}
+            >
+              <FontAwesome name="flag-checkered" size={25} color="#ffffff" />
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <></>
+        )}
+        
       </View>
+      {/* Popovers  */}
+      {confirmJoin && ( // popover pour buton joint trip user
+          <View style={styles.exitPopover}>
+            <StyledBoldText title="Are you sure you want to join the trip?" />
+            <View style={styles.buttonsContainer}>
+              <TouchableOpacity
+                style={styles.buttonPopover}
+                onPress={() => {handleJoinRequest();
+                                 setCanJoin(false)}} // hides the "join trip" button}
+              >
+                <StyledBoldText title="Yes" style={styles.buttonText} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.buttonPopover}
+                onPress={() => setConfirmJoin(false)}
+              >
+                <StyledBoldText title="No" style={styles.buttonText} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        )}
+
+      {confirmExit && ( // popover pour buton exit trip
+        <View style={styles.exitPopover}>
+          <StyledBoldText title="Are you sure want to finish the trip?" />
+          <View style={styles.buttonsContainer}>
+            <TouchableOpacity
+              style={styles.buttonPopover}
+              onPress={() => {
+                navigation.navigate("Review", { tripData: params.tripData });
+              }}
+            >
+              <StyledBoldText title="Yes" style={styles.buttonText} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buttonPopover}
+              onPress={() => setConfirmExit(false)}
+            >
+              <StyledBoldText title="No" style={styles.buttonText} />
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+      
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
     </SafeAreaView>
   );
@@ -368,11 +406,12 @@ const styles = StyleSheet.create({
     width: "90%",
     marginTop: 20,
     marginBottom: 20,
-    shadowColor: "black",
-    shadowOffset: { width: 2, height: 2 },
-    shadowOpacity: 0.5,
-    elevation: 4,
-    shadowRadius: 4,
+    borderWidth:0.5,
+    // shadowColor: "#000",
+    // shadowOffset: { width: 0, height: 3 },
+    // shadowOpacity: 0.29,
+    // elevation: 7,
+    shadowRadius: 4.65,
     borderRadius: 8,
     color: "#1B9756",
   },
@@ -380,16 +419,16 @@ const styles = StyleSheet.create({
     flex: 0.2,
     justifyContent: "flex-start",
     marginLeft: 40,
-    marginTop: 40,
-    color: "#1B9756",
+    marginTop: 50,
+    color: "black",
     fontSize: 20,
   },
   titlecard2: {
     flex: 0.2,
     justifyContent: "flex-start",
     marginLeft: 40,
-    marginTop: 10,
-    color: "#1B9756",
+    marginTop: 30,
+    color: "black",
     fontSize: 20,
   },
   datecard: {
@@ -436,6 +475,8 @@ const styles = StyleSheet.create({
   },
   passengersBar: {
     height: "15%",
+    width: "90%",
+    flexDirection: "row",
   },
   imageContainer: {
     height: "100%",
@@ -453,12 +494,46 @@ const styles = StyleSheet.create({
     color: "#000000",
   },
   Button: {
-    marginTop: 10,
+    height: 64,
+    width: 64,
+    marginTop: 16,
+    marginRight: 10,
     marginLeft: 10,
     borderRadius: 50,
-    padding: 16,
     backgroundColor: "#1EA85F",
     alignItems: "center",
     justifyContent: "center",
+  },
+  text: {
+    fontSize: 30,
+  },
+  exitPopover: {
+    position: "absolute",
+    top: 500,
+    height: 100,
+    width: 300,
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "#ffff",
+    color: "#1EA85F",
+    shadowColor: "#000",
+    shadowOffset: { width: 10, height: 10 },
+    shadowOpacity: 0.9,
+    elevation: 10,
+    shadowRadius: 0.65,
+  },
+  buttonsContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: 200,
+    height: 50,
+  },
+  buttonPopover: {
+    width: 70,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#1EA85F",
   },
 });

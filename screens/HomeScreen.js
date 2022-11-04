@@ -22,6 +22,9 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { updateProfilePicture } from "../reducers/user";
+import { useIsFocused } from "@react-navigation/native";
+
+import { BACK_END_ADDRESS } from "../environmentVar";
 
 // Import FontAwesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -36,8 +39,6 @@ import * as ImagePicker from "expo-image-picker";
 // Cloudinary
 import { CLOUDINARY_CLOUD_NAME } from "../environmentVar";
 
-const BACK_END_ADDRESS = "https://flyways-backend.vercel.app/";
-
 export default function HomeScreen({ navigation }) {
   // Etats
   const [upcomingTrips, setUpcomingTrips] = useState([]);
@@ -46,6 +47,8 @@ export default function HomeScreen({ navigation }) {
   const [averageRating, setAverageRating] = useState(null);
   const [reviews, setReviews] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const isFocused = useIsFocused();
 
   // fonction pour déclencher le menu modal
   const toggleModal = () => {
@@ -65,6 +68,9 @@ export default function HomeScreen({ navigation }) {
           setProfilePicture(data.user.profilePicture);
           setAverageRating(data.user.averageRating);
           setReviews(data.user.reviews);
+
+          // mettre à jour le reducer avec la photo du user
+          dispatch(updateProfilePicture(data.user.profilePicture));
 
           // Récupérer les trips, les stoker dans un états UpcomingTrips
           let tripsTemp = [];
@@ -90,7 +96,7 @@ export default function HomeScreen({ navigation }) {
           setUpcomingTrips(tripsTemp);
         }
       });
-  }, []);
+  }, [isFocused]);
 
   // Fonction pour déclencher le Image Picker, uploader dans cloudinary et récupérer l'url à enregistrer dans le reducer
   const pickImage = async () => {
@@ -208,7 +214,16 @@ export default function HomeScreen({ navigation }) {
           style={styles.upcomingTripsTitle}
         />
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          <View style={styles.upcomingTripsContainer}>{upcomingTripsData}</View>
+          {upcomingTripsData.length ? (
+            <View style={styles.upcomingTripsContainer}>
+              {upcomingTripsData}
+            </View>
+          ) : (
+            <StyledRegularText
+              title="No upcoming trips yet"
+              style={{ marginTop: 20, fontSize: 12, fontStyle: "italic" }}
+            />
+          )}
         </ScrollView>
       </View>
       <ProfilModal modalVisible={modalVisible} toggleModal={toggleModal} />
@@ -267,11 +282,11 @@ const styles = StyleSheet.create({
   upcomingTripsContainer: {
     width: "90%",
     marginTop: 10,
-    marginBottom: 150,
   },
   scrollContainer: {
     width: "100%",
     alignItems: "center",
+    marginBottom: 150,
   },
   underline: {
     textDecorationLine: "underline",

@@ -26,10 +26,6 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function SearchResultScreen({ navigation, route: { params } }) {
-  //   const [minDate, setMinDate] = useState(null);
-  //   const [maxDate, setMaxDate] = useState(null);
-  //   const [maxDist, setMaxDist] = useState(null);
-
   const [minDate, setMinDate] = useState("20/01/2010 10:00");
   const [maxDate, setMaxDate] = useState("20/01/2050 10:00");
   const [maxDist, setMaxDist] = useState(40000);

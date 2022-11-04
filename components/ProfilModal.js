@@ -35,6 +35,7 @@ export default function ProfilModal(props) {
   };
 
   const goToSettings = () => {
+    props.toggleModal();
     navigation.navigate("Settings");
   };
 
