@@ -303,7 +303,7 @@ export default function TripScreen({ navigation, route: { params } }) {
           leader && (
             <View style={styles.buttonCard}>
               <TouchableOpacity
-                style={styles.Button}
+                style={[styles.Button, { bottom: 7 }]}
                 onPress={() => {
                   navigation.navigate("Review", {
                     tripData: params.tripData,
