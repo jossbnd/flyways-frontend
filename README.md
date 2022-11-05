@@ -23,7 +23,7 @@ Then, they can share the cost of the ride and reduce their carbon footprint.
 Backend: 
 + Express/Node.js
 + Database: mongoDB
-+ Deploy on Vercel
++ Deployed on Vercel
 
 FrontEnd: 
 + React Native Expo
