@@ -75,10 +75,7 @@ export default function HomeScreen({ navigation }) {
           // Récupérer les trips, les stoker dans un états UpcomingTrips
           let tripsTemp = [];
           for (let trip of data.user.trips) {
-            // console.log("coucou", data.user.trips, "final");
             if (!trip.isDone) {
-              // let tripData =data.user.trips;
-              // console.log(tripData);
               let upcomingTrip = {
                 dataTrip: trip,
                 arrival:
@@ -141,11 +138,7 @@ export default function HomeScreen({ navigation }) {
             method: "PUT",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ profilePicture: cloudinaryData.secure_url }),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
-            });
+          });
         });
     }
   };

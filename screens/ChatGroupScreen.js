@@ -14,7 +14,6 @@ import { BACK_END_ADDRESS } from "../environmentVar";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
-import StyledBoldText from "../components/StyledBoldText";
 
 // Import des hooks
 import { useEffect, useState } from "react";

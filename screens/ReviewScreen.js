@@ -10,7 +10,6 @@ import ProfilModal from "../components/ProfilModal";
 import Review from "../components/Review";
 
 // Import des fonts
-import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 
 // Import balises
@@ -32,7 +31,6 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 export default function ReviewScreen({ navigation, route: { params } }) {
-  console.log(params);
   /****** STORE REDUX ******/
   const user = useSelector((state) => state.user.value);
   /* ******************** */
@@ -54,7 +52,6 @@ export default function ReviewScreen({ navigation, route: { params } }) {
   };
 
   const handleFinish = () => {
-    console.log(passengersData);
     if (count === passengersData.length) {
       navigation.navigate("Ending");
     }
