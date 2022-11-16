@@ -5,11 +5,8 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Platform,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
-import { useSelector } from "react-redux";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
@@ -23,11 +20,8 @@ export default function PhoneScreen({ navigation }) {
   const [phoneNumber, setPhoneNumber] = useState(null);
   const [errorMessage, setErrorMessage] = useState(null);
 
-  const user = useSelector((state) => state.user.value);
-
   const handleContinue = () => {
     const PHONE_REGEX = /^(\+33|0033|0)(6|7)[0-9]{8}$/;
-    console.log(PHONE_REGEX.test(phoneNumber));
 
     if (PHONE_REGEX.test(phoneNumber)) {
       navigation.navigate("TabNavigator");

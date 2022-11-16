@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import { StyleSheet, View, TouchableOpacity } from "react-native";
 
 // Import hook Navigation
 import { useNavigation } from "@react-navigation/native";
@@ -16,7 +16,6 @@ export default function UpcomingTrips(props) {
     <TouchableOpacity
       style={styles.container}
       onPress={() => {
-        console.log(props.dataTrip);
         navigation.navigate("Trip", { tripData: props.dataTrip });
       }}
     >
