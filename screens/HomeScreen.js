@@ -22,6 +22,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { updateProfilePicture } from "../reducers/user";
+import { useIsFocused } from "@react-navigation/native";
 
 import { BACK_END_ADDRESS } from "../environmentVar";
 
@@ -46,6 +47,8 @@ export default function HomeScreen({ navigation }) {
   const [averageRating, setAverageRating] = useState(null);
   const [reviews, setReviews] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const isFocused = useIsFocused();
 
   // fonction pour déclencher le menu modal
   const toggleModal = () => {
@@ -72,10 +75,7 @@ export default function HomeScreen({ navigation }) {
           // Récupérer les trips, les stoker dans un états UpcomingTrips
           let tripsTemp = [];
           for (let trip of data.user.trips) {
-            // console.log("coucou", data.user.trips, "final");
             if (!trip.isDone) {
-              // let tripData =data.user.trips;
-              // console.log(tripData);
               let upcomingTrip = {
                 dataTrip: trip,
                 arrival:
@@ -93,7 +93,7 @@ export default function HomeScreen({ navigation }) {
           setUpcomingTrips(tripsTemp);
         }
       });
-  }, []);
+  }, [isFocused]);
 
   // Fonction pour déclencher le Image Picker, uploader dans cloudinary et récupérer l'url à enregistrer dans le reducer
   const pickImage = async () => {
@@ -138,11 +138,7 @@ export default function HomeScreen({ navigation }) {
             method: "PUT",
             headers: { "content-type": "application/json" },
             body: JSON.stringify({ profilePicture: cloudinaryData.secure_url }),
-          })
-            .then((res) => res.json())
-            .then((data) => {
-              console.log(data);
-            });
+          });
         });
     }
   };

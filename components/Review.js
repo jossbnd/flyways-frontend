@@ -58,7 +58,6 @@ export default function Review(props) {
   /****** FONCTIONS ******/
   // fonction sur le done
   const handleDone = () => {
-    console.log("review done");
     const date = new Date();
     const newReview = {
       authorToken: user.token, // utilisateur qui laisse l'avis
@@ -71,11 +70,7 @@ export default function Review(props) {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify(newReview),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
+    });
     setIsDone(true);
     props.addCount();
   };
@@ -156,7 +151,7 @@ const styles = StyleSheet.create({
   topCardName: {
     flexDirection: "row",
     marginLeft: 10,
-    width: '30%',
+    width: "30%",
   },
   profilePicture: {
     height: 48,
@@ -172,9 +167,9 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
   },
   buttonsView: {
-    width: '100%',
+    width: "100%",
     justifyContent: "center",
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
     marginBottom: 20,
   },
@@ -204,7 +199,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   scoreView: {
-    marginLeft: 30
+    marginLeft: 30,
   },
   notation: {
     flexDirection: "row",

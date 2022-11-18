@@ -1,11 +1,8 @@
 import {
-  Button,
   StyleSheet,
   View,
   TextInput,
-  Touchable,
   TouchableOpacity,
-  Image,
   ScrollView,
   RefreshControl,
 } from "react-native";
@@ -17,14 +14,13 @@ import Discussion from "../components/Discussion";
 import { BACK_END_ADDRESS } from "../environmentVar";
 
 // Import des fonts
-import StyledRegularText from "../components/StyledBoldText";
-import StyledBoldText from "../components/StyledBoldText";
 import { useEffect, useState, useCallback } from "react";
 import { useSelector } from "react-redux";
 
 // Import icones
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
+// Pour créer le refresh quand on drag le conteneur de discussions
 const wait = (timeout) => {
   return new Promise((resolve) => setTimeout(resolve, timeout));
 };
@@ -38,6 +34,7 @@ export default function ChatScreen({ navigation }) {
 
   const [refreshing, setRefreshing] = useState(false);
 
+  // Permet de rerender le composants et de refaire un fetch quand on 'drag' le conteneur de message
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     wait(2000).then(() => setRefreshing(false));

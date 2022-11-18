@@ -15,9 +15,6 @@ import StyledRegularText from "../components/StyledRegularText";
 // Safearea import
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Import Font Awesome
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-
 export default function EndingScreen({ navigation }) {
   // état pour l'animation
   const [go, setGo] = useState(true);
@@ -74,12 +71,6 @@ export default function EndingScreen({ navigation }) {
           </TouchableOpacity>
         </Animated.View>
       </View>
-      {/* <TouchableOpacity
-          style={[styles.button, styles.green]}
-          onPress={handleBack}
-        >
-          <StyledBoldText title="BACK TO HOMEPAGE" style={styles.go} />
-        </TouchableOpacity> */}
     </SafeAreaView>
   );
 }

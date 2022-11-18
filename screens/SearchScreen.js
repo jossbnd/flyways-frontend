@@ -158,10 +158,7 @@ export default function SearchScreen({ navigation }) {
         rangeTime: rangeTime,
       };
 
-      // console.log(searchDataComplete);
-
       navigation.navigate("SearchResult", { searchDataComplete });
-      // navigation.navigate("SearchParameters", { searchData });
     }
   };
 
@@ -218,7 +215,6 @@ export default function SearchScreen({ navigation }) {
 
   // fonction pour récupérer la valeur de l'input destination
   const getAddress = () => {
-    // console.log(placesRef.current?.getAddressText());
   };
 
   // Fonction pour le Date Picker

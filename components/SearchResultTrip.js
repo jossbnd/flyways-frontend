@@ -10,7 +10,6 @@ import {
 
 // Import FontAwesome
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
 
 // Import hook Navigation
 import { useNavigation } from "@react-navigation/native";
@@ -20,10 +19,8 @@ import CountryFlag from "react-native-country-flag";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
-import StyledBoldText from "../components/StyledBoldText";
 
 const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
 
 export default function SearchResultTrip(props) {
   // variable qui stocke la methode useNavigation
@@ -69,7 +66,6 @@ export default function SearchResultTrip(props) {
       // navigation={navigation}
       style={styles.container}
       onPress={() => {
-        // console.log(props);
         navigation.navigate("Trip", { tripData: props });
       }}
     >
