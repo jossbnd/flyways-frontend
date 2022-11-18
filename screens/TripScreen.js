@@ -5,21 +5,13 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
-  Alert,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 import ProfilModal from "../components/ProfilModal";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import FontAwesome5 from "react-native-vector-icons/FontAwesome5";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Marker } from "react-native-maps";
-
-//Import hook Navigation
-import { useNavigation } from "@react-navigation/native";
-
-//Import hook Navigation
-import { useNavigation } from "@react-navigation/native";
 
 //import redux
 import { useRef, useState } from "react";
@@ -36,14 +28,11 @@ import { GOOGLE_API_KEY, BACK_END_ADDRESS } from "../environmentVar";
 import StyledRegularText from "../components/StyledBoldText";
 import StyledBoldText from "../components/StyledBoldText";
 import { useEffect } from "react";
-import user from "../reducers/user";
-import { usePreventRemoveContext } from "@react-navigation/native";
+
 
 // Import Moment to format date
 import moment from "moment";
 
-// Import Moment to format date
-import moment from "moment";
 
 export default function TripScreen({ navigation, route: { params } }) {
   //ETATS
