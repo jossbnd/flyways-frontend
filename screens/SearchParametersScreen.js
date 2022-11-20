@@ -1,6 +1,5 @@
 import {
   KeyboardAvoidingView,
-  Button,
   StyleSheet,
   Text,
   View,
@@ -8,19 +7,11 @@ import {
   TextInput,
   Dimensions,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import TopBar from "../components/TopBar";
 import { useState } from "react";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
-import StyledBoldText from "../components/StyledBoldText";
-
-// Import du composant
-import SearchResultTrip from "../components/SearchResultTrip";
-
-// Import de react-slider pour la distance max
-import ReactSlider from "react-slider";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
