@@ -1,5 +1,4 @@
 import {
-  Button,
   StyleSheet,
   Text,
   View,
@@ -17,12 +16,9 @@ import { BACK_END_ADDRESS } from "../environmentVar";
 
 // Import des fonts
 import StyledRegularText from "../components/StyledBoldText";
-import StyledBoldText from "../components/StyledBoldText";
 
 // Import du composant
 import SearchResultTrip from "../components/SearchResultTrip";
-import { faBlackTie } from "@fortawesome/free-brands-svg-icons";
-import TripScreen from "./TripScreen";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -90,7 +86,9 @@ export default function SearchResultScreen({ navigation, route: { params } }) {
   return (
     <SafeAreaView style={styles.container}>
       <TopBar></TopBar>
-      <ScrollView contentContainerStyle={styles.resultContainer}>{searchResult}</ScrollView>
+      <ScrollView contentContainerStyle={styles.resultContainer}>
+        {searchResult}
+      </ScrollView>
     </SafeAreaView>
   );
 }
